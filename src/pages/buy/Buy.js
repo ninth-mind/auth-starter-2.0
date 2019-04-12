@@ -6,7 +6,11 @@ class Buy extends React.Component {
   }
 
   render() {
-    return <Checkout />
+    return (
+      <div className="page">
+        <Checkout />
+      </div>
+    )
   }
 }
 

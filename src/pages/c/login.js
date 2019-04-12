@@ -120,16 +120,16 @@ class Login extends React.Component {
               ref={n => (this.passwordInput = n)}
             />
           </div>
+          <button type="submit" tabIndex="0">
+            Submit
+          </button>
           <ReCAPTCHA
             ref={n => (this.reCaptcha = n)}
             sitekey={this.props.CAPTCHA_SITE_KEY}
             size="invisible"
           />
-          <button type="submit" tabIndex="0">
-            Submit
-          </button>
         </form>
-        <Link href="/register">
+        <Link href="/c/register">
           <a className="small italic link" tabIndex="1">
             Need an account? Register here.
           </a>

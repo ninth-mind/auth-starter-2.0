@@ -5,6 +5,7 @@ import withReduxStore from '~/lib/with-redux-store'
 import { Provider } from 'react-redux'
 import { StripeProvider } from 'react-stripe-elements'
 import Layout from '~/layouts/Layout'
+import '~/styles/main.scss'
 
 class MyApp extends App {
   constructor(props) {

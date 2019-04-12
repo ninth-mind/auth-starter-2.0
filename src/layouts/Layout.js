@@ -4,10 +4,10 @@ import Navigation from '~/components/Navigation'
 import { connect } from 'react-redux'
 import ls from 'store'
 import Loading from '~/components/Loading'
-import { actions } from '~/store'
 import { ToastContainer, toast } from 'react-toastify'
 import { handleToken, setLoading } from '~/lib/utils'
 import 'react-toastify/dist/ReactToastify.min.css'
+import './Layout.scss'
 
 class Layout extends React.Component {
   constructor(props) {

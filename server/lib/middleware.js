@@ -67,7 +67,10 @@ function verifyCaptcha(req, res, next) {
     })
       .then(({ status, data }) => {
         if (status === 200 && data.score > 0.5 && data.success) next()
-        else res.status(403).send('Invalid Captcha')
+        else {
+          res.status(403).send({ msg: 'Invalid reCaptcha', reCaptcha: data })
+          console.log('RECAPTCHA VALUE: ', data)
+        }
       })
       .catch(err => handleError(err, res, 4001))
   } catch (err) {

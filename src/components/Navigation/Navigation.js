@@ -1,14 +1,11 @@
 import React from 'react'
 import Link from 'next/link'
+import './Navigation.scss'
 
 class Navigations extends React.Component {
-  constructor(props) {
-    super(props)
-  }
-
   render() {
     return (
-      <nav>
+      <nav className="navigation">
         <ul>
           <li>
             <Link href="/">
@@ -16,12 +13,12 @@ class Navigations extends React.Component {
             </Link>
           </li>
           <li>
-            <Link href="/login">
+            <Link href="/c/login">
               <a>Login</a>
             </Link>
           </li>
           <li>
-            <Link href="/register">
+            <Link href="/c/register">
               <a>Register</a>
             </Link>
           </li>

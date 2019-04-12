@@ -171,7 +171,7 @@ class Register extends React.Component {
           />
           <button type="submit">Submit</button>
         </form>
-        <Link href="/login">
+        <Link href="/c/login">
           <a className="small italic link">Already a member? Login here.</a>
         </Link>
       </div>

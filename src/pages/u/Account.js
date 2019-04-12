@@ -2,7 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { toast } from 'react-toastify'
 import { signOut } from '~/lib/utils'
-import { axiosWCreds, redirect } from '../lib/utils'
+import { axiosWCreds, redirect } from '~/lib/utils'
 import AddValue from '~/components/AddValue'
 
 class Account extends React.Component {
@@ -34,7 +34,7 @@ class Account extends React.Component {
       return r.data.data
     } catch (err) {
       toast.error('Oops. Not authorized yet. Please login')
-      redirect('/login', ctx)
+      redirect('/c/login', ctx)
       return {}
     }
   }
