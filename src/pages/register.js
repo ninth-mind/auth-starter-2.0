@@ -3,14 +3,14 @@ import axios from 'axios'
 import Link from 'next/link'
 import ReCAPTCHA from 'react-google-recaptcha'
 import { toast } from 'react-toastify'
-import { actions } from '~/store'
 import { connect } from 'react-redux'
 import {
   handleError,
   handleToken,
   validPassword,
   validName,
-  redirect
+  redirect,
+  setLoading
 } from '~/lib/utils'
 
 class Register extends React.Component {
@@ -41,10 +41,7 @@ class Register extends React.Component {
   }
 
   setLoading(isLoading) {
-    this.props.dispatch({
-      type: actions.LOADING,
-      isLoading
-    })
+    setLoading(isLoading, this.props.dispatch)
   }
 
   handleChange(e) {
@@ -104,7 +101,7 @@ class Register extends React.Component {
       .then(r => {
         this.setLoading(false)
         handleToken(r.data.token, dispatch)
-        redirect('/')
+        redirect('/u')
       })
       .catch(err => {
         this.setLoading(false)

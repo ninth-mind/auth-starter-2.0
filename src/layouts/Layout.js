@@ -1,44 +1,41 @@
 import React from 'react'
 import Router from 'next/router'
 import Navigation from '~/components/Navigation'
-import { actions } from '~/store'
 import { connect } from 'react-redux'
+import ls from 'store'
 import Loading from '~/components/Loading'
+import { actions } from '~/store'
 import { ToastContainer, toast } from 'react-toastify'
+import { handleToken, setLoading } from '~/lib/utils'
 import 'react-toastify/dist/ReactToastify.min.css'
 
 class Layout extends React.Component {
   constructor(props) {
     super(props)
     this.initializeRouter = this.initializeRouter.bind(this)
+    this.updateStoreFromToken = this.updateStoreFromToken.bind(this)
   }
 
   componentDidMount() {
     this.initializeRouter()
+    this.updateStoreFromToken()
+  }
+
+  updateStoreFromToken() {
+    const { dispatch } = this.props
+    const { token } = ls.get('profile')
+    handleToken(token, dispatch)
   }
 
   initializeRouter() {
     let { dispatch } = this.props
     Router.events.on('routeChangeStart', url => {
-      console.log('LOADING: ' + url)
-      dispatch({
-        type: actions.LOADING,
-        isLoading: true
-      })
+      setLoading(true, dispatch)
     })
-    Router.events.on('routeChangeComplete', () =>
-      dispatch({
-        type: actions.LOADING,
-        isLoading: false
-      })
-    )
+    Router.events.on('routeChangeComplete', () => setLoading(false, dispatch))
     Router.events.on('routeChangeError', e => {
       console.log('ROUTER ERROR', e)
-      debugger
-      dispatch({
-        type: actions.LOADING,
-        isLoading: false
-      })
+      setLoading(false, dispatch)
     })
   }
 
@@ -58,7 +55,10 @@ class Layout extends React.Component {
 }
 
 const mapStateToProps = state => {
-  return { isLoading: state.ui.isLoading }
+  return {
+    isLoading: state.ui.isLoading,
+    localStorageName: state.constants.LOCAL_STORAGE_NAME
+  }
 }
 
 export default connect(mapStateToProps)(Layout)

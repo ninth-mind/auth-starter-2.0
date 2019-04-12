@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import { toast } from 'react-toastify'
 import { signOut } from '~/lib/utils'
 import { axiosWCreds, redirect } from '../lib/utils'
+import AddValue from '~/components/AddValue'
 
 class Account extends React.Component {
   constructor(props) {
@@ -29,9 +30,11 @@ class Account extends React.Component {
         url: url,
         headers: headers
       })
-      console.log('INITIAL PROPS', r.data)
+      console.log(r.data.data)
       return r.data.data
     } catch (err) {
+      toast.error('Oops. Not authorized yet. Please login')
+      redirect('/login', ctx)
       return {}
     }
   }
@@ -48,30 +51,25 @@ class Account extends React.Component {
       <div className="page">
         <h1>Account</h1>
         <h2>Welcome{this.props.fname ? ' ' + capName : ''},</h2>
-        <h4>{this.props.email}</h4>
-        <h4>{this.props.phone}</h4>
-        <p>
-          Currently, there is nothing here. If you are a client contact Jamie to
-          discuss what you would like to see on your profile. And since you went
-          through all this effort to register, I suppose I can trust you. My
-          email is <code>me@jamieskinner.me</code>. If you are not a client of
-          mine, and you just happen to register for my site, well then BRAVO!
-          Progress through the easter eggs and some secrets might reveal
-          themselves here.
-        </p>
+        <h4>Email: {this.props.email}</h4>
+        <h4>Value: {this.props.value}</h4>
+        <p>Nothing here yet....</p>
+        <AddValue />
         <button onClick={this.signOut}>Sign Out</button>
       </div>
     )
   }
 }
 
-const mapStateToProps = (state, ownProps) => ({
-  fname: state.profile.fname,
-  lname: state.profile.lname,
-  email: state.profile.email,
-  phone: state.profile.phone,
-  token: state.profile.token,
-  ...ownProps
-})
+const mapStateToProps = (state, ownProps) => {
+  return {
+    ...ownProps,
+    value: state.profile.value || ownProps.value,
+    fname: state.profile.fname,
+    lname: state.profile.lname,
+    email: state.profile.email,
+    token: state.profile.token
+  }
+}
 
 export default connect(mapStateToProps)(Account)

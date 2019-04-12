@@ -6,6 +6,12 @@ import Router from 'next/router'
 
 export const axiosWCreds = axios.create()
 
+export function setLoading(isLoading, dispatch) {
+  dispatch({
+    type: actions.LOADING,
+    isLoading
+  })
+}
 /**
  * Programatic redirect
  * @param {OBJECT} ctx - ctx object from 'getInitialProps'
@@ -59,9 +65,6 @@ export function handleToken(token, dispatch) {
     ls.set('profile', stored || { token })
     let { email, fname, lname, id } = parseJWT(token)
     axiosWCreds.defaults.headers.common['Authorization'] = 'Bearer ' + token
-    // axiosWCreds.defaults.headers['Allowed-Privileges'] = privileges
-    //   ? privileges.join(' ').toUpperCase()
-    //   : ''
     dispatch({
       type: actions.CREDS,
       token,

@@ -5,7 +5,7 @@ import Link from 'next/link'
 import ReCAPTCHA from 'react-google-recaptcha'
 import { toast } from 'react-toastify'
 import { connect } from 'react-redux'
-import { handleToken, redirect, handleError } from '~/lib/utils'
+import { handleToken, redirect, handleError, setLoading } from '~/lib/utils'
 
 class Login extends React.Component {
   constructor(props) {
@@ -18,6 +18,7 @@ class Login extends React.Component {
     this.passwordInput // added by ref
     this.handleSubmit = this.handleSubmit.bind(this)
     this.handleChange = this.handleChange.bind(this)
+    this.setLoading = this.setLoading.bind(this)
     this.sanitize = this.sanitize.bind(this)
   }
 
@@ -36,6 +37,10 @@ class Login extends React.Component {
     let val = e.target.value
     obj[id] = val
     this.setState({ ...this.state, ...obj })
+  }
+
+  setLoading(isLoading) {
+    setLoading(isLoading, this.props.dispatch)
   }
 
   async handleSubmit(e) {
@@ -72,6 +77,7 @@ class Login extends React.Component {
           handleError(err)
         }
       })
+      .then(() => this.setLoading(false))
   }
 
   render() {
@@ -84,7 +90,6 @@ class Login extends React.Component {
               <label htmlFor="email">Email:</label>
             </div>
             <div className="space-out">
-              <br />
               <input
                 id="email"
                 type="text"

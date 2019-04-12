@@ -8,10 +8,6 @@ const UserSchema = mongoose.Schema({
     index: { unique: true },
     trim: true
   },
-  randomNum: {
-    type: String,
-    default: `${Math.random()}`
-  },
   password: String,
   fname: {
     type: String,
@@ -26,6 +22,10 @@ const UserSchema = mongoose.Schema({
   signedUpDate: {
     type: Date,
     default: Date.now()
+  },
+  value: {
+    type: Number,
+    default: 1
   }
 })
 
