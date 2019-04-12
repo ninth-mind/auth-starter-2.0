@@ -21,14 +21,14 @@ class Register extends React.Component {
       email: '',
       password: '',
       confirm: '',
-      recaptcha: '',
       loaded: false
     }
     this.handleChange = this.handleChange.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
     this.setLoading = this.setLoading.bind(this)
+    this.sanitize = this.sanitize.bind(this)
     this.clear = this.clear.bind(this)
-    this.recaptcha // added by ref
+    this.reCaptcha // added by ref
     this.form // added by ref
   }
 
@@ -49,37 +49,32 @@ class Register extends React.Component {
 
   handleChange(e) {
     // for form inputs
-    if (e.target) {
-      let obj = {}
-      let id = e.target.id
-      let val = e.target.value
-      obj[id] = val
-      this.setState({ ...this.state, ...obj })
-    } else {
-      this.setState(Object.assign(this.state, { recaptcha: e }))
-    }
+    let obj = {}
+    let id = e.target.id
+    let val = e.target.value
+    obj[id] = val
+    this.setState({ ...this.state, ...obj })
   }
 
-  handleSubmit(e) {
-    e.preventDefault()
-    const { dispatch } = this.props
-
-    this.setLoading(true)
+  sanitize() {
     // check if confirmation password matches
     if (this.state.confirm !== this.state.password) {
-      return toast.warn('Passwords do not match.')
+      toast.warn('Passwords do not match.')
+      return false
     }
 
     if (!validPassword(this.state.password)) {
       this.clear(['password', 'confirm'])
-      return toast.error(
+      toast.error(
         'Password must be 8 characters. Special characters allowed are .!@#$%^&*'
       )
+      return false
     }
 
     if (!validName(this.state.name)) {
       this.clear(['password', 'confirm'])
-      return toast.error('Invalid characters found in name.')
+      toast.error('Invalid characters found in name.')
+      return false
     }
 
     // split name up
@@ -88,12 +83,23 @@ class Register extends React.Component {
       fname: splitName[0],
       lname: splitName.slice(1).join(' ')
     })
+    return data
+  }
 
+  async handleSubmit(e) {
+    e.preventDefault()
+    let data = this.sanitize()
+    if (!data) return // unsanitary inputs
+
+    // start async process
+    this.setLoading(true)
+    const { dispatch } = this.props
+    const captchaToken = await this.reCaptcha.execute({ action: 'register' })
     // send request
     axios({
       method: 'post',
       url: `/api/auth/register`,
-      data: data
+      data: { ...data, recaptcha: captchaToken }
     })
       .then(r => {
         this.setLoading(false)
@@ -162,9 +168,9 @@ class Register extends React.Component {
             />
           </div>
           <ReCAPTCHA
-            ref={n => (this.recaptcha = n)}
+            ref={n => (this.reCaptcha = n)}
             sitekey={this.props.CAPTCHA_SITE_KEY}
-            onChange={this.handleChange}
+            size="invisible"
           />
           <button type="submit">Submit</button>
         </form>

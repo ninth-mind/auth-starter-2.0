@@ -12,23 +12,24 @@ class Account extends React.Component {
 
   static async getInitialProps(ctx) {
     // if rendered on the server
-    let url,
-      headers,
-      { req } = ctx
-    if (req) {
-      url = `${req.protocol}://${req.headers.host}/api/me`
-      headers = { cookie: req.headers.cookie }
-    } else {
-      url = '/api/me'
-      headers = { Authorization: `Bearer ${this.props.token}` }
-    }
     try {
+      let url,
+        headers,
+        { req } = ctx
+      if (req) {
+        url = `${req.protocol}://${req.headers.host}/api/me`
+        headers = { cookie: req.headers.cookie }
+      } else {
+        url = '/api/me'
+        let token = ctx.reduxStore.getState().profile.token
+        headers = { Authorization: `Bearer ${token}` }
+      }
       let r = await axiosWCreds({
         method: 'GET',
         url: url,
         headers: headers
       })
-      console.log(r.data)
+      console.log('INITIAL PROPS', r.data)
       return r.data.data
     } catch (err) {
       return {}

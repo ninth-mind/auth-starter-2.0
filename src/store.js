@@ -3,7 +3,7 @@ import { composeWithDevTools } from 'redux-devtools-extension'
 
 const initialState = {
   constants: {
-    CAPTCHA_SITE_KEY: '6LeEdJUUAAAAAI4gWcutefpeJ16MGEY-aKLxl-L7',
+    CAPTCHA_SITE_KEY: '6Le87Z0UAAAAALKPzIW8DiLMEzSi9I51FNTnWBQN', // v3 site key
     COOKIE_STORAGE_NAME: 'rich'
   },
   ui: {

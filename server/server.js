@@ -5,6 +5,7 @@ const express = require('express')
 const next = require('next')
 const path = require('path')
 const bodyParser = require('body-parser')
+const cookieParser = require('cookie-parser')
 const cors = require('cors')
 const ApiRouter = require('./routers/ApiRouter')
 
@@ -26,6 +27,7 @@ app
     server.use(cors())
     server.use(bodyParser.urlencoded({ extended: false }))
     server.use(bodyParser.json())
+    server.use(cookieParser())
 
     server.use((req, res, next) => {
       req.locals = {

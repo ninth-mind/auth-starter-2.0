@@ -1,6 +1,7 @@
 const express = require('express')
 const jwt = require('jsonwebtoken')
 const User = require('../models/UserModel')
+const cookieName = process.env.COOKIE_NAME
 // const transporter = require('../connections/mailer')
 const errorCodes = require('../lib/errorCodes')
 const {
@@ -69,6 +70,14 @@ AuthRouter.post('/login', verifyCaptcha, (req, res) => {
       })
     })
     .catch(err => handleError(err, null, 1000))
+})
+
+/**
+ * LOGOUT
+ */
+AuthRouter.get('/logout', verifyAuthenticationToken, (req, res) => {
+  res.clearCookie(cookieName)
+  respond(res, 200, 'Successfully logged out')
 })
 
 /**

@@ -8,9 +8,9 @@ const UserSchema = mongoose.Schema({
     index: { unique: true },
     trim: true
   },
-  phone: {
+  randomNum: {
     type: String,
-    trim: true
+    default: `${Math.random()}`
   },
   password: String,
   fname: {
@@ -26,8 +26,7 @@ const UserSchema = mongoose.Schema({
   signedUpDate: {
     type: Date,
     default: Date.now()
-  },
-  eggs: [Object]
+  }
 })
 
 UserSchema.pre('save', function(next) {

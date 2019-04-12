@@ -29,7 +29,7 @@ function verifyAuthenticationToken(req, res, next) {
   try {
     // check if the token is in the cookies or the authorization header
     let token
-    if (req.cookies[cookieName]) {
+    if (req.cookies && req.cookies[cookieName]) {
       token = req.cookies[cookieName]
     } else {
       token = req.headers.authorization.split(' ')[1]
@@ -65,8 +65,8 @@ function verifyCaptcha(req, res, next) {
         remoteip: req.connection.remoteAddress
       }
     })
-      .then(r => {
-        if (r.status === 200 && r.data.success) next()
+      .then(({ status, data }) => {
+        if (status === 200 && data.score > 0.5 && data.success) next()
         else res.status(403).send('Invalid Captcha')
       })
       .catch(err => handleError(err, res, 4001))
