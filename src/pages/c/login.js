@@ -2,7 +2,6 @@ import React from 'react'
 import axios from 'axios'
 import isEmail from 'validator/lib/isEmail'
 import Link from 'next/link'
-import ReCAPTCHA from 'react-google-recaptcha'
 import { toast } from 'react-toastify'
 import { connect } from 'react-redux'
 import { handleToken, redirect, handleError, setLoading } from '~/lib/utils'
@@ -14,7 +13,6 @@ class Login extends React.Component {
       email: '',
       password: ''
     }
-    this.reCaptcha // added by ref
     this.passwordInput // added by ref
     this.handleSubmit = this.handleSubmit.bind(this)
     this.handleChange = this.handleChange.bind(this)
@@ -51,7 +49,7 @@ class Login extends React.Component {
     //async
     this.setLoading(true)
     const { dispatch } = this.props
-    const captchaToken = await this.reCaptcha.execute({ action: 'login' })
+    const captchaToken = await this.props.reCaptcha.execute({ action: 'login' })
 
     axios({
       method: 'post',
@@ -72,7 +70,6 @@ class Login extends React.Component {
           toast.error('Incorrect credentials.')
           this.passwordInput.value = ''
           this.passwordInput.focus()
-          this.reCaptcha.reset()
         } else {
           handleError(err)
         }
@@ -123,11 +120,6 @@ class Login extends React.Component {
           <button type="submit" tabIndex="0">
             Submit
           </button>
-          <ReCAPTCHA
-            ref={n => (this.reCaptcha = n)}
-            sitekey={this.props.CAPTCHA_SITE_KEY}
-            size="invisible"
-          />
         </form>
         <Link href="/c/register">
           <a className="small italic link" tabIndex="1">
@@ -140,7 +132,6 @@ class Login extends React.Component {
 }
 const mapStateToProps = state => {
   return {
-    CAPTCHA_SITE_KEY: state.constants.CAPTCHA_SITE_KEY,
     profile: state.profile
   }
 }

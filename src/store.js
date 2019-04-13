@@ -10,12 +10,12 @@ const initialState = {
     isLoading: false
   },
   profile: {
-    email: '',
-    fname: '',
-    lname: '',
-    token: '',
-    value: '',
-    id: ''
+    email: null,
+    fname: null,
+    lname: null,
+    token: null,
+    value: null,
+    id: null
   }
 }
 
@@ -44,6 +44,7 @@ function profileReducer(state = initialState.profile, action) {
         fname: action.fname,
         lname: action.lname,
         email: action.email,
+        value: action.value,
         id: action.id
       }
     }

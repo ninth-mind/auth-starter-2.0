@@ -1,7 +1,6 @@
 import React from 'react'
 import axios from 'axios'
 import Link from 'next/link'
-import ReCAPTCHA from 'react-google-recaptcha'
 import { toast } from 'react-toastify'
 import { connect } from 'react-redux'
 import {
@@ -28,7 +27,6 @@ class Register extends React.Component {
     this.setLoading = this.setLoading.bind(this)
     this.sanitize = this.sanitize.bind(this)
     this.clear = this.clear.bind(this)
-    this.reCaptcha // added by ref
     this.form // added by ref
   }
 
@@ -91,7 +89,9 @@ class Register extends React.Component {
     // start async process
     this.setLoading(true)
     const { dispatch } = this.props
-    const captchaToken = await this.reCaptcha.execute({ action: 'register' })
+    const captchaToken = await this.props.reCaptcha.execute({
+      action: 'register'
+    })
     // send request
     axios({
       method: 'post',
@@ -164,11 +164,6 @@ class Register extends React.Component {
               onChange={this.handleChange}
             />
           </div>
-          <ReCAPTCHA
-            ref={n => (this.reCaptcha = n)}
-            sitekey={this.props.CAPTCHA_SITE_KEY}
-            size="invisible"
-          />
           <button type="submit">Submit</button>
         </form>
         <Link href="/c/login">
@@ -180,7 +175,6 @@ class Register extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  profile: state.profile,
-  CAPTCHA_SITE_KEY: state.constants.CAPTCHA_SITE_KEY
+  profile: state.profile
 })
 export default connect(mapStateToProps)(Register)

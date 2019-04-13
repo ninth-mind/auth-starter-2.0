@@ -1,5 +1,6 @@
 import React from 'react'
-import { axiosWCreds, setLoading } from '~/lib/utils'
+import axios from 'axios'
+import { setLoading } from '~/lib/utils'
 import { actions } from '~/store'
 import { connect } from 'react-redux'
 import { toast } from 'react-toastify'
@@ -15,7 +16,7 @@ class AddValue extends React.Component {
     const { dispatch } = this.props
     setLoading(true, dispatch)
 
-    let { status, data } = await axiosWCreds({
+    let { status, data } = await axios({
       method: 'post',
       url: '/api/me',
       data: { toAdd: 1 }

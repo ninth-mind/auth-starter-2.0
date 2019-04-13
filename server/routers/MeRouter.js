@@ -25,7 +25,6 @@ MeRouter.get('/', verifyAuthenticationToken, (req, res) => {
 
 MeRouter.post('/', verifyAuthenticationToken, (req, res) => {
   const { toAdd } = req.body
-  console.log(toAdd)
   const { email } = req.locals.decodedToken
   UserModel.findOneAndUpdate(
     { email },

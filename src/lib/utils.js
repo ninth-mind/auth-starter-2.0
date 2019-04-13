@@ -4,8 +4,6 @@ import ls from 'store'
 import axios from 'axios'
 import Router from 'next/router'
 
-export const axiosWCreds = axios.create()
-
 export function setLoading(isLoading, dispatch) {
   dispatch({
     type: actions.LOADING,
@@ -60,11 +58,7 @@ export function parseJWT(token) {
 
 export function handleToken(token, dispatch) {
   if (token) {
-    let stored = ls.get('profile')
-    if (stored) stored.token = token
-    ls.set('profile', stored || { token })
     let { email, fname, lname, id } = parseJWT(token)
-    axiosWCreds.defaults.headers.common['Authorization'] = 'Bearer ' + token
     dispatch({
       type: actions.CREDS,
       token,
@@ -79,20 +73,16 @@ export function handleToken(token, dispatch) {
 }
 
 export function signOut(dispatch) {
-  axiosWCreds({
+  axios({
     method: 'GET',
     url: '/api/auth/logout'
   })
     .then(r => {
-      let stored = ls.get('profile')
-      if (stored) delete stored.token
-      ls.set('profile', stored)
       dispatch({
         type: actions.LOGOUT
       })
       redirect('/')
     })
-    .then(() => (axiosWCreds.defaults.headers.common['Authorization'] = null))
     .catch(err => handleError(err))
 }
 

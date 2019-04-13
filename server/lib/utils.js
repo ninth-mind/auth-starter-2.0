@@ -16,8 +16,8 @@ function respondWithToken(user, res) {
   const token = jwt.sign({ fname, lname, email, id }, secret, {
     expiresIn: tokenExpiryTime
   })
-  res.cookie(cookieName, token)
-  return res.send({ token })
+  res.cookie(cookieName, token, { httpOnly: true })
+  return res.send({ msg: 'login successful', token })
 }
 /**
   Error handling. Only to be used when the SERVER is experiencing an error. Not

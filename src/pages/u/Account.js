@@ -1,8 +1,9 @@
 import React from 'react'
+import axios from 'axios'
+import { actions } from '~/store'
 import { connect } from 'react-redux'
 import { toast } from 'react-toastify'
-import { signOut } from '~/lib/utils'
-import { axiosWCreds, redirect } from '~/lib/utils'
+import { signOut, redirect } from '~/lib/utils'
 import AddValue from '~/components/AddValue'
 
 class Account extends React.Component {
@@ -22,21 +23,30 @@ class Account extends React.Component {
         headers = { cookie: req.headers.cookie }
       } else {
         url = '/api/me'
-        let token = ctx.reduxStore.getState().profile.token
-        headers = { Authorization: `Bearer ${token}` }
       }
-      let r = await axiosWCreds({
+
+      let r = await axios({
         method: 'GET',
         url: url,
         headers: headers
       })
-      console.log(r.data.data)
       return r.data.data
     } catch (err) {
       toast.error('Oops. Not authorized yet. Please login')
       redirect('/c/login', ctx)
       return {}
     }
+  }
+  componentDidMount(np, ns) {
+    const { dispatch, fname, lname, email, value, id } = this.props
+    dispatch({
+      type: actions.CREDS,
+      fname,
+      lname,
+      email,
+      value,
+      id
+    })
   }
 
   signOut() {
@@ -63,12 +73,12 @@ class Account extends React.Component {
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    ...ownProps,
-    value: state.profile.value || ownProps.value,
     fname: state.profile.fname,
     lname: state.profile.lname,
     email: state.profile.email,
-    token: state.profile.token
+    token: state.profile.token,
+    ...ownProps,
+    value: state.profile.value || ownProps.value
   }
 }
 

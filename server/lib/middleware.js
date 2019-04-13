@@ -7,6 +7,7 @@ const secret = process.env.SECRET
 const clientURL = process.env.CLIENT_URL
 const cookieName = process.env.COOKIE_NAME
 const captchaSecretKey = process.env.CAPTCHA_SECRET_KEY
+const captchaThreshold = process.env.CAPTCHA_THRESHOLD
 const passport = require('passport')
 
 passport.serializeUser(function(user, done) {
@@ -31,8 +32,6 @@ function verifyAuthenticationToken(req, res, next) {
     let token
     if (req.cookies && req.cookies[cookieName]) {
       token = req.cookies[cookieName]
-    } else {
-      token = req.headers.authorization.split(' ')[1]
     }
 
     // verify token
@@ -40,7 +39,8 @@ function verifyAuthenticationToken(req, res, next) {
       if (err) {
         if (
           err.name === 'TokenExpiredError' ||
-          err.message === 'jwt malformed'
+          err.message === 'jwt malformed' ||
+          err.message === 'jwt must be provided'
         ) {
           return res.status(403).send('Your session has expired.')
         } else return handleError(err, res, 4000)
@@ -49,7 +49,7 @@ function verifyAuthenticationToken(req, res, next) {
       next()
     })
   } catch (err) {
-    return res.status(400).send('No authorization token present')
+    return res.status(400).send('No token present')
   }
 }
 
@@ -66,7 +66,8 @@ function verifyCaptcha(req, res, next) {
       }
     })
       .then(({ status, data }) => {
-        if (status === 200 && data.score > 0.5 && data.success) next()
+        if (status === 200 && data.score >= captchaThreshold && data.success)
+          next()
         else {
           res.status(403).send({ msg: 'Invalid reCaptcha', reCaptcha: data })
           console.log('RECAPTCHA VALUE: ', data)
