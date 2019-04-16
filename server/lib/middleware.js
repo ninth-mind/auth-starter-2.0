@@ -1,13 +1,21 @@
 require('dotenv').config()
 const jwt = require('jsonwebtoken')
 const axios = require('axios')
+const passport = require('passport')
 const { handleError } = require('./utils')
-
 const secret = process.env.SECRET
 const clientURL = process.env.CLIENT_URL
 const cookieName = process.env.COOKIE_NAME
 const captchaSecretKey = process.env.CAPTCHA_SECRET_KEY
 const captchaThreshold = process.env.CAPTCHA_THRESHOLD
+
+passport.serializeUser(function(user, done) {
+  done(null, user)
+})
+
+passport.deserializeUser(function(user, done) {
+  done(null, user)
+})
 
 function verifyOrigin(req, res, next) {
   if (process.env.NODE_ENV !== 'production') next()
@@ -73,5 +81,6 @@ function verifyCaptcha(req, res, next) {
 module.exports = {
   verifyOrigin,
   verifyCaptcha,
-  verifyAuthenticationToken
+  verifyAuthenticationToken,
+  passport
 }

@@ -1,26 +1,18 @@
 const express = require('express')
+const { passport } = require('../../lib/middleware')
 const InstagramRouter = express.Router()
-const passport = require('passport')
 const InstagramStrategy = require('passport-instagram')
 const um = require('../../database/userManagement')
 const { handleError, respondWithToken } = require('../../lib/utils')
-
-passport.serializeUser(function(user, done) {
-  done(null, user)
-})
-
-passport.deserializeUser(function(user, done) {
-  done(null, user)
-})
-
-InstagramRouter.use(passport.initialize())
+const serverURL = process.env.SERVER_URL
+const clientURL = process.env.CLIENT_URL
 
 passport.use(
   new InstagramStrategy(
     {
       clientID: process.env.INSTAGRAM_CLIENT_ID,
       clientSecret: process.env.INSTAGRAM_CLIENT_SECRET,
-      callbackURL: 'http://localhost:3000/api/auth/instagram/callback'
+      callbackURL: `${serverURL}/api/auth/instagram/callback`
     },
     (accessToken, refreshToken, profile, done) => {
       //gets user from spotify and passes it to /spotify/callback
@@ -33,14 +25,14 @@ passport.use(
 InstagramRouter.get(
   '/',
   passport.authenticate('instagram', {
-    failureRedirect: 'http://localhost:3000/404'
+    failureRedirect: `${clientURL}/404`
   })
 )
 
 InstagramRouter.get(
   '/callback',
   passport.authenticate('instagram', {
-    failureRedirect: '/login',
+    failureRedirect: '/c',
     session: false
   }),
   (req, res) => {

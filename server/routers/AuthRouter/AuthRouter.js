@@ -1,5 +1,6 @@
 const express = require('express')
 const jwt = require('jsonwebtoken')
+const { passport } = require('../../lib/middleware')
 const User = require('../../database/models/UserModel')
 const um = require('../../database/userManagement')
 const InstagramRouter = require('./InstagramRouter')
@@ -25,6 +26,10 @@ const emailConfirmationTokenExpiration =
 const clientURL = process.env.CLIENT_URL
 const serverURL = process.env.SERVER_URL
 
+AuthRouter.use(passport.initialize())
+AuthRouter.use('/instagram', InstagramRouter)
+AuthRouter.use('/facebook', FacebookRouter)
+
 /**
  * Verifies the users token is valid, and that the route
  * they are trying to access is allowed.
@@ -33,9 +38,6 @@ AuthRouter.get('/', verifyAuthenticationToken, (req, res) => {
   // if the user makes it here.... they are authenticated
   return res.send('OK')
 })
-
-AuthRouter.use('/instagram', InstagramRouter)
-AuthRouter.use('/facebook', FacebookRouter)
 
 /**
  * Signs up user. Posts user data from form submission to database,

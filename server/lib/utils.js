@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken')
 const axios = require('axios')
 const ErrorCodes = require('./errorCodes')
+const { determinePayloadFromSource } = require('../database/userManagement')
 const secret = process.env.SECRET
 const tokenExpiryTime = process.env.TOKEN_EXPIRATION_TIME
 const cookieName = process.env.COOKIE_NAME
@@ -9,13 +10,14 @@ const serverURL = process.env.SERVER_URL
 /**
  *  Signs and sends token back to user
  *
- * @param {Object} user - The user to use to get token information from
- * @param {Response_Object} res - The response object to send back to the user
+ * @param {object} user - The user to use to get token information from
+ * @param {object} res - The express response object
  * @param {boolean} - Boolean if response should redirect to server. ie, uses 3rd party OAuth
  */
 function respondWithToken(user, res, redirect) {
-  let { source, displayName, id, email, value } = user
-  const token = jwt.sign({ source, displayName, id, email, value }, secret, {
+  let payload = determinePayloadFromSource(user.source, user)
+  console.log(payload)
+  const token = jwt.sign(payload, secret, {
     expiresIn: tokenExpiryTime
   })
   res.cookie(cookieName, token, { httpOnly: true })
@@ -77,19 +79,9 @@ function respond(res, status = 200, message = 'ok', data) {
   })
 }
 
-function determineQueryFromSource(source, p) {
-  let { email, id } = p
-  let query = {}
-  if (source === 'email') query = { email }
-  else if (source === 'instagram') query = { 'instagram.id': id }
-  else if (source === 'facebook') query = { 'facebook.id': id }
-  return query
-}
-
 module.exports = {
   respond,
   sendErrorToSlack,
   respondWithToken,
-  handleError,
-  determineQueryFromSource
+  handleError
 }

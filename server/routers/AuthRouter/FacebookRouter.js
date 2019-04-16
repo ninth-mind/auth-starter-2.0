@@ -1,26 +1,18 @@
 const express = require('express')
 const FacebookRouter = express.Router()
-const passport = require('passport')
+const { passport } = require('../../lib/middleware')
 const FacebookStrategy = require('passport-facebook')
 const um = require('../../database/userManagement')
 const { handleError, respondWithToken } = require('../../lib/utils')
-
-passport.serializeUser(function(user, done) {
-  done(null, user)
-})
-
-passport.deserializeUser(function(user, done) {
-  done(null, user)
-})
-
-FacebookRouter.use(passport.initialize())
+const serverURL = process.env.SERVER_URL
+const clientURL = process.env.CLIENT_URL
 
 passport.use(
   new FacebookStrategy(
     {
       clientID: process.env.FACEBOOK_APP_ID,
       clientSecret: process.env.FACEBOOK_APP_SECRET,
-      callbackURL: 'http://localhost:3000/api/auth/facebook/callback'
+      callbackURL: `${serverURL}/api/auth/facebook/callback`
     },
     (accessToken, refreshToken, profile, done) => {
       //gets user from spotify and passes it to /spotify/callback
@@ -33,15 +25,16 @@ passport.use(
 FacebookRouter.get(
   '/',
   passport.authenticate('facebook', {
-    failureRedirect: 'http://localhost:3000/404'
+    failureRedirect: `${clientURL}/404`
   })
 )
 
 FacebookRouter.get(
   '/callback',
   passport.authenticate('facebook', {
-    failureRedirect: '/login',
-    session: false
+    failureRedirect: '/c',
+    session: false,
+    scope: ['email', 'user_birthday']
   }),
   (req, res) => {
     const { profile } = req.user

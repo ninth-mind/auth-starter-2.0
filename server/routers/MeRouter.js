@@ -1,6 +1,5 @@
 const express = require('express')
 const MeRouter = express.Router()
-const UserModel = require('../database/models/UserModel')
 const um = require('../database/userManagement')
 const { verifyAuthenticationToken } = require('../lib/middleware')
 const { respond, handleError } = require('../lib/utils')
@@ -18,11 +17,12 @@ MeRouter.get('/', verifyAuthenticationToken, (req, res) => {
 MeRouter.post('/', verifyAuthenticationToken, (req, res) => {
   const { toAdd } = req.body
   const { source } = req.locals.decodedToken
-  UserModel.findOneAndUpdate(
+  um.findOneAndUpdate(
     source,
     req.locals.decodedToken,
     { $inc: { value: toAdd } },
-    { new: true }
+    { new: true },
+    res
   )
     .then(user => {
       if (!user) respond(res, 403, 'Not authorized')

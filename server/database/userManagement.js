@@ -48,16 +48,61 @@ function findUser(source, profile, res) {
   })
 }
 
+/**
+ *
+ * @param {string} source - source of user account
+ * @param {object} profile - profile data to search for
+ * @param {object} update - object to update user with
+ * @param {object} opts - options object to pass query
+ * @param {object} res - express response object
+ */
+function findOneAndUpdate(source, profile, update, opts, res) {
+  return new Promise((resolve, reject) => {
+    let query = determineQueryFromSource(source, profile)
+    User.findOneAndUpdate(query, update, opts)
+      .then(user => resolve(user))
+      .catch(err => {
+        handleError(err, res, 1002)
+        reject(err)
+      })
+  })
+}
+
+/**
+ * Determines the correct Database query based on the login strategy
+ * @param {string} source - source string (instagram, facebook, email)
+ * @param {object} p - know attributes about the user
+ */
 function determineQueryFromSource(source, p) {
   let { email, id } = p
   let query = {}
   if (source === 'email') query = { email }
   else if (source === 'instagram') query = { 'instagram.id': id }
-  else if (source === 'facebook') query = { 'facebook.id': id }
+  else query = { 'facebook.id': id }
   return query
 }
 
+/**
+ * Determines the correct Database payload to be sent based on user login strategy
+ * @param {string} source - source string (instagram, facebook, email)
+ * @param {object} user - know attributes about the user
+ */
+function determinePayloadFromSource(source, user) {
+  let { value, displayName } = user
+  let payload = { value, displayName, source }
+  if (source === 'email') payload.email = user.email
+  else if (source === 'instagram') payload.id = user.instagram.id
+  else payload.id = user.facebook.id
+  return payload
+}
+
+/**
+ * Maps disperate responses from login sources to unified object model for database.
+ * @param {string} source - source string (instagram, facebook, email)
+ * @param {object} p - known attributes about a user
+ */
 function loginMapper(source, p) {
+  console.log('INCOMING === ', p)
   let result = {
     ...p,
     source: source,
@@ -80,11 +125,13 @@ function loginMapper(source, p) {
       id: p.id
     }
   }
-  console.log('OUTGOING === PROFILE OBJEcT', result)
+  console.log('OUTGOING === ', result)
   return result
 }
-
 module.exports = {
   findUser,
-  findOrCreateUser
+  findOrCreateUser,
+  findOneAndUpdate,
+  determinePayloadFromSource,
+  determineQueryFromSource
 }
