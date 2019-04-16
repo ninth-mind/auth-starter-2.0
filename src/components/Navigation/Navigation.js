@@ -13,13 +13,8 @@ class Navigations extends React.Component {
             </Link>
           </li>
           <li>
-            <Link href="/c/login">
-              <a>Login</a>
-            </Link>
-          </li>
-          <li>
-            <Link href="/c/register">
-              <a>Register</a>
+            <Link href="/c">
+              <a>Login/Register</a>
             </Link>
           </li>
           <li>

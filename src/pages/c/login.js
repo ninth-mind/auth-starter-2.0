@@ -62,13 +62,14 @@ class Login extends React.Component {
       })
       .catch(err => {
         // incorrect email or password
+        console.log(err)
         if (
           err &&
           err.request &&
-          (err.request.status === 401 || err.request.status === 403)
+          (err.request.status === 404 || err.request.status === 403)
         ) {
           toast.error('Incorrect credentials.')
-          this.passwordInput.value = ''
+          this.setState({ ...this.state, password: '' })
           this.passwordInput.focus()
         } else {
           handleError(err)
@@ -130,6 +131,7 @@ class Login extends React.Component {
     )
   }
 }
+
 const mapStateToProps = state => {
   return {
     profile: state.profile

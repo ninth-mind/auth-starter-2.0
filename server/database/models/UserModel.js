@@ -2,32 +2,43 @@ const mongoose = require('mongoose')
 const bcrypt = require('bcrypt')
 const SALT_WORK_FACTOR = 10
 
-const UserSchema = mongoose.Schema({
-  email: {
-    type: String,
-    index: { unique: true },
-    trim: true
+const UserSchema = mongoose.Schema(
+  {
+    source: String,
+    email: {
+      type: String,
+      index: true,
+      trim: true
+    },
+    displayName: {
+      type: String,
+      trim: true
+    },
+    name: {
+      type: String,
+      lowercase: true,
+      trim: true
+    },
+    value: {
+      type: Number,
+      default: 1
+    },
+    password: String,
+    instagram: {
+      id: { type: String, index: true },
+      token: String,
+      username: String,
+      displayName: String
+    },
+    facebook: {
+      id: { type: String, index: true },
+      token: String,
+      email: String,
+      name: String
+    }
   },
-  password: String,
-  fname: {
-    type: String,
-    lowercase: true,
-    trim: true
-  },
-  lname: {
-    type: String,
-    lowercase: true,
-    trim: true
-  },
-  signedUpDate: {
-    type: Date,
-    default: Date.now()
-  },
-  value: {
-    type: Number,
-    default: 1
-  }
-})
+  { timestamps: true }
+)
 
 UserSchema.pre('save', function(next) {
   var user = this
@@ -51,6 +62,7 @@ UserSchema.pre('save', function(next) {
 })
 
 UserSchema.methods.comparePassword = function(candidatePassword, cb) {
+  console.log('passwords', candidatePassword, this.password)
   bcrypt.compare(candidatePassword, this.password, function(err, isMatch) {
     if (err) return cb(err)
     cb(null, isMatch)

@@ -33,11 +33,12 @@ class Account extends React.Component {
       return r.data.data
     } catch (err) {
       toast.error('Oops. Not authorized yet. Please login')
-      redirect('/c/login', ctx)
+      redirect('/c', ctx)
       return {}
     }
   }
-  componentDidMount(np, ns) {
+
+  componentDidMount() {
     const { dispatch, fname, lname, email, value, id } = this.props
     dispatch({
       type: actions.CREDS,
@@ -55,12 +56,10 @@ class Account extends React.Component {
   }
 
   render() {
-    const name = this.props.fname
-    const capName = name.charAt(0).toUpperCase() + name.slice(1)
     return (
       <div className="page">
         <h1>Account</h1>
-        <h2>Welcome{this.props.fname ? ' ' + capName : ''},</h2>
+        <h2>Welcome,</h2>
         <h4>Email: {this.props.email}</h4>
         <h4>Value: {this.props.value}</h4>
         <p>Nothing here yet....</p>

@@ -1,21 +1,21 @@
 const express = require('express')
 const jwt = require('jsonwebtoken')
-const User = require('../models/UserModel')
+const User = require('../../database/models/UserModel')
+const um = require('../../database/userManagement')
+const InstagramRouter = require('./InstagramRouter')
+const FacebookRouter = require('./FacebookRouter')
 const cookieName = process.env.COOKIE_NAME
-// const transporter = require('../connections/mailer')
-const errorCodes = require('../lib/errorCodes')
+
 const {
-  passport,
   verifyAuthenticationToken,
   verifyCaptcha
-} = require('../lib/middleware')
+} = require('../../lib/middleware')
 const {
   handleError,
   respondWithToken,
   sendEmailConfirmation,
   respond
-} = require('../lib/utils')
-const emailTemplates = require('../lib/emailTemplates')
+} = require('../../lib/utils')
 const AuthRouter = express.Router()
 
 const secret = process.env.SECRET
@@ -34,42 +34,42 @@ AuthRouter.get('/', verifyAuthenticationToken, (req, res) => {
   return res.send('OK')
 })
 
+AuthRouter.use('/instagram', InstagramRouter)
+AuthRouter.use('/facebook', FacebookRouter)
+
 /**
  * Signs up user. Posts user data from form submission to database,
  * and triggers an email confirmation message to be sent to the users
  * email.
  */
 AuthRouter.post('/register', verifyCaptcha, (req, res) => {
-  User.create(req.body, (err, user) => {
-    if (err) {
+  um.findOrCreateUser('email', req.body, res)
+    .then(user => respondWithToken(user, res))
+    .catch(err => {
       if (err.code === 11000) {
-        return res.status(409).send('This email already exists')
-      } else return handleError(err, res, 1000)
-    } else {
-      // sendEmailConfirmation(user)
-      //   .then(r => {
-      respondWithToken(user, res)
-      //     console.log('confirmation email sent')
-      //   })
-      //   .catch(err => handleError(err, null, 1001))
-    }
-  })
+        res.status(409).send('This email already exists')
+      } else handleError(err, res, 1000)
+    })
 })
 
 AuthRouter.post('/login', verifyCaptcha, (req, res) => {
   const { email, password } = req.body
-  return User.findOne({ email })
-    .then(user => {
-      if (!user) respond(res, 403, errorCodes[1016])
+  um.findUser('email', { email }, res).then(user => {
+    if (!user) respond(res, 404, 'No user found')
+    else {
       user.comparePassword(password, (err, isMatch) => {
-        if (err) return handleError(err, res, 1002)
-        if (!isMatch) {
-          return respond(res, 401, 'Incorrect Password')
-        }
-        respondWithToken(user, res)
+        if (err) handleError(err, res, 1002)
+        else if (!isMatch) respond(res, 403, 'Incorrect Password')
+        else respondWithToken(user, res)
       })
-    })
-    .catch(err => handleError(err, null, 1000))
+    }
+  })
+})
+
+AuthRouter.get('/token/:token', (req, res) => {
+  const { token } = req.params
+  res.cookie(cookieName, token, { httpOnly: true })
+  res.redirect('/u')
 })
 
 /**
@@ -122,7 +122,7 @@ AuthRouter.post('/change-email', verifyAuthenticationToken, (req, res) => {
 AuthRouter.post('/change-password', verifyAuthenticationToken, (req, res) => {
   let { decodedToken } = req.locals
   if (!decodedToken.emailConfirmed) {
-    return res.status(401).send('Please confirm your email.')
+    return res.status(403).send('Please confirm your email.')
   }
 
   User.findOne({ email: decodedToken.email }, (err, user) => {
@@ -131,7 +131,7 @@ AuthRouter.post('/change-password', verifyAuthenticationToken, (req, res) => {
     else {
       user.comparePassword(req.body['current-password'], (err, isMatch) => {
         if (err) return handleError(err, res, 1006)
-        else if (!isMatch) return res.status(401).send('Incorrect password')
+        else if (!isMatch) return res.status(403).send('Incorrect password')
         else {
           // save the password and send refreshed token
           user.password = req.body['new-password']
@@ -226,7 +226,7 @@ AuthRouter.post('/reset-password/', (req, res) => {
       //   })
       //   .catch(err => handleError(err, null, 1012))
     } else if (!user.emailConfirmed) {
-      res.status(401).send('Email was not confirmed.')
+      res.status(403).send('Email was not confirmed.')
     } else {
       // sends email with reset link
       const { email, fname, lname, id, emailConfirmed } = user
@@ -273,7 +273,7 @@ AuthRouter.put('/reset-password', verifyAuthenticationToken, (req, res) => {
   const { decodedToken } = req.locals
   User.findOne({ email: decodedToken.email }, (err, user) => {
     if (err) return handleError(err, res, 1013)
-    else if (!user) return res.status(401).send('No user found.')
+    else if (!user) return res.status(403).send('No user found.')
     else {
       user.password = req.body['new-password']
       user.save((err, updatedUser) => {

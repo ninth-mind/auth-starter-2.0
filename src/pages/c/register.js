@@ -18,6 +18,7 @@ class Register extends React.Component {
     this.state = {
       name: '',
       email: '',
+      username: '',
       password: '',
       confirm: '',
       loaded: false
@@ -72,13 +73,7 @@ class Register extends React.Component {
       return false
     }
 
-    // split name up
-    let splitName = this.state.name.split(' ')
-    let data = Object.assign(this.state, {
-      fname: splitName[0],
-      lname: splitName.slice(1).join(' ')
-    })
-    return data
+    return this.state
   }
 
   async handleSubmit(e) {
@@ -130,6 +125,15 @@ class Register extends React.Component {
             <label htmlFor="name">Full Name:</label>
             <input
               id="name"
+              type="text"
+              required
+              onChange={this.handleChange}
+            />
+          </div>
+          <div className="form__input-group">
+            <label htmlFor="username">Username:</label>
+            <input
+              id="username"
               type="text"
               required
               onChange={this.handleChange}

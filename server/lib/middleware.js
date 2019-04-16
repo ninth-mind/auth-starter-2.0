@@ -8,20 +8,11 @@ const clientURL = process.env.CLIENT_URL
 const cookieName = process.env.COOKIE_NAME
 const captchaSecretKey = process.env.CAPTCHA_SECRET_KEY
 const captchaThreshold = process.env.CAPTCHA_THRESHOLD
-const passport = require('passport')
-
-passport.serializeUser(function(user, done) {
-  done(null, user)
-})
-
-passport.deserializeUser(function(user, done) {
-  done(null, user)
-})
 
 function verifyOrigin(req, res, next) {
   if (process.env.NODE_ENV !== 'production') next()
   else if (req.headers.origin !== clientURL)
-    res.status(401).send({ msg: 'You are not autorized' })
+    res.status(403).send({ msg: 'You are not autorized' })
   else next()
 }
 
@@ -82,6 +73,5 @@ function verifyCaptcha(req, res, next) {
 module.exports = {
   verifyOrigin,
   verifyCaptcha,
-  verifyAuthenticationToken,
-  passport
+  verifyAuthenticationToken
 }

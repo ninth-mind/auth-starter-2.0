@@ -3,7 +3,7 @@ const ApiRouter = express.Router()
 const AuthRouter = require('./AuthRouter')
 const MeRouter = require('./MeRouter')
 const LeadersRouter = require('./LeadersRouter')
-const db = require('../connections/database')
+const db = require('../database')
 
 ApiRouter.get('/', (req, res) => {
   res.send(`Congrats!, You've reached the API`)
