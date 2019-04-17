@@ -2,6 +2,7 @@ const User = require('./models/UserModel')
 const { handleError } = require('../lib/utils')
 
 /**
+ * Finds or creates user.
  * @param {string} source - source of profile
  * @param {object} profile - user profile object to create *MUST HAVE SOURCE*
  * @param {object} res - express response object
@@ -14,7 +15,9 @@ function findOrCreateUser(source, profile, res) {
         else {
           let newProf = loginMapper(source, profile)
           User.create(newProf)
-            .then(user => resolve(user))
+            .then(user => {
+              resolve(user)
+            })
             .catch(err => reject(err))
         }
       })
@@ -107,8 +110,7 @@ function loginMapper(source, p) {
     ...p,
     source: source,
     email: p.email,
-    displayName: p.username || p.displayName || p.name,
-    name: p.full_name || `${p.name.givenName} ${p.name.familyName}`,
+    displayName: p.displayName || p.username || p.name,
     photo: p.profile_picture
   }
   if (source === 'instagram') {

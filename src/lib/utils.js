@@ -1,6 +1,5 @@
 import { actions } from '~/store'
 import validator from 'validator'
-import ls from 'store'
 import axios from 'axios'
 import Router from 'next/router'
 
@@ -38,14 +37,6 @@ export function validPassword(password) {
   }
 }
 
-export function validName(name) {
-  let blacklisted = validator.blacklist(name, `\\[\\]\\\\<>,/:;"'{}|+=()~`)
-  return (
-    blacklisted.length === name.length &&
-    name.split(' ').reduce((a, n) => a && validator.isAlpha(n), true)
-  )
-}
-
 export function parseJWT(token) {
   try {
     let base64Url = token.split('.')[1]
@@ -56,16 +47,21 @@ export function parseJWT(token) {
   }
 }
 
+/**
+ * Parses and saves token information in store
+ * @param {string} token - jwt
+ * @param {function} dispatch - react-redux dispatch function
+ */
 export function handleToken(token, dispatch) {
   if (token) {
-    let { email, fname, lname, id } = parseJWT(token)
+    let { email, source, displayName, id } = parseJWT(token)
     dispatch({
       type: actions.CREDS,
+      id,
       token,
       email,
-      fname,
-      lname,
-      id
+      source,
+      displayName
     })
   } else {
     signOut(dispatch)

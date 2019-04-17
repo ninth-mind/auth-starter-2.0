@@ -6,23 +6,23 @@ const secret = process.env.SECRET
 const tokenExpiryTime = process.env.TOKEN_EXPIRATION_TIME
 const cookieName = process.env.COOKIE_NAME
 const slackWebhook = process.env.SLACK_WEBHOOK
-const serverURL = process.env.SERVER_URL
 /**
  *  Signs and sends token back to user
  *
  * @param {object} user - The user to use to get token information from
  * @param {object} res - The express response object
- * @param {boolean} - Boolean if response should redirect to server. ie, uses 3rd party OAuth
+ * @param {boolean} redirect - Boolean if response should redirect to server. ie, uses 3rd party OAuth
  */
 function respondWithToken(user, res, redirect) {
-  let payload = determinePayloadFromSource(user.source, user)
-  console.log(payload)
+  const payload = determinePayloadFromSource(user.source, user)
   const token = jwt.sign(payload, secret, {
     expiresIn: tokenExpiryTime
   })
   res.cookie(cookieName, token, { httpOnly: true })
-  if (!redirect) res.send({ msg: 'login successful', token })
-  else res.redirect(`${serverURL}/api/auth/token/${token}`)
+  if (redirect) {
+    const redirectURL = user.wasNew ? `/c/new-user?token=${token}` : '/u'
+    res.redirect(redirectURL)
+  } else res.send({ msg: 'login successful', token, wasNew: user.wasNew })
 }
 /**
   Error handling. Only to be used when the SERVER is experiencing an error. Not

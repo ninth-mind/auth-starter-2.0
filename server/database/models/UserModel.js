@@ -14,16 +14,15 @@ const UserSchema = mongoose.Schema(
       type: String,
       trim: true
     },
-    name: {
-      type: String,
-      lowercase: true,
-      trim: true
-    },
     value: {
       type: Number,
       default: 1
     },
     password: String,
+    confirmed: {
+      type: Boolean,
+      default: false
+    },
     instagram: {
       id: { type: String, index: true },
       token: String,
@@ -42,6 +41,7 @@ const UserSchema = mongoose.Schema(
 
 UserSchema.pre('save', function(next) {
   var user = this
+  this.wasNew = this.isNew
 
   // only hash the password if it has been modified (or is new)
   if (!user.isModified('password')) return next()
@@ -60,9 +60,7 @@ UserSchema.pre('save', function(next) {
     })
   })
 })
-
 UserSchema.methods.comparePassword = function(candidatePassword, cb) {
-  console.log('passwords', candidatePassword, this.password)
   bcrypt.compare(candidatePassword, this.password, function(err, isMatch) {
     if (err) return cb(err)
     cb(null, isMatch)

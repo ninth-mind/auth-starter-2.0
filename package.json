@@ -1,8 +1,8 @@
 {
-  "name": "with-redux",
+  "name": "leaderboard",
   "version": "1.0.0",
   "scripts": {
-    "dev": "node server/server.js",
+    "dev": "nodemon -w server server/server.js",
     "build": "next build ./src",
     "start": "NODE_ENV=production node server/server.js"
   },
@@ -37,7 +37,6 @@
     "react-toastify": "^5.0.1",
     "redux": "^3.6.0",
     "redux-devtools-extension": "^2.13.2",
-    "store": "^2.0.12",
     "validator": "^10.11.0"
   },
   "license": "ISC",

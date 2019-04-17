@@ -39,11 +39,11 @@ class Account extends React.Component {
   }
 
   componentDidMount() {
-    const { dispatch, fname, lname, email, value, id } = this.props
+    const { dispatch, email, value, source, displayName, id } = this.props
     dispatch({
       type: actions.CREDS,
-      fname,
-      lname,
+      displayName,
+      source,
       email,
       value,
       id
@@ -59,7 +59,7 @@ class Account extends React.Component {
     return (
       <div className="page">
         <h1>Account</h1>
-        <h2>Welcome,</h2>
+        <h2>Welcome {this.props.displayName},</h2>
         <h4>Email: {this.props.email}</h4>
         <h4>Value: {this.props.value}</h4>
         <p>Nothing here yet....</p>
@@ -72,8 +72,7 @@ class Account extends React.Component {
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    fname: state.profile.fname,
-    lname: state.profile.lname,
+    displayName: state.profile.displayName,
     email: state.profile.email,
     token: state.profile.token,
     ...ownProps,

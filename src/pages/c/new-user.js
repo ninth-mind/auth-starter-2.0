@@ -3,37 +3,31 @@ import axios from 'axios'
 import Link from 'next/link'
 import { toast } from 'react-toastify'
 import { connect } from 'react-redux'
-import {
-  handleError,
-  handleToken,
-  validPassword,
-  redirect,
-  setLoading
-} from '~/lib/utils'
+import { handleError, handleToken, redirect, setLoading } from '~/lib/utils'
 
-class Register extends React.Component {
+class NewUser extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
       email: '',
       displayName: '',
-      password: '',
-      confirm: ''
+      region: ''
     }
     this.handleChange = this.handleChange.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
     this.setLoading = this.setLoading.bind(this)
-    this.sanitize = this.sanitize.bind(this)
-    this.clear = this.clear.bind(this)
     this.form // added by ref
   }
 
-  /**
-   * @param {Array} inputs : Array of inputs to clear. The first of which will recieve focus.
-   */
-  clear(inputs) {
-    inputs.forEach(e => (this.form.querySelector(`#${e}`).value = ''))
-    this.form.querySelector(`#${inputs[0]}`).focus()
+  static async getInitialProps({ query }) {
+    return { query }
+  }
+
+  componentDidMount() {
+    const { dispatch, query } = this.props
+    if (query && query.token) {
+      handleToken(query.token, dispatch)
+    }
   }
 
   setLoading(isLoading) {
@@ -49,28 +43,9 @@ class Register extends React.Component {
     this.setState({ ...this.state, ...obj })
   }
 
-  sanitize() {
-    // check if confirmation password matches
-    if (this.state.confirm !== this.state.password) {
-      toast.warn('Passwords do not match.')
-      return false
-    }
-
-    if (!validPassword(this.state.password)) {
-      this.clear(['password', 'confirm'])
-      toast.error(
-        'Password must be 8 characters. Special characters allowed are .!@#$%^&*'
-      )
-      return false
-    }
-
-    return this.state
-  }
-
   async handleSubmit(e) {
     e.preventDefault()
-    let data = this.sanitize()
-    if (!data) return // unsanitary inputs
+    let data = this.state
 
     // start async process
     this.setLoading(true)
@@ -84,11 +59,10 @@ class Register extends React.Component {
       url: `/api/auth/register`,
       data: { ...data, recaptcha: captchaToken }
     })
-      .then(({ data }) => {
+      .then(r => {
         this.setLoading(false)
-        let { token, wasNew } = data // was new should always be true
-        handleToken(token, dispatch)
-        wasNew ? redirect(`/c/new-user`) : redirect('/u')
+        handleToken(r.data.token, dispatch)
+        redirect('/u')
       })
       .catch(err => {
         this.setLoading(false)
@@ -106,7 +80,10 @@ class Register extends React.Component {
   render() {
     return (
       <div className="register page center">
-        <h1>Register</h1>
+        <h1>Complete Profile</h1>
+        <p>
+          There are just a few more things we need to complete your profile.
+        </p>
         <form
           className="form"
           id="register"
@@ -124,34 +101,23 @@ class Register extends React.Component {
             />
           </div>
           <div className="form__input-group">
+            <label htmlFor="region">Region:</label>
+            <input
+              id="region"
+              type="text"
+              required
+              onChange={this.handleChange}
+              value={this.state.region}
+            />
+          </div>
+          <div className="form__input-group">
             <label htmlFor="email">Email:</label>
             <input
               id="email"
               type="email"
-              size="30"
               required
               onChange={this.handleChange}
               value={this.state.email}
-            />
-          </div>
-          <div className="form__input-group">
-            <label htmlFor="password">Password:</label>
-            <input
-              id="password"
-              type="password"
-              required
-              onChange={this.handleChange}
-              value={this.state.password}
-            />
-          </div>
-          <div className="form__input-group">
-            <label htmlFor="confirm">Confirm Password:</label>
-            <input
-              id="confirm"
-              type="password"
-              required
-              onChange={this.handleChange}
-              value={this.state.confirm}
             />
           </div>
           <button type="submit">Submit</button>
@@ -164,7 +130,8 @@ class Register extends React.Component {
   }
 }
 
-const mapStateToProps = state => ({
-  profile: state.profile
+const mapStateToProps = (state, ownProps) => ({
+  profile: state.profile,
+  query: ownProps.query
 })
-export default connect(mapStateToProps)(Register)
+export default connect(mapStateToProps)(NewUser)

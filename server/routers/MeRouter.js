@@ -27,14 +27,8 @@ MeRouter.post('/', verifyAuthenticationToken, (req, res) => {
     .then(user => {
       if (!user) respond(res, 403, 'Not authorized')
       else {
-        const { email, id, fname, lname, value } = user
-        respond(res, 200, 'Value updated.', {
-          email,
-          id,
-          fname,
-          lname,
-          value
-        })
+        const { value } = user
+        respond(res, 200, 'Value updated.', { value })
       }
     })
     .catch(err => handleError(err, res, 1001))

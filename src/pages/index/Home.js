@@ -28,7 +28,7 @@ class Home extends React.Component {
   render() {
     return (
       <div className="page">
-        <h1>Home</h1>
+        <h1>Leaderboard</h1>
         <Leaderboard leaders={this.props.leaders} />
       </div>
     )

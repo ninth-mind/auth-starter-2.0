@@ -34,7 +34,8 @@ FacebookRouter.get(
   passport.authenticate('facebook', {
     failureRedirect: '/c',
     session: false,
-    scope: ['email', 'user_birthday']
+    showDialog: true,
+    scope: ['name', 'email', 'profile_picture', 'user_link']
   }),
   (req, res) => {
     const { profile } = req.user

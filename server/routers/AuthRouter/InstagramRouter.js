@@ -33,7 +33,8 @@ InstagramRouter.get(
   '/callback',
   passport.authenticate('instagram', {
     failureRedirect: '/c',
-    session: false
+    session: false,
+    showDialog: true
   }),
   (req, res) => {
     const { profile } = req.user
