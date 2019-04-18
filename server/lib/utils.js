@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken')
 const axios = require('axios')
 const ErrorCodes = require('./errorCodes')
-const { determinePayloadFromSource } = require('../database/userManagement')
+const { determinePayloadFromSource } = require('../services/user')
 const secret = process.env.SECRET
 const tokenExpiryTime = process.env.TOKEN_EXPIRATION_TIME
 const cookieName = process.env.COOKIE_NAME

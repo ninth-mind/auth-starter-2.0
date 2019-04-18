@@ -1,6 +1,6 @@
 const express = require('express')
 const { passport } = require('../../lib/middleware')
-const um = require('../../database/userManagement')
+const User = require('../../services/user')
 const InstagramRouter = require('./InstagramRouter')
 const FacebookRouter = require('./FacebookRouter')
 const cookieName = process.env.COOKIE_NAME
@@ -31,7 +31,7 @@ AuthRouter.get('/', verifyAuthenticationToken, (req, res) => {
  * email.
  */
 AuthRouter.post('/register', verifyCaptcha, (req, res) => {
-  um.findOrCreateUser('email', req.body, res)
+  User.findOrCreateUser('email', req.body, res)
     .then(user => respondWithToken(user, res))
     .catch(err => {
       if (err.code === 11000) {
@@ -42,7 +42,7 @@ AuthRouter.post('/register', verifyCaptcha, (req, res) => {
 
 AuthRouter.post('/login', verifyCaptcha, (req, res) => {
   const { email, password } = req.body
-  um.findUser('email', { email }, res).then(user => {
+  User.findUser('email', { email }, res).then(user => {
     if (!user) respond(res, 404, 'No user found')
     else {
       user.comparePassword(password, (err, isMatch) => {

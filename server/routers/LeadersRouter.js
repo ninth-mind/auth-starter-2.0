@@ -1,6 +1,6 @@
 const express = require('express')
 const LeadersRouter = express.Router()
-const UserModel = require('../database/models/UserModel')
+const UserModel = require('../services/user/UserModel')
 const { respond, handleError } = require('../lib/utils')
 
 LeadersRouter.get('/', (req, res) => {

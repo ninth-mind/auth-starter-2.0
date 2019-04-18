@@ -2,7 +2,7 @@ const express = require('express')
 const FacebookRouter = express.Router()
 const { passport } = require('../../lib/middleware')
 const FacebookStrategy = require('passport-facebook')
-const um = require('../../database/userManagement')
+const User = require('../../services/user')
 const { handleError, respondWithToken } = require('../../lib/utils')
 const serverURL = process.env.SERVER_URL
 const clientURL = process.env.CLIENT_URL
@@ -39,7 +39,7 @@ FacebookRouter.get(
   }),
   (req, res) => {
     const { profile } = req.user
-    um.findOrCreateUser('facebook', profile, res)
+    User.findOrCreateUser('facebook', profile, res)
       .then(user => respondWithToken(user, res, true))
       .catch(err => handleError(err, res, 1003))
   }

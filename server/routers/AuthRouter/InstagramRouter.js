@@ -2,7 +2,7 @@ const express = require('express')
 const { passport } = require('../../lib/middleware')
 const InstagramRouter = express.Router()
 const InstagramStrategy = require('passport-instagram')
-const um = require('../../database/userManagement')
+const User = require('../../services/user')
 const { handleError, respondWithToken } = require('../../lib/utils')
 const serverURL = process.env.SERVER_URL
 const clientURL = process.env.CLIENT_URL
@@ -38,7 +38,7 @@ InstagramRouter.get(
   }),
   (req, res) => {
     const { profile } = req.user
-    um.findOrCreateUser('instagram', profile, res)
+    User.findOrCreateUser('instagram', profile, res)
       .then(user => respondWithToken(user, res, true))
       .catch(err => handleError(err, res, 1003))
   }

@@ -1,6 +1,6 @@
 const express = require('express')
 const MeRouter = express.Router()
-const um = require('../database/userManagement')
+const um = require('../services/user')
 const { verifyAuthenticationToken } = require('../lib/middleware')
 const { respond, handleError } = require('../lib/utils')
 

@@ -1,5 +1,48 @@
-const User = require('./models/UserModel')
-const { handleError } = require('../lib/utils')
+const UserModel = require('./UserModel')
+const { handleError } = require('../../lib/utils')
+/**
+ * Returns a user or null if not user is found
+ * @param {string} source - source of login
+ * @param {object} profile - profile
+ * @param {object} res - express response object
+ */
+
+function findUser(source, profile, res) {
+  return new Promise((resolve, reject) => {
+    let query = determineQueryFromSource(source, profile)
+    UserModel.find(query)
+      .then(users => {
+        if (!users) resolve()
+        // putting this here just in CASE
+        else if (users.length > 1) handleError(null, res, 1001)
+        else resolve(users[0] || null)
+      })
+      .catch(err => {
+        handleError(err, res, 1002)
+        reject(err)
+      })
+  })
+}
+
+/**
+ * Returns all users
+ * @param {string} source - source of login
+ * @param {object} profile - profile
+ * @param {object} res - express response object
+ */
+function getUsers(res) {
+  return new Promise((resolve, reject) => {
+    UserModel.find({})
+      .then(users => {
+        if (!users) resolve()
+        else resolve(users)
+      })
+      .catch(err => {
+        handleError(err, res, 1002)
+        reject(err)
+      })
+  })
+}
 
 /**
  * Finds or creates user.
@@ -14,7 +57,7 @@ function findOrCreateUser(source, profile, res) {
         if (user) resolve(user)
         else {
           let newProf = loginMapper(source, profile)
-          User.create(newProf)
+          UserModel.create(newProf)
             .then(user => {
               resolve(user)
             })
@@ -23,29 +66,6 @@ function findOrCreateUser(source, profile, res) {
       })
       .catch(err => {
         handleError(err, res, 1003)
-        reject(err)
-      })
-  })
-}
-
-/**
- * Returns a user or null if not user is found
- * @param {string} source - source of login
- * @param {object} profile - profile
- * @param {object} res - express response object
- */
-function findUser(source, profile, res) {
-  return new Promise((resolve, reject) => {
-    let query = determineQueryFromSource(source, profile)
-    User.find(query)
-      .then(users => {
-        if (!users) resolve()
-        // putting this here just in CASE
-        else if (users.length > 1) handleError(null, res, 1001)
-        else resolve(users[0] || null)
-      })
-      .catch(err => {
-        handleError(err, res, 1002)
         reject(err)
       })
   })
@@ -62,7 +82,7 @@ function findUser(source, profile, res) {
 function findOneAndUpdate(source, profile, update, opts, res) {
   return new Promise((resolve, reject) => {
     let query = determineQueryFromSource(source, profile)
-    User.findOneAndUpdate(query, update, opts)
+    UserModel.findOneAndUpdate(query, update, opts)
       .then(user => resolve(user))
       .catch(err => {
         handleError(err, res, 1002)
@@ -130,10 +150,13 @@ function loginMapper(source, p) {
   console.log('OUTGOING === ', result)
   return result
 }
+
 module.exports = {
   findUser,
+  getUsers,
   findOrCreateUser,
   findOneAndUpdate,
   determinePayloadFromSource,
-  determineQueryFromSource
+  determineQueryFromSource,
+  loginMapper
 }
