@@ -35,34 +35,11 @@ function respondWithToken(user, res, redirect) {
 function handleError(err, res, code) {
   if (code) console.log(ErrorCodes[code])
   if (err) console.log(err)
-  // sendErrorToSlack(err)
   if (res) {
     return res
       .status(500)
       .send({ error: err, message: ErrorCodes[code], code: code })
   }
-}
-
-// TODO
-function sendErrorToSlack(error) {
-  let template = `SUDO PORTFOLIO:
-*message*: ${error.message},
-*stack*: \n
-    \`\`\`
-      ${error.stack}
-    \`\`\`
-  `
-  if (typeof error === 'string') {
-    template = error
-  }
-  axios
-    .post(slackWebhook, { text: template })
-    .then(() => {
-      console.log('POSTED ERROR TO SLACK')
-    })
-    .catch(e => {
-      console.log('ERROR POSTING TO SLACK', e)
-    })
 }
 
 /**
@@ -81,7 +58,6 @@ function respond(res, status = 200, message = 'ok', data) {
 
 module.exports = {
   respond,
-  sendErrorToSlack,
   respondWithToken,
   handleError
 }

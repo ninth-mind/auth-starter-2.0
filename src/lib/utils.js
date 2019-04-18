@@ -83,13 +83,7 @@ export function signOut(dispatch) {
 }
 
 export function handleError(err) {
-  axios({
-    url: '/api/error/report',
-    method: 'post',
-    data: err
-  })
-    .then(() => console.log(`~~~ Error reported ~~~~~`, err))
-    .catch(() => console.log('Error reporting error ~~~~~ facepalm', err))
+  console.error(err)
 }
 
 export function debounce(func, wait, immediate) {
