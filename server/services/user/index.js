@@ -1,5 +1,4 @@
 const UserModel = require('./UserModel')
-const { handleError } = require('../../lib/utils')
 /**
  * Returns a user or null if not user is found
  * @param {string} source - source of login
@@ -7,21 +6,9 @@ const { handleError } = require('../../lib/utils')
  * @param {object} res - express response object
  */
 
-function findUser(source, profile, res) {
-  return new Promise((resolve, reject) => {
-    let query = determineQueryFromSource(source, profile)
-    UserModel.find(query)
-      .then(users => {
-        if (!users) resolve()
-        // putting this here just in CASE
-        else if (users.length > 1) handleError(null, res, 1001)
-        else resolve(users[0] || null)
-      })
-      .catch(err => {
-        handleError(err, res, 1002)
-        reject(err)
-      })
-  })
+async function findUser(source, profile) {
+  let query = determineQueryFromSource(source, profile)
+  return await UserModel.findOne(query)
 }
 
 /**
@@ -30,18 +17,8 @@ function findUser(source, profile, res) {
  * @param {object} profile - profile
  * @param {object} res - express response object
  */
-function getUsers(res) {
-  return new Promise((resolve, reject) => {
-    UserModel.find({})
-      .then(users => {
-        if (!users) resolve()
-        else resolve(users)
-      })
-      .catch(err => {
-        handleError(err, res, 1002)
-        reject(err)
-      })
-  })
+async function getUsers() {
+  return await UserModel.find({}).sort({ value: -1 })
 }
 
 /**
@@ -50,25 +27,13 @@ function getUsers(res) {
  * @param {object} profile - user profile object to create *MUST HAVE SOURCE*
  * @param {object} res - express response object
  */
-function findOrCreateUser(source, profile, res) {
-  return new Promise((resolve, reject) => {
-    findUser(source, { ...profile, source }, res)
-      .then(user => {
-        if (user) resolve(user)
-        else {
-          let newProf = loginMapper(source, profile)
-          UserModel.create(newProf)
-            .then(user => {
-              resolve(user)
-            })
-            .catch(err => reject(err))
-        }
-      })
-      .catch(err => {
-        handleError(err, res, 1003)
-        reject(err)
-      })
-  })
+async function findOrCreateUser(source, profile) {
+  let user = await findUser(source, { ...profile, source })
+  if (user) return user
+  else {
+    let newProf = loginMapper(source, profile)
+    return await UserModel.create(newProf)
+  }
 }
 
 /**
@@ -79,16 +44,9 @@ function findOrCreateUser(source, profile, res) {
  * @param {object} opts - options object to pass query
  * @param {object} res - express response object
  */
-function findOneAndUpdate(source, profile, update, opts, res) {
-  return new Promise((resolve, reject) => {
-    let query = determineQueryFromSource(source, profile)
-    UserModel.findOneAndUpdate(query, update, opts)
-      .then(user => resolve(user))
-      .catch(err => {
-        handleError(err, res, 1002)
-        reject(err)
-      })
-  })
+async function findOneAndUpdate(source, profile, update, opts) {
+  let query = determineQueryFromSource(source, profile)
+  return await UserModel.findOneAndUpdate(query, update, opts)
 }
 
 /**
@@ -125,7 +83,6 @@ function determinePayloadFromSource(source, user) {
  * @param {object} p - known attributes about a user
  */
 function loginMapper(source, p) {
-  console.log('INCOMING === ', p)
   let result = {
     ...p,
     source: source,
@@ -147,7 +104,6 @@ function loginMapper(source, p) {
       id: p.id
     }
   }
-  console.log('OUTGOING === ', result)
   return result
 }
 

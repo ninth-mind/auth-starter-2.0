@@ -38,7 +38,7 @@ InstagramRouter.get(
   }),
   (req, res) => {
     const { profile } = req.user
-    User.findOrCreateUser('instagram', profile, res)
+    User.findOrCreateUser('instagram', profile)
       .then(user => respondWithToken(user, res, true))
       .catch(err => handleError(err, res, 1003))
   }
