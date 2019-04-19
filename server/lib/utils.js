@@ -11,14 +11,18 @@ const cookieName = process.env.COOKIE_NAME
  * @param {object} res - The express response object
  * @param {boolean} blockRedirect - boolean to block redirect and respond directly to call
  */
-function respondWithToken(user, res, blockRedirect) {
+function respondWithToken(user, res, redirect) {
   const payload = determinePayloadFromSource(user.source, user)
   const token = jwt.sign(payload, secret, {
     expiresIn: tokenExpiryTime
   })
   res.cookie(cookieName, token, { httpOnly: true })
-  if (!blockRedirect && (user.wasNew || payload.permissions.length === 0)) {
-    res.redirect(`/c/new-user?token=${token}`)
+  if (redirect) {
+    let redirectURL =
+      user.wasNew || payload.permissions.length === 0
+        ? `/c/new-user?token=${token}`
+        : '/u'
+    res.redirect(redirectURL)
   } else respond(res, 200, 'login successful', { token, wasNew: user.wasNew })
 }
 /**

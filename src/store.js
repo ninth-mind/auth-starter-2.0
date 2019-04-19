@@ -22,6 +22,7 @@ export const actions = {
   LOADING: 'LOADING',
   // AUTH
   CREDS: 'CREDS',
+  PROFILE: 'PROFILE',
   LOGOUT: 'LOGOUT',
   VALUE: 'SET_VALUE'
 }
@@ -51,6 +52,14 @@ function profileReducer(state = initialState.profile, action) {
       return {
         ...state,
         value: action.value
+      }
+    }
+    case actions.PROFILE: {
+      let dup = { ...action }
+      delete dup.type
+      return {
+        ...state,
+        ...dup
       }
     }
     case actions.LOGOUT: {

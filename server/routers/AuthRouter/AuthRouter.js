@@ -32,7 +32,7 @@ AuthRouter.get('/', verifyAuthenticationToken, (req, res) => {
  */
 AuthRouter.post('/register', verifyCaptcha, (req, res) => {
   User.findOrCreateUser('email', req.body)
-    .then(user => respondWithToken(user, res, true))
+    .then(user => respondWithToken(user, res))
     .catch(err => {
       if (err.code === 11000) {
         res.status(409).send('This email already exists')
@@ -48,9 +48,22 @@ AuthRouter.post('/login', verifyCaptcha, (req, res) => {
       user.comparePassword(password, (err, isMatch) => {
         if (err) handleError(err, res, 1002)
         else if (!isMatch) respond(res, 403, 'Incorrect Password')
-        else respondWithToken(user, res, true)
+        else respondWithToken(user, res)
       })
     }
+  })
+})
+
+AuthRouter.post('/complete-profile', verifyCaptcha, (req, res) => {
+  const { source, id, email } = req.body
+  User.findOneAndUpdate(
+    source,
+    { id, email },
+    { ...req.body, permissions: ['view_profile'] },
+    { new: true }
+  ).then(user => {
+    if (!user) respond(res, 404, 'No user found')
+    else respondWithToken(user, res)
   })
 })
 
