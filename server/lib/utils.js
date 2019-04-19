@@ -1,28 +1,25 @@
 const jwt = require('jsonwebtoken')
-const axios = require('axios')
 const ErrorCodes = require('./errorCodes')
 const { determinePayloadFromSource } = require('../services/user')
 const secret = process.env.SECRET
 const tokenExpiryTime = process.env.TOKEN_EXPIRATION_TIME
 const cookieName = process.env.COOKIE_NAME
-const slackWebhook = process.env.SLACK_WEBHOOK
 /**
  *  Signs and sends token back to user
  *
  * @param {object} user - The user to use to get token information from
  * @param {object} res - The express response object
- * @param {boolean} redirect - Boolean if response should redirect to server. ie, uses 3rd party OAuth
+ * @param {boolean} blockRedirect - boolean to block redirect and respond directly to call
  */
-function respondWithToken(user, res, redirect) {
+function respondWithToken(user, res, blockRedirect) {
   const payload = determinePayloadFromSource(user.source, user)
   const token = jwt.sign(payload, secret, {
     expiresIn: tokenExpiryTime
   })
   res.cookie(cookieName, token, { httpOnly: true })
-  if (redirect) {
-    const redirectURL = user.wasNew ? `/c/new-user?token=${token}` : '/u'
-    res.redirect(redirectURL)
-  } else res.send({ msg: 'login successful', token, wasNew: user.wasNew })
+  if (!blockRedirect && (user.wasNew || payload.permissions.length === 0)) {
+    res.redirect(`/c/new-user?token=${token}`)
+  } else respond(res, 200, 'login successful', { token, wasNew: user.wasNew })
 }
 /**
   Error handling. Only to be used when the SERVER is experiencing an error. Not

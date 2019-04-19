@@ -57,7 +57,9 @@ class Login extends React.Component {
       data: { ...data, recaptcha: captchaToken }
     })
       .then(r => {
-        handleToken(r.data.token, dispatch)
+        this.setLoading(false)
+        let { token } = r.data.data
+        handleToken(token, dispatch)
         redirect('/u')
       })
       .catch(err => {

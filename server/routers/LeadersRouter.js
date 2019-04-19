@@ -1,11 +1,10 @@
 const express = require('express')
 const LeadersRouter = express.Router()
-const UserModel = require('../services/user/UserModel')
+const User = require('../services/user')
 const { respond, handleError } = require('../lib/utils')
 
 LeadersRouter.get('/', (req, res) => {
-  UserModel.find({})
-    .sort({ value: -1 })
+  User.getUsers()
     .then(result => {
       respond(res, 200, 'Leaders Found', result)
     })

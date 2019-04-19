@@ -17,6 +17,7 @@ class Register extends React.Component {
     this.state = {
       email: '',
       displayName: '',
+      region: '',
       password: '',
       confirm: ''
     }
@@ -84,11 +85,11 @@ class Register extends React.Component {
       url: `/api/auth/register`,
       data: { ...data, recaptcha: captchaToken }
     })
-      .then(({ data }) => {
+      .then(r => {
         this.setLoading(false)
-        let { token, wasNew } = data // was new should always be true
+        let { token, wasNew } = r.data.data // was new should always be true
         handleToken(token, dispatch)
-        wasNew ? redirect(`/c/new-user`) : redirect('/u')
+        wasNew ? redirect(`/c/new-user?token=${token}`) : redirect('/u')
       })
       .catch(err => {
         this.setLoading(false)
@@ -121,6 +122,16 @@ class Register extends React.Component {
               required
               onChange={this.handleChange}
               value={this.state.displayName}
+            />
+          </div>
+          <div className="form__input-group">
+            <label htmlFor="region">Region:</label>
+            <input
+              id="region"
+              type="text"
+              required
+              onChange={this.handleChange}
+              value={this.state.region}
             />
           </div>
           <div className="form__input-group">

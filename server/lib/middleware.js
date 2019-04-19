@@ -2,7 +2,7 @@ require('dotenv').config()
 const jwt = require('jsonwebtoken')
 const axios = require('axios')
 const passport = require('passport')
-const { handleError } = require('./utils')
+const { handleError, respond } = require('./utils')
 const secret = process.env.SECRET
 const clientURL = process.env.CLIENT_URL
 const cookieName = process.env.COOKIE_NAME
@@ -20,7 +20,7 @@ passport.deserializeUser(function(user, done) {
 function verifyOrigin(req, res, next) {
   if (process.env.NODE_ENV !== 'production') next()
   else if (req.headers.origin !== clientURL)
-    res.status(403).send({ msg: 'You are not autorized' })
+    respond(res, 403, 'You are not authorized')
   else next()
 }
 
@@ -49,6 +49,22 @@ function verifyAuthenticationToken(req, res, next) {
     })
   } catch (err) {
     return res.status(400).send('No token present')
+  }
+}
+
+/**
+ * Creates a middleware function with the specific permissions to check for
+ * User must have all permissions to continue
+ * @param {Array} permissions - Array of permission strings
+ */
+function makePermissionsMiddleware(permissions) {
+  return function(req, res, next) {
+    const userPermissions = req.locals.decodedToken.permissions
+    let isAllowed = permissions.reduce((allowed, p) => {
+      return userPermissions.includes(p) && allowed
+    }, true)
+    if (isAllowed) next()
+    else respond(res, 403, 'You are not authorized')
   }
 }
 
@@ -82,5 +98,6 @@ module.exports = {
   verifyOrigin,
   verifyCaptcha,
   verifyAuthenticationToken,
+  makePermissionsMiddleware,
   passport
 }

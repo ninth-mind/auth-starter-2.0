@@ -18,6 +18,8 @@ const UserSchema = mongoose.Schema(
       type: Number,
       default: 1
     },
+    region: String,
+    permissions: [String],
     password: String,
     confirmed: {
       type: Boolean,
