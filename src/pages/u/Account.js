@@ -30,7 +30,7 @@ class Account extends React.Component {
         url: url,
         headers: headers
       })
-      return r.data.data
+      return { profile: r.data.data }
     } catch (err) {
       toast.error('Oops. Not authorized yet. Please login')
       redirect('/c', ctx)
@@ -39,14 +39,14 @@ class Account extends React.Component {
   }
 
   componentDidMount() {
-    const { dispatch, email, value, source, displayName, id } = this.props
+    const { dispatch, initialProfile } = this.props
     dispatch({
-      type: actions.CREDS,
-      displayName,
-      source,
-      email,
-      value,
-      id
+      type: actions.PROFILE,
+      username: initialProfile.username,
+      email: initialProfile.email,
+      id: initialProfile.id,
+      value: initialProfile.value,
+      source: initialProfile.source
     })
   }
 
@@ -56,12 +56,13 @@ class Account extends React.Component {
   }
 
   render() {
+    const p = this.props.profile
     return (
       <div className="page">
         <h1>Account</h1>
-        <h2>Welcome {this.props.displayName},</h2>
-        <h4>Email: {this.props.email}</h4>
-        <h4>Value: {this.props.value}</h4>
+        <h2>Welcome {p.username},</h2>
+        <h4>Email: {p.email}</h4>
+        <h4>Value: {p.value}</h4>
         <p>Nothing here yet....</p>
         <AddValue />
         <button onClick={this.signOut}>Sign Out</button>
@@ -72,11 +73,8 @@ class Account extends React.Component {
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    displayName: state.profile.displayName,
-    email: state.profile.email,
-    token: state.profile.token,
-    ...ownProps,
-    value: state.profile.value || ownProps.value
+    profile: state.profile,
+    initialProfile: ownProps.profile
   }
 }
 

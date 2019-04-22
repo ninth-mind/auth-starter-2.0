@@ -15,14 +15,41 @@ class NewUser extends React.Component {
     this.form // added by ref
   }
 
-  static async getInitialProps({ query }) {
-    return { query }
+  static async getInitialProps(ctx) {
+    let url,
+      headers,
+      { req, query } = ctx
+    try {
+      if (req) {
+        url = `${req.protocol}://${req.headers.host}/api/me`
+        headers = { cookie: req.headers.cookie }
+      } else {
+        url = '/api/me'
+      }
+
+      let r = await axios({
+        method: 'GET',
+        url: url,
+        headers: headers
+      })
+      return { profile: r.data.data }
+    } catch (err) {
+      toast.error('Oops. Not authorized yet. Please login')
+      return { query }
+    }
   }
 
   componentDidMount() {
     const { dispatch, query } = this.props
+    // get data from token
     if (query && query.token) {
       handleToken(query.token, dispatch)
+      // get data from /api/me
+    } else {
+      dispatch({
+        type: actions.PROFILE,
+        profile: this.props.profile
+      })
     }
   }
 
@@ -92,13 +119,13 @@ class NewUser extends React.Component {
           ref={n => (this.form = n)}
         >
           <div className="form__input-group">
-            <label htmlFor="displayName">Display Name:</label>
+            <label htmlFor="username">Username:</label>
             <input
-              id="displayName"
+              id="username"
               type="text"
               required
               onChange={this.handleChange}
-              value={p.displayName || ''}
+              value={p.username || ''}
             />
           </div>
           <div className="form__input-group">

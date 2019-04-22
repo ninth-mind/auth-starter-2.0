@@ -16,7 +16,7 @@ class Register extends React.Component {
     super(props)
     this.state = {
       email: '',
-      displayName: '',
+      username: '',
       region: '',
       password: '',
       confirm: ''
@@ -115,13 +115,13 @@ class Register extends React.Component {
           ref={n => (this.form = n)}
         >
           <div className="form__input-group">
-            <label htmlFor="displayName">Display Name:</label>
+            <label htmlFor="username">Username:</label>
             <input
-              id="displayName"
+              id="username"
               type="text"
               required
               onChange={this.handleChange}
-              value={this.state.displayName}
+              value={this.state.username}
             />
           </div>
           <div className="form__input-group">

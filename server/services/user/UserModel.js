@@ -7,11 +7,12 @@ const UserSchema = mongoose.Schema(
     source: String,
     email: {
       type: String,
-      index: true,
+      index: { unique: true },
       trim: true
     },
-    displayName: {
+    username: {
       type: String,
+      index: { unique: true },
       trim: true
     },
     value: {

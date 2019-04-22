@@ -54,14 +54,14 @@ export function parseJWT(token) {
  */
 export function handleToken(token, dispatch) {
   if (token) {
-    let { email, source, displayName, id } = parseJWT(token)
+    let { email, source, username, id } = parseJWT(token)
     dispatch({
       type: actions.CREDS,
       id,
       token,
       email,
       source,
-      displayName
+      username
     })
   } else {
     signOut(dispatch)

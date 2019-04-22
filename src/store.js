@@ -9,7 +9,7 @@ const initialState = {
     isLoading: false
   },
   profile: {
-    displayName: null,
+    username: null,
     email: null,
     value: null,
     source: null,
@@ -40,7 +40,7 @@ function profileReducer(state = initialState.profile, action) {
     case actions.CREDS: {
       return {
         ...state,
-        displayName: action.displayName,
+        username: action.username,
         source: action.source,
         email: action.email,
         value: action.value,

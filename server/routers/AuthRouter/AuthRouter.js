@@ -46,8 +46,7 @@ AuthRouter.post('/login', verifyCaptcha, (req, res) => {
     if (!user) respond(res, 404, 'No user found')
     else {
       user.comparePassword(password, (err, isMatch) => {
-        if (err) handleError(err, res, 1002)
-        else if (!isMatch) respond(res, 403, 'Incorrect Password')
+        if (err || !isMatch) respond(res, 403, 'Incorrect Password')
         else respondWithToken(user, res)
       })
     }

@@ -1,4 +1,5 @@
 const UserModel = require('./UserModel')
+const ObjectID = require('mongoose').Types.ObjectId
 /**
  * Returns a user or null if not user is found
  * @param {string} source - source of login
@@ -54,11 +55,13 @@ async function findOneAndUpdate(source, profile, update, opts) {
  * @param {object} p - know attributes about the user
  */
 function determineQueryFromSource(source, p) {
-  let { email, id } = p
   let query = {}
-  if (source === 'email') query = { email }
-  else if (source === 'instagram') query = { 'instagram.id': id }
-  else query = { 'facebook.id': id }
+  try {
+    query = { _id: new ObjectID(p.id.toString()) }
+  } catch (err) {
+    if (p.id) query[`${source}.id`] = p.id
+    else query.email = p.email
+  }
   return query
 }
 
@@ -68,11 +71,8 @@ function determineQueryFromSource(source, p) {
  * @param {object} user - know attributes about the user
  */
 function determinePayloadFromSource(source, user) {
-  let { value, displayName, permissions } = user
-  let payload = { value, displayName, source, permissions }
-  if (source === 'email') payload.email = user.email
-  else if (source === 'instagram') payload.id = user.instagram.id
-  else payload.id = user.facebook.id
+  let { value, username, permissions, email, _id } = user
+  let payload = { value, username, source, permissions, email, id: _id }
   return payload
 }
 
@@ -86,7 +86,7 @@ function loginMapper(source, p) {
     ...p,
     source: source,
     email: p.email,
-    displayName: p.displayName || p.username || p.name,
+    username: p.username || p.displayName || p.name,
     photo: p.profile_picture,
     permissions: source === 'email' ? ['view_profile'] : []
   }
@@ -95,8 +95,8 @@ function loginMapper(source, p) {
       id: p.id,
       bio: p.bio,
       website: p.website,
-      username: p.username,
-      displayName: p.displayName || p.username
+      username: p.username || p.displayName,
+      displayName: p.displayName
     }
   }
   if (source === 'facebook') {

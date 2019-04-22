@@ -9,8 +9,8 @@ class Leaderboard extends React.Component {
     let leaders = this.props.leaders || []
     let leaderEls = leaders.map((l, i) => {
       return (
-        <li key={l.displayName || i}>
-          {l.displayName || l.email} - {l.value}
+        <li key={l.username || i}>
+          {l.username || l.email} - {l.value}
         </li>
       )
     })
