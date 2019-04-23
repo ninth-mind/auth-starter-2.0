@@ -7,11 +7,11 @@ const cookieName = process.env.COOKIE_NAME
 /**
  *  Signs and sends token back to user
  *
- * @param {object} user - The user to use to get token information from
  * @param {object} res - The express response object
+ * @param {object} user - The user to use to get token information from
  * @param {boolean} blockRedirect - boolean to block redirect and respond directly to call
  */
-function respondWithToken(user, res, redirect) {
+function respondWithToken(res, user, redirect) {
   const payload = determinePayloadFromSource(user.source, user)
   const token = jwt.sign(payload, secret, {
     expiresIn: tokenExpiryTime

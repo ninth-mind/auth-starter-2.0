@@ -15,28 +15,8 @@ class NewUser extends React.Component {
     this.form // added by ref
   }
 
-  static async getInitialProps(ctx) {
-    let url,
-      headers,
-      { req, query } = ctx
-    try {
-      if (req) {
-        url = `${req.protocol}://${req.headers.host}/api/me`
-        headers = { cookie: req.headers.cookie }
-      } else {
-        url = '/api/me'
-      }
-
-      let r = await axios({
-        method: 'GET',
-        url: url,
-        headers: headers
-      })
-      return { profile: r.data.data }
-    } catch (err) {
-      toast.error('Oops. Not authorized yet. Please login')
-      return { query }
-    }
+  static async getInitialProps({ query }) {
+    return { query }
   }
 
   componentDidMount() {
@@ -44,12 +24,6 @@ class NewUser extends React.Component {
     // get data from token
     if (query && query.token) {
       handleToken(query.token, dispatch)
-      // get data from /api/me
-    } else {
-      dispatch({
-        type: actions.PROFILE,
-        profile: this.props.profile
-      })
     }
   }
 
@@ -76,7 +50,7 @@ class NewUser extends React.Component {
     const { dispatch } = this.props
     let data = this.props.profile
     const captchaToken = await this.props.reCaptcha.execute({
-      action: 'register'
+      action: 'complete-profile'
     })
     // send request
     axios({
@@ -93,7 +67,7 @@ class NewUser extends React.Component {
         this.setLoading(false)
         if (err.request.status === 409) {
           toast.info(
-            'It appears you may already have an account. Try to login.'
+            'It appears you may already have an account. Try to login using your email.'
           )
         } else {
           toast.error('Oops. Something went wrong...')
@@ -129,16 +103,6 @@ class NewUser extends React.Component {
             />
           </div>
           <div className="form__input-group">
-            <label htmlFor="region">Region:</label>
-            <input
-              id="region"
-              type="text"
-              required
-              onChange={this.handleChange}
-              value={p.region || ''}
-            />
-          </div>
-          <div className="form__input-group">
             <label htmlFor="email">Email:</label>
             <input
               id="email"
@@ -146,6 +110,16 @@ class NewUser extends React.Component {
               required
               onChange={this.handleChange}
               value={p.email || ''}
+            />
+          </div>
+          <div className="form__input-group">
+            <label htmlFor="region">Region:</label>
+            <input
+              id="region"
+              type="text"
+              required
+              onChange={this.handleChange}
+              value={p.region || ''}
             />
           </div>
           <button type="submit">Submit</button>

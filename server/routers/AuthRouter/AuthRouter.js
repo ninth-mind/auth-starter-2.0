@@ -32,7 +32,7 @@ AuthRouter.get('/', verifyAuthenticationToken, (req, res) => {
  */
 AuthRouter.post('/register', verifyCaptcha, (req, res) => {
   User.findOrCreateUser('email', req.body)
-    .then(user => respondWithToken(user, res))
+    .then(user => respondWithToken(res, user))
     .catch(err => {
       if (err.code === 11000) {
         res.status(409).send('This email already exists')
@@ -47,7 +47,7 @@ AuthRouter.post('/login', verifyCaptcha, (req, res) => {
     else {
       user.comparePassword(password, (err, isMatch) => {
         if (err || !isMatch) respond(res, 403, 'Incorrect Password')
-        else respondWithToken(user, res)
+        else respondWithToken(res, user)
       })
     }
   })
@@ -59,11 +59,17 @@ AuthRouter.post('/complete-profile', verifyCaptcha, (req, res) => {
     source,
     { id, email },
     { ...req.body, permissions: ['view_profile'] },
-    { new: true }
-  ).then(user => {
-    if (!user) respond(res, 404, 'No user found')
-    else respondWithToken(user, res)
-  })
+    { new: true, runValidators: true, context: 'query' }
+  )
+    .then(user => {
+      if (!user) respond(res, 404, 'No user found')
+      else respondWithToken(res, user)
+    })
+    .catch(err => {
+      if (err.errors.email.kind === 'unique-validator')
+        respond(res, 409, 'Email already exists')
+      else respond(res, 500, 'Something went wrong')
+    })
 })
 
 /**

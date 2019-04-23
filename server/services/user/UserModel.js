@@ -1,4 +1,6 @@
 const mongoose = require('mongoose')
+const uniqueValidator = require('mongoose-unique-validator')
+
 const bcrypt = require('bcrypt')
 const SALT_WORK_FACTOR = 10
 
@@ -8,11 +10,13 @@ const UserSchema = mongoose.Schema(
     email: {
       type: String,
       index: { unique: true },
+      uniqueCaseInsensitive: true,
       trim: true
     },
     username: {
       type: String,
       index: { unique: true },
+      uniqueCaseInsensitive: true,
       trim: true
     },
     value: {
@@ -70,5 +74,7 @@ UserSchema.methods.comparePassword = function(candidatePassword, cb) {
     cb(null, isMatch)
   })
 }
+
+UserSchema.plugin(uniqueValidator, { type: 'unique-validator' })
 
 module.exports = mongoose.model('User', UserSchema)

@@ -40,7 +40,7 @@ FacebookRouter.get(
   (req, res) => {
     const { profile } = req.user
     User.findOrCreateUser('facebook', profile)
-      .then(user => respondWithToken(user, res, true))
+      .then(user => respondWithToken(res, user, true))
       .catch(err => handleError(err, res, 1003))
   }
 )
