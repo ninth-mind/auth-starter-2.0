@@ -38,6 +38,16 @@ async function findOrCreateUser(source, profile) {
 
 /**
  *
+ * @param {string} source - source of profule
+ * @param {object} profile - user profile object
+ */
+async function createUser(source, profile) {
+  let newProf = loginMapper(source, profile)
+  return await UserModel.create(newProf)
+}
+
+/**
+ *
  * @param {string} source - source of user account
  * @param {object} profile - profile data to search for
  * @param {object} update - object to update user with
@@ -109,6 +119,7 @@ function loginMapper(source, p) {
 
 module.exports = {
   findUser,
+  createUser,
   getUsers,
   findOrCreateUser,
   findOneAndUpdate,

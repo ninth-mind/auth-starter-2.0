@@ -31,8 +31,13 @@ AuthRouter.get('/', verifyAuthenticationToken, (req, res) => {
  * email.
  */
 AuthRouter.post('/register', verifyCaptcha, (req, res) => {
-  User.findOrCreateUser('email', req.body)
-    .then(user => respondWithToken(res, user))
+  User.findUser('email', req.body)
+    .then(u => {
+      if (u) respond(res, 409, 'User already exists')
+      else {
+        User.createUser('email', req.body).then(nu => respondWithToken(res, nu))
+      }
+    })
     .catch(err => {
       if (err.code === 11000) {
         res.status(409).send('This email already exists')
