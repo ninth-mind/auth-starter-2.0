@@ -25,17 +25,16 @@ passport.use(
 FacebookRouter.get(
   '/',
   passport.authenticate('facebook', {
-    failureRedirect: `${clientURL}/404`
+    failureRedirect: `${clientURL}/c`,
+    display: 'popup',
+    scope: ['email']
   })
 )
 
 FacebookRouter.get(
   '/callback',
   passport.authenticate('facebook', {
-    failureRedirect: '/c',
-    session: false,
-    showDialog: true,
-    scope: ['name', 'email', 'profile_picture', 'user_link']
+    failureRedirect: '/c'
   }),
   (req, res) => {
     const { profile } = req.user
