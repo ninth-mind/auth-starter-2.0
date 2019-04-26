@@ -1,7 +1,7 @@
 const express = require('express')
-const Mailer = require('../mail/mailer')
-const { handleError } = require('../../lib/utils')
-const { verifyAuthenticationToken } = require('../../lib/middleware')
+const Mailer = require('../services/mail')
+const { handleError } = require('../lib/utils')
+const { verifyAuthenticationToken } = require('../lib/middleware')
 const MailRouter = express.Router()
 /**
  * Sends email confirmation if the user requests another confirmation email.

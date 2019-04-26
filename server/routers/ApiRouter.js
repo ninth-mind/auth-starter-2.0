@@ -2,6 +2,7 @@ const express = require('express')
 const ApiRouter = express.Router()
 const AuthRouter = require('./AuthRouter')
 const MeRouter = require('./MeRouter')
+const MailRouter = require('./MailRouter')
 const LeadersRouter = require('./LeadersRouter')
 const db = require('../services/database')
 
@@ -11,6 +12,7 @@ ApiRouter.get('/', (req, res) => {
 
 ApiRouter.use('/auth', AuthRouter)
 ApiRouter.use('/me', MeRouter)
+ApiRouter.use('/mail', MailRouter)
 ApiRouter.use('/leaders', LeadersRouter)
 
 module.exports = ApiRouter
