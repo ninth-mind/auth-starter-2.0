@@ -98,8 +98,7 @@ function loginMapper(source, p) {
     email: p.email,
     name: p.name && `${p.name.givenName} ${p.name.familyName}`,
     username: p.username || p.displayName || p.name,
-    photo: p.profile_picture,
-    permissions: ['view_profile']
+    photo: p.profile_picture
   }
   if (source === 'instagram') {
     result.instagram = {

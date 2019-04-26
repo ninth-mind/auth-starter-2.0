@@ -58,7 +58,11 @@ class NewUser extends React.Component {
     })
       .then(r => {
         this.setLoading(false)
-        redirect('/u')
+        toast.success(
+          `Email confirmation sent.
+Check your email to complete registration.`
+        )
+        redirect('/')
       })
       .catch(err => {
         this.setLoading(false)

@@ -1,6 +1,7 @@
 const express = require('express')
 const { passport } = require('../../lib/middleware')
 const User = require('../../services/user')
+const Mailer = require('../../services/mail')
 const InstagramRouter = require('./InstagramRouter')
 const FacebookRouter = require('./FacebookRouter')
 const {
@@ -36,9 +37,10 @@ AuthRouter.post('/register', verifyCaptcha, async (req, res) => {
     else {
       // create user
       let nu = await User.createUser('email', req.body)
-      let token = createToken(nu.toObject())
-      res.cookie(cookieName, token, { httpOnly: true })
-      respond(res, 200, 'User created', { ...nu, wasNew: nu.wasNew, token })
+      let token = createToken(nu.toObject(), true)
+      //send confirmation email
+      let mailResponse = await Mailer.sendEmailConfirmation(nu.email, token)
+      respond(res, 200, 'email confirmation sent', mailResponse)
     }
   } catch (err) {
     handleError(err, res, 1003)
@@ -71,19 +73,22 @@ AuthRouter.post(
   verifyAuthenticationToken,
   async (req, res) => {
     try {
-      const { source } = req.body
+      //create user
+      const { source, email } = req.body
       let u = await User.findOrCreateUser(
         source,
         { ...req.body },
         { new: true }
       )
-      let token = createToken(u.toObject())
-      res.cookie(cookieName, token, { httpOnly: true, overwrite: true })
-      respond(res, 200, 'user saved', u)
+      //create new temporary token
+      let token = createToken(u.toObject(), true)
+      let mailResponse = await Mailer.sendEmailConfirmation(email, token)
+      respond(res, 200, 'email confirmation sent', mailResponse)
     } catch (err) {
-      if (err.errors && err.errors.email.kind === 'unique-validator')
-        return respond(res, 409, `Email already exists.`)
-      else handleError(err, res, 1005)
+      if (err.errors) {
+        let kind = err.errors.keys()[0]
+        return respond(res, 409, `${kind} already exists.`)
+      } else handleError(err, res, 1005)
     }
   }
 )
@@ -95,5 +100,30 @@ AuthRouter.get('/logout', verifyAuthenticationToken, (req, res) => {
   res.clearCookie(cookieName)
   respond(res, 200, 'Successfully logged out')
 })
+
+/**
+ * Confirms users email, once they have been re-routed back using the
+ * confirmation email link sent to their email.
+ */
+AuthRouter.get(
+  '/email-confirmation/:token',
+  verifyAuthenticationToken,
+  async (req, res) => {
+    try {
+      let { decodedToken } = req.locals
+      let u = await User.findOneAndUpdate(
+        decodedToken.source,
+        decodedToken,
+        { $set: { confirmed: true, permissions: ['view_profile'] } },
+        { new: true }
+      )
+      let newToken = createToken(u.toObject())
+      res.cookie(cookieName, newToken, { httpOnly: true, overwrite: true })
+      res.redirect('/u')
+    } catch (err) {
+      handleError(err, res, 1006)
+    }
+  }
+)
 
 module.exports = AuthRouter

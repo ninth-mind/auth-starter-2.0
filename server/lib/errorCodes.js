@@ -4,5 +4,6 @@ module.exports = {
   1002: 'Error finding user during lookup',
   1003: 'Error creating user',
   1004: 'Error email during login',
-  1005: 'Error completing profile'
+  1005: 'Error completing profile',
+  1006: 'Error confirming email'
 }

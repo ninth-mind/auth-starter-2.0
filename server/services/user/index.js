@@ -1,2 +1,2 @@
-const user = require('./user')
-module.exports = user
+const User = require('./user')
+module.exports = User

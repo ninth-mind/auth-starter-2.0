@@ -80,8 +80,11 @@ class Register extends React.Component {
     })
       .then(r => {
         this.setLoading(false)
-        let { token, wasNew } = r.data.data // was new should always be true
-        wasNew ? redirect(`/c/new-user?token=${token}`) : redirect('/u')
+        toast.success(
+          `Email confirmation sent.
+Check your email to complete registration.`
+        )
+        redirect('/')
       })
       .catch(err => {
         this.setLoading(false)

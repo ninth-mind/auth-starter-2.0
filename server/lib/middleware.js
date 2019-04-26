@@ -27,10 +27,12 @@ function verifyOrigin(req, res, next) {
 // middleware to protect routes from unAuthorized tokens
 function verifyAuthenticationToken(req, res, next) {
   try {
-    // check if the token is in the cookies or the authorization header
+    // check if the token is in the cookies or the req.params
     let token
     if (req.cookies && req.cookies[cookieName]) {
       token = req.cookies[cookieName]
+    } else if (req.params.token) {
+      token = req.params.token
     }
 
     // verify token
@@ -44,7 +46,7 @@ function verifyAuthenticationToken(req, res, next) {
           return res.status(403).send('Your session has expired.')
         } else return handleError(err, res, 4000)
       }
-      req.locals = { decodedToken: decoded }
+      req.locals = { decodedToken: decoded, token }
       next()
     })
   } catch (err) {
