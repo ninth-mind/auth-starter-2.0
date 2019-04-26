@@ -15,24 +15,27 @@ class Account extends React.Component {
   static async getInitialProps(ctx) {
     // if rendered on the server
     try {
-      let url,
-        headers,
+      let opts = {},
         { req } = ctx
       if (req) {
-        url = `${req.protocol}://${req.headers.host}/api/me`
-        headers = { cookie: req.headers.cookie }
+        opts = {
+          url: `${req.protocol}://${req.headers.host}/api/me`,
+          headers: { cookie: req.headers.cookie }
+        }
       } else {
-        url = '/api/me'
+        opts = {
+          url: '/api/me'
+        }
       }
 
       let r = await axios({
         method: 'GET',
-        url: url,
-        headers: headers
+        ...opts
       })
+
       return { profile: r.data.data }
     } catch (err) {
-      toast.error('Oops. Not authorized yet. Please login')
+      toast.error('Oops. Incorrect Permissions')
       redirect('/c', ctx)
       return {}
     }

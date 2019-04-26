@@ -3,9 +3,10 @@ const FacebookRouter = express.Router()
 const { passport } = require('../../lib/middleware')
 const FacebookStrategy = require('passport-facebook')
 const User = require('../../services/user')
-const { handleError, respondWithToken } = require('../../lib/utils')
+const { handleError, createToken } = require('../../lib/utils')
 const serverURL = process.env.SERVER_URL
 const clientURL = process.env.CLIENT_URL
+const cookieName = process.env.COOKIE_NAME
 
 passport.use(
   new FacebookStrategy(
@@ -26,7 +27,8 @@ FacebookRouter.get(
   '/',
   passport.authenticate('facebook', {
     failureRedirect: `${clientURL}/c`,
-    display: 'popup',
+    session: false,
+    showDialog: true,
     scope: ['email']
   })
 )
@@ -36,11 +38,25 @@ FacebookRouter.get(
   passport.authenticate('facebook', {
     failureRedirect: '/c'
   }),
-  (req, res) => {
-    const { profile } = req.user
-    User.findOrCreateUser('facebook', profile)
-      .then(user => respondWithToken(res, user, true))
-      .catch(err => handleError(err, res, 1003))
+  async (req, res) => {
+    try {
+      const { profile } = req.user
+      let user = await User.findUser('facebook', profile)
+      // if user is found, log them in and redirect to profile
+      if (user) {
+        let token = createToken(user.toObject())
+        res.cookie(cookieName, token, { httpOnly: true })
+        res.redirect('/u')
+        // if NO user, create temp token and redirect to new-user page
+      } else {
+        let newProf = User.loginMapper('facebook', profile)
+        let token = createToken(newProf, true)
+        res.cookie(cookieName, token, { httpOnly: true, overwrite: true })
+        res.redirect(`/c/new-user?token=${token}`)
+      }
+    } catch (err) {
+      handleError(err, res, 1003)
+    }
   }
 )
 

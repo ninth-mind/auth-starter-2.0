@@ -1,29 +1,17 @@
 const jwt = require('jsonwebtoken')
 const ErrorCodes = require('./errorCodes')
-const { determinePayloadFromSource } = require('../services/user')
+// const { determinePayloadFromSource } = require('../services/user')
 const secret = process.env.SECRET
 const tokenExpiryTime = process.env.TOKEN_EXPIRATION_TIME
-const cookieName = process.env.COOKIE_NAME
+const tempTokenExpiryTime = process.env.TEMP_TOKEN_EXPIRATION_TIME
+
 /**
- *  Signs and sends token back to user
- *
- * @param {object} res - The express response object
- * @param {object} user - The user to use to get token information from
- * @param {boolean} blockRedirect - boolean to block redirect and respond directly to call
+ * @param {Object} payload - make cookie
  */
-function respondWithToken(res, user, redirect) {
-  const payload = determinePayloadFromSource(user.source, user)
-  const token = jwt.sign(payload, secret, {
-    expiresIn: tokenExpiryTime
+function createToken(payload, isTemp = false) {
+  return jwt.sign(payload, secret, {
+    expiresIn: isTemp ? tempTokenExpiryTime : tokenExpiryTime
   })
-  res.cookie(cookieName, token, { httpOnly: true })
-  if (redirect) {
-    let redirectURL =
-      user.wasNew || payload.permissions.length === 0
-        ? `/c/new-user?token=${token}`
-        : '/u'
-    res.redirect(redirectURL)
-  } else respond(res, 200, 'login successful', { token, wasNew: user.wasNew })
 }
 /**
   Error handling. Only to be used when the SERVER is experiencing an error. Not
@@ -59,6 +47,6 @@ function respond(res, status = 200, message = 'ok', data) {
 
 module.exports = {
   respond,
-  respondWithToken,
+  createToken,
   handleError
 }

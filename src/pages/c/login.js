@@ -4,7 +4,7 @@ import isEmail from 'validator/lib/isEmail'
 import Link from 'next/link'
 import { toast } from 'react-toastify'
 import { connect } from 'react-redux'
-import { handleToken, redirect, handleError, setLoading } from '~/lib/utils'
+import { redirect, handleError, setLoading } from '~/lib/utils'
 
 class Login extends React.Component {
   constructor(props) {
@@ -48,7 +48,6 @@ class Login extends React.Component {
 
     //async
     this.setLoading(true)
-    const { dispatch } = this.props
     const captchaToken = await this.props.reCaptcha.execute({ action: 'login' })
 
     axios({
@@ -58,22 +57,13 @@ class Login extends React.Component {
     })
       .then(r => {
         this.setLoading(false)
-        let { token } = r.data.data
-        handleToken(token, dispatch)
         redirect('/u')
       })
       .catch(err => {
-        // incorrect email or password
-        console.log(err)
-        if (
-          err &&
-          err.request &&
-          (err.request.status === 404 || err.request.status === 403)
-        ) {
-          toast.error('Incorrect credentials.')
-          this.setState({ ...this.state, password: '' })
-          this.passwordInput.focus()
+        if (err && err.response && err.response.data) {
+          toast.error(err.response.data.msg)
         } else {
+          toast.error('Oops. Something went wrong')
           handleError(err)
         }
       })

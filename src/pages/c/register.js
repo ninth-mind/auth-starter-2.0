@@ -3,13 +3,7 @@ import axios from 'axios'
 import Link from 'next/link'
 import { toast } from 'react-toastify'
 import { connect } from 'react-redux'
-import {
-  handleError,
-  handleToken,
-  validPassword,
-  redirect,
-  setLoading
-} from '~/lib/utils'
+import { handleError, validPassword, redirect, setLoading } from '~/lib/utils'
 
 class Register extends React.Component {
   constructor(props) {
@@ -75,7 +69,6 @@ class Register extends React.Component {
 
     // start async process
     this.setLoading(true)
-    const { dispatch } = this.props
     const captchaToken = await this.props.reCaptcha.execute({
       action: 'register'
     })
@@ -88,17 +81,14 @@ class Register extends React.Component {
       .then(r => {
         this.setLoading(false)
         let { token, wasNew } = r.data.data // was new should always be true
-        handleToken(token, dispatch)
         wasNew ? redirect(`/c/new-user?token=${token}`) : redirect('/u')
       })
       .catch(err => {
         this.setLoading(false)
-        if (err.request.status === 409) {
-          toast.info(
-            'It appears you may already have an account. Try to login.'
-          )
+        if (err && err.response && err.response.data) {
+          toast.error(err.response.data.msg)
         } else {
-          toast.error('Oops. Something went wrong...')
+          toast.error('Oops. Something went wrong')
           handleError(err)
         }
       })
