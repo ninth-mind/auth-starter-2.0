@@ -1,6 +1,5 @@
 const jwt = require('jsonwebtoken')
 const ErrorCodes = require('./errorCodes')
-// const { determinePayloadFromSource } = require('../services/user')
 const secret = process.env.SECRET
 const tokenExpiryTime = process.env.TOKEN_EXPIRATION_TIME
 const tempTokenExpiryTime = process.env.TEMP_TOKEN_EXPIRATION_TIME

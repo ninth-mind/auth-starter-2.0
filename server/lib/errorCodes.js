@@ -5,5 +5,7 @@ module.exports = {
   1003: 'Error creating user',
   1004: 'Error email during login',
   1005: 'Error completing profile',
-  1006: 'Error confirming email'
+  1006: 'Error confirming email',
+  1007: 'Error generating reset password request',
+  1008: 'Error saving new password on password reset'
 }

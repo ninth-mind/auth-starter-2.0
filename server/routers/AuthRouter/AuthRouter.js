@@ -126,4 +126,66 @@ AuthRouter.get(
   }
 )
 
+/**
+ * SENDS Password reset email
+ * sends 200 response regardless if user is found, OR if email is unconfirmed
+ */
+AuthRouter.post('/reset-password', async (req, res) => {
+  try {
+    let { email } = req.body
+    // find user
+    let u = await User.findUser('email', { email })
+    if (!u || !u.confirmed) {
+      // if no user found, send NOT FOUND EMAIL
+      let nur = await Mailer.sendNoUserFoundEmail(email)
+      respond(res, 200, 'Email sent', nur)
+    } else if (u && u.source !== 'email') {
+      respond(res, 200, 'User used different login service', {
+        source: u.source
+      })
+    } else {
+      // if user and email confirmed .... create token
+      let token = createToken({ email }, true)
+      let nvmur = await Mailer.sendPasswordChangeEmail(email, token)
+      respond(res, 200, 'Email sent', nvmur)
+    }
+  } catch (err) {
+    handleError(err, res, 1007)
+  }
+})
+
+/**
+ * Verify Token and redirect to reset password page
+ */
+AuthRouter.get(
+  '/reset-password/:token',
+  verifyAuthenticationToken,
+  (req, res) => {
+    const { token } = req.params
+    res.cookie(cookieName, token, { httpOnly: true })
+    res.redirect(`/c/reset-password?token=${token}`)
+  }
+)
+
+AuthRouter.put(
+  '/reset-password',
+  verifyAuthenticationToken,
+  async (req, res) => {
+    try {
+      const { decodedToken } = req.locals
+      const { password } = req.body
+      let u = await User.findUser('email', { email: decodedToken.email })
+      if (!u) respond(res, 401, 'No user found')
+      else {
+        u.password = password
+        let nu = await u.save()
+        res.clearCookie(cookieName)
+        respond(res, 200, 'Password reset')
+      }
+    } catch (err) {
+      handleError(err, res, 1008)
+    }
+  }
+)
+
 module.exports = AuthRouter

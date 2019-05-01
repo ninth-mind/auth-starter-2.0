@@ -94,7 +94,7 @@ class Login extends React.Component {
           <div className="form__input-group">
             <div className="password-label">
               <label htmlFor="password">Password</label>
-              <Link href="/forgot-password">
+              <Link href="/c/reset-password">
                 <a className="small italic link" tabIndex="1">
                   Forgot?
                 </a>

@@ -2,6 +2,15 @@ import { actions } from '~/store'
 import validator from 'validator'
 import axios from 'axios'
 import Router from 'next/router'
+import { useState } from 'react'
+
+export function handleFormInput(initialValue) {
+  let [value, setValue] = useState(initialValue)
+  function handleChange(e) {
+    setValue(e.target.value)
+  }
+  return { value, onChange: handleChange }
+}
 
 export function setLoading(isLoading, dispatch) {
   dispatch({

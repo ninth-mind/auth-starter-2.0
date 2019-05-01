@@ -1,5 +1,5 @@
 const transporter = require('./transporter')
-const { confirmationEmailHTML } = require('./emailTemplates')
+const templates = require('./emailTemplates')
 const serverURL = process.env.SERVER_URL
 /**
  * Sends email confirmation link to users email.
@@ -12,17 +12,45 @@ async function sendEmailConfirmation(email, token) {
     let result = await transporter.sendMail({
       to: email,
       subject: 'Confirmation Email',
-      html: confirmationEmailHTML(email, link)
+      html: templates.confirmationEmailHTML(email, link)
     })
-    if (result) {
-      console.log('EMAIL RESULT', result)
-      return result
-    }
+
+    console.log('EMAIL RESULT', result)
+    return result
+  } catch (err) {
+    return err
+  }
+}
+
+async function sendPasswordChangeEmail(email, token) {
+  try {
+    let link = `${serverURL}/api/auth/reset-password/${token}`
+    let result = await transporter.sendMail({
+      to: email,
+      subject: 'Password Change Request',
+      html: templates.resetPasswordHTML(email, link)
+    })
+    return result
+  } catch (err) {
+    return err
+  }
+}
+
+async function sendNoUserFoundEmail(email) {
+  try {
+    let result = await transporter.sendMail({
+      to: email,
+      subject: 'Account Change Request',
+      html: templates.userNotFoundHTML(email)
+    })
+    return result
   } catch (err) {
     return err
   }
 }
 
 module.exports = {
-  sendEmailConfirmation
+  sendEmailConfirmation,
+  sendPasswordChangeEmail,
+  sendNoUserFoundEmail
 }
