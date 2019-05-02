@@ -4,13 +4,11 @@ const secret = process.env.SECRET
 const tokenExpiryTime = process.env.TOKEN_EXPIRATION_TIME
 const tempTokenExpiryTime = process.env.TEMP_TOKEN_EXPIRATION_TIME
 const cookieName = process.env.COOKIE_NAME
-// const User = require('../services/user')
 
 /**
  * @param {Object} payload - make cookie
  */
 function createToken(profile, isTemp = false) {
-  // let payload = User.determinePayloadFromSource(profile.source, profile)
   return jwt.sign(profile, secret, {
     expiresIn: isTemp ? tempTokenExpiryTime : tokenExpiryTime
   })
