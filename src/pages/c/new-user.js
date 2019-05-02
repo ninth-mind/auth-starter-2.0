@@ -36,10 +36,7 @@ class NewUser extends React.Component {
     let val = e.target.value
     let obj = {}
     obj[id] = val
-    this.setState({
-      ...this.state,
-      ...obj
-    })
+    this.setState(obj)
   }
 
   async handleSubmit(e) {

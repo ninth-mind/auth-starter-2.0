@@ -41,7 +41,7 @@ class Register extends React.Component {
     let id = e.target.id
     let val = e.target.value
     obj[id] = val
-    this.setState({ ...this.state, ...obj })
+    this.setState(obj)
   }
 
   sanitize() {

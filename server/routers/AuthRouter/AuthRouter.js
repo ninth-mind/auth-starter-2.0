@@ -8,7 +8,12 @@ const {
   verifyAuthenticationToken,
   verifyCaptcha
 } = require('../../lib/middleware')
-const { handleError, respond, createToken } = require('../../lib/utils')
+const {
+  handleError,
+  respond,
+  createToken,
+  setCookie
+} = require('../../lib/utils')
 const cookieName = process.env.COOKIE_NAME
 const AuthRouter = express.Router()
 
@@ -58,7 +63,7 @@ AuthRouter.post('/login', verifyCaptcha, async (req, res) => {
       if (!isMatch) respond(res, 403, 'Incorrect credentials')
       else {
         let token = createToken(u.toObject())
-        res.cookie(cookieName, token, { httpOnly: true })
+        setCookie(res, token)
         respond(res, 200, 'login successful', u.toObject())
       }
     }
@@ -118,7 +123,7 @@ AuthRouter.get(
         { new: true }
       )
       let newToken = createToken(u.toObject())
-      res.cookie(cookieName, newToken, { httpOnly: true, overwrite: true })
+      setCookie(res, newToken, true)
       res.redirect('/u')
     } catch (err) {
       handleError(err, res, 1006)
@@ -162,7 +167,7 @@ AuthRouter.get(
   verifyAuthenticationToken,
   (req, res) => {
     const { token } = req.params
-    res.cookie(cookieName, token, { httpOnly: true })
+    setCookie(res, token)
     res.redirect(`/c/reset-password?token=${token}`)
   }
 )

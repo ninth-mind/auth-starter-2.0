@@ -3,10 +3,9 @@ const { passport } = require('../../lib/middleware')
 const InstagramRouter = express.Router()
 const InstagramStrategy = require('passport-instagram')
 const User = require('../../services/user')
-const { handleError, createToken } = require('../../lib/utils')
+const { handleError, createToken, setCookie } = require('../../lib/utils')
 const serverURL = process.env.SERVER_URL
 const clientURL = process.env.CLIENT_URL
-const cookieName = process.env.COOKIE_NAME
 
 passport.use(
   new InstagramStrategy(
@@ -44,13 +43,13 @@ InstagramRouter.get(
       // if user is found, log them in and redirect to profile
       if (user) {
         let token = createToken(user.toObject())
-        res.cookie(cookieName, token, { httpOnly: true })
+        setCookie(res, token)
         res.redirect('/u')
         // if NO user, create temp token and redirect to new-user page
       } else {
         let newProf = User.loginMapper('instagram', profile)
         let token = createToken(newProf, true)
-        res.cookie(cookieName, token, { httpOnly: true, overwrite: true })
+        setCookie(res, token, true)
         res.redirect(`/c/new-user?token=${token}`)
       }
     } catch (err) {

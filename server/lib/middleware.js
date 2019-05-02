@@ -29,10 +29,10 @@ function verifyAuthenticationToken(req, res, next) {
   try {
     // check if the token is in the cookies or the req.params
     let token
-    if (req.cookies && req.cookies[cookieName]) {
-      token = req.cookies[cookieName]
-    } else if (req.params.token) {
+    if (req.params.token) {
       token = req.params.token
+    } else if (req.cookies && req.cookies[cookieName]) {
+      token = req.cookies[cookieName]
     }
 
     // verify token

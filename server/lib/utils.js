@@ -3,13 +3,24 @@ const ErrorCodes = require('./errorCodes')
 const secret = process.env.SECRET
 const tokenExpiryTime = process.env.TOKEN_EXPIRATION_TIME
 const tempTokenExpiryTime = process.env.TEMP_TOKEN_EXPIRATION_TIME
+const cookieName = process.env.COOKIE_NAME
+// const User = require('../services/user')
 
 /**
  * @param {Object} payload - make cookie
  */
-function createToken(payload, isTemp = false) {
-  return jwt.sign(payload, secret, {
+function createToken(profile, isTemp = false) {
+  // let payload = User.determinePayloadFromSource(profile.source, profile)
+  return jwt.sign(profile, secret, {
     expiresIn: isTemp ? tempTokenExpiryTime : tokenExpiryTime
+  })
+}
+
+function setCookie(res, token, overwrite = false) {
+  res.cookie(cookieName, token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    overwrite
   })
 }
 /**
@@ -47,5 +58,6 @@ function respond(res, status = 200, message = 'ok', data) {
 module.exports = {
   respond,
   createToken,
-  handleError
+  handleError,
+  setCookie
 }
