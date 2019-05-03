@@ -59,6 +59,8 @@ AuthRouter.post('/login', verifyCaptcha, async (req, res) => {
     if (!u) respond(res, 404, 'No user found')
     else {
       if (!u.password) return respond(res, 409, `User signed using ${u.source}`)
+      else if (!u.confirmed)
+        return respond(res, 409, `Email has not been confirmed`)
       let isMatch = await u.comparePassword(password)
       if (!isMatch) respond(res, 403, 'Incorrect credentials')
       else {

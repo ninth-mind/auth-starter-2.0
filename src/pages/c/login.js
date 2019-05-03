@@ -1,10 +1,9 @@
 import React from 'react'
 import axios from 'axios'
-import isEmail from 'validator/lib/isEmail'
 import Link from 'next/link'
 import { toast } from 'react-toastify'
 import { connect } from 'react-redux'
-import { redirect, handleError, setLoading } from '~/lib/utils'
+import { redirect, handleError, setLoading, clean } from '~/lib/utils'
 
 class Login extends React.Component {
   constructor(props) {
@@ -17,15 +16,20 @@ class Login extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this)
     this.handleChange = this.handleChange.bind(this)
     this.setLoading = this.setLoading.bind(this)
-    this.sanitize = this.sanitize.bind(this)
+    this.clear = this.clear.bind(this)
   }
 
-  sanitize() {
-    // TODO: SANITIZE INPUTS
-    if (!isEmail(this.state.email)) {
-      toast.error('Invalid Email')
-      return false
-    } else return this.state
+  /**
+   * @param {Array} inputs : Array of inputs to clear. The first of which will recieve focus.
+   */
+  clear(inputs) {
+    this.setState(
+      inputs.reduce((a, f) => {
+        a[f] = ''
+        return a
+      }, {})
+    )
+    this.form.querySelector(`#${inputs[0]}`).focus()
   }
 
   handleChange(e) {
@@ -43,9 +47,8 @@ class Login extends React.Component {
 
   async handleSubmit(e) {
     e.preventDefault()
-    let data = this.sanitize()
-    if (!data) return // unsanitary inputs
-
+    // clean inputs
+    let data = clean(this.state)
     //async
     this.setLoading(true)
     const captchaToken = await this.props.reCaptcha.execute({ action: 'login' })

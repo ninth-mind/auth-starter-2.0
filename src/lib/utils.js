@@ -32,20 +32,75 @@ export function redirect(path, ctx) {
   }
 }
 
-export function validPassword(password) {
-  try {
-    let pass = validator.trim(password)
-    let blacklisted = validator.blacklist(pass, `\\[\\]\\\\<>,/:;"'{}|+=()~`)
-    return (
-      password.length >= 8 &&
-      validator.isAscii(pass) &&
-      blacklisted.length === password.length
-    )
-  } catch (err) {
-    return false
+/**
+ * Validates and object, based on their keys
+ * @param {object} inputs - object where they key indicates the type of validation
+ *                          for the value
+ */
+export function sanitize(inputs) {
+  let incorrectFields = []
+  let result = { ...inputs }
+  for (let key in inputs) {
+    let value = inputs[key]
+    // is password
+    if (key.match(/pass|confirm/gi)) {
+      let pass = validator.trim(value)
+      let whitelisted = validator.whitelist(pass, 'a-zA-Z0-9!@#$%*^-')
+      if (
+        value.length < 8 ||
+        !validator.isAscii(pass) ||
+        whitelisted.length !== value.length
+      )
+        incorrectFields.push(key)
+      else result[key] = pass
+      // if email
+    } else if (key.match(/email/gi)) {
+      let email = validator.trim(value)
+      let whitelisted = validator.whitelist(email, 'a-zA-Z0-9@._-')
+      if (!validator.isEmail(email) || whitelisted.length !== value.length)
+        incorrectFields.push(key)
+      else result[key] = validator.normalizeEmail(whitelisted)
+      //username
+    } else if (key.match(/username/gi)) {
+      let un = validator.trim(value)
+      let whitelisted = validator.whitelist(un, 'a-zA-Z0-9@$!._-')
+      if (
+        value.length < 3 ||
+        !validator.isAscii(un) ||
+        whitelisted.length !== value.length
+      )
+        incorrectFields.push(key)
+      else result[key] = validator.trim(value)
+    }
   }
+
+  if (incorrectFields.length === 0) return { valid: true, result }
+  return { valid: false, invalid: incorrectFields }
 }
 
+export function clean(inputs) {
+  let result = { ...inputs }
+  for (let key in inputs) {
+    let value = inputs[key]
+    // is password
+    if (key.match(/pass|confirm/gi)) {
+      result[key] = validator.trim(value)
+      // if email
+    } else if (key.match(/email/gi)) {
+      let email = validator.trim(value)
+      result[key] = validator.normalizeEmail(email)
+      //username
+    } else if (key.match(/username/gi)) {
+      result[key] = validator.trim(value)
+    }
+  }
+  return result
+}
+
+/**
+ * Parses token into object
+ * @param {string} token - token string
+ */
 export function parseJWT(token) {
   try {
     let base64Url = token.split('.')[1]

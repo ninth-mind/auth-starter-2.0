@@ -3,7 +3,7 @@ import axios from 'axios'
 import Link from 'next/link'
 import { toast } from 'react-toastify'
 import { connect } from 'react-redux'
-import { handleError, validPassword, redirect, setLoading } from '~/lib/utils'
+import { handleError, sanitize, redirect, setLoading } from '~/lib/utils'
 
 class Register extends React.Component {
   constructor(props) {
@@ -18,7 +18,7 @@ class Register extends React.Component {
     this.handleChange = this.handleChange.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
     this.setLoading = this.setLoading.bind(this)
-    this.sanitize = this.sanitize.bind(this)
+    this.cleanInputs = this.cleanInputs.bind(this)
     this.clear = this.clear.bind(this)
     this.form // added by ref
   }
@@ -27,12 +27,27 @@ class Register extends React.Component {
    * @param {Array} inputs : Array of inputs to clear. The first of which will recieve focus.
    */
   clear(inputs) {
-    inputs.forEach(e => (this.form.querySelector(`#${e}`).value = ''))
+    this.setState(
+      inputs.reduce((a, f) => {
+        a[f] = ''
+        return a
+      }, {})
+    )
     this.form.querySelector(`#${inputs[0]}`).focus()
   }
 
   setLoading(isLoading) {
     setLoading(isLoading, this.props.dispatch)
+  }
+
+  cleanInputs() {
+    let { confirm, password } = this.state
+    let r = sanitize(this.state) || []
+    if (confirm !== password) {
+      r.valid = false
+      r.invalid = [...(r.invalid || []), 'password', 'confirm']
+    }
+    return r
   }
 
   handleChange(e) {
@@ -44,31 +59,20 @@ class Register extends React.Component {
     this.setState(obj)
   }
 
-  sanitize() {
-    // check if confirmation password matches
-    if (this.state.confirm !== this.state.password) {
-      toast.warn('Passwords do not match.')
-      return false
-    }
-
-    if (!validPassword(this.state.password)) {
-      this.clear(['password', 'confirm'])
-      toast.error(
-        'Password must be 8 characters. Special characters allowed are .!@#$%^&*'
-      )
-      return false
-    }
-
-    return this.state
-  }
-
   async handleSubmit(e) {
+    const { dispatch } = this.props
     e.preventDefault()
-    let data = this.sanitize()
-    if (!data) return // unsanitary inputs
+    // validate inputs
+    let cleaned = this.cleanInputs()
+    if (!cleaned.valid) {
+      toast.warn(`Invalid fields: ${cleaned.invalid.join(', ')}`)
+      this.clear(cleaned.invalid)
+      return
+    }
 
     // start async process
-    this.setLoading(true)
+    this.setLoading(true, dispatch)
+    let data = cleaned.result
     const captchaToken = await this.props.reCaptcha.execute({
       action: 'register'
     })
@@ -79,15 +83,13 @@ class Register extends React.Component {
       data: { ...data, recaptcha: captchaToken }
     })
       .then(r => {
-        this.setLoading(false)
         toast.success(
           `Email confirmation sent.
-Check your email to complete registration.`
+    Check your email to complete registration.`
         )
         redirect('/')
       })
       .catch(err => {
-        this.setLoading(false)
         if (err && err.response && err.response.data) {
           toast.error(err.response.data.msg)
         } else {
@@ -95,6 +97,7 @@ Check your email to complete registration.`
           handleError(err)
         }
       })
+      .finally(() => this.setLoading(false, dispatch))
   }
 
   render() {
