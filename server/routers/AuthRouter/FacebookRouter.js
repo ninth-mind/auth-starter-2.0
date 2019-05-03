@@ -12,7 +12,15 @@ passport.use(
     {
       clientID: process.env.FACEBOOK_APP_ID,
       clientSecret: process.env.FACEBOOK_APP_SECRET,
-      callbackURL: `${serverURL}/api/auth/facebook/callback`
+      callbackURL: `${serverURL}/api/auth/facebook/callback`,
+      profileFields: [
+        'id',
+        'displayName',
+        'photos',
+        'emails',
+        'first_name',
+        'last_name'
+      ]
     },
     (accessToken, refreshToken, profile, done) => {
       //gets user from spotify and passes it to /spotify/callback
@@ -28,18 +36,20 @@ FacebookRouter.get(
     failureRedirect: `${clientURL}/c`,
     session: false,
     showDialog: true,
-    scope: ['email']
+    scope: ['public_profile', 'email']
   })
 )
 
 FacebookRouter.get(
   '/callback',
   passport.authenticate('facebook', {
-    failureRedirect: '/c'
+    failureRedirect: '/c',
+    scope: ['public_profile', 'email']
   }),
   async (req, res) => {
     try {
       const { profile } = req.user
+      console.log('PROFILE', profile)
       let user = await User.findUser('facebook', profile)
       // if user is found, log them in and redirect to profile
       if (user) {

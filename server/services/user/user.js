@@ -93,12 +93,12 @@ function determinePayloadFromSource(source, user) {
  */
 function loginMapper(source, p) {
   let result = {
-    ...p,
+    id: p.id,
     source: source,
     email: p.email,
-    name: p.name && `${p.name.givenName} ${p.name.familyName}`,
+    name: p.name,
     username: p.username || p.displayName || p.name,
-    photo: p.profile_picture
+    photo: p.photo || (p.photos && p.photos[0].value)
   }
   if (source === 'instagram') {
     result.instagram = {
@@ -110,8 +110,11 @@ function loginMapper(source, p) {
     }
   }
   if (source === 'facebook') {
+    result.email = p.email || p.emails[0].value
+    result.name = p.name || `${p.name.givenName} ${p.name.familyName}`
     result.facebook = {
-      id: p.id
+      id: p.id,
+      photo: p.photo || (p.photos && p.photos[0].value)
     }
   }
   return result

@@ -33,9 +33,7 @@ function handleError(err, res, code) {
   if (code) console.log(ErrorCodes[code])
   if (err) console.log(err)
   if (res) {
-    return res
-      .status(500)
-      .send({ error: err, message: ErrorCodes[code], code: code })
+    return respond(res, 500, ErrorCodes[code], { code, err })
   }
 }
 

@@ -45,14 +45,14 @@ function verifyAuthenticationToken(req, res, next) {
           err.message === 'jwt malformed' ||
           err.message === 'jwt must be provided'
         ) {
-          return res.status(403).send('Your session has expired.')
+          return respond(res, 403, 'Your session has expired')
         } else return handleError(err, res, 4000)
       }
       req.locals = { decodedToken: decoded, token }
       next()
     })
   } catch (err) {
-    return res.status(400).send('No token present')
+    return respond(res, 400, 'No token present')
   }
 }
 
@@ -88,13 +88,13 @@ function verifyCaptcha(req, res, next) {
         if (status === 200 && data.score >= captchaThreshold && data.success)
           next()
         else {
-          res.status(403).send({ msg: 'Invalid reCaptcha', reCaptcha: data })
           console.log('RECAPTCHA VALUE: ', data)
+          respond(res, 403, 'Invalid reCaptcha', { reCaptcha: data })
         }
       })
       .catch(err => handleError(err, res, 4001))
   } catch (err) {
-    res.status(403).send('Invalid captcha. No captcha info present.')
+    respond(res, 403, 'Invalid captcha. No captcha info present.')
   }
 }
 
