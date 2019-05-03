@@ -31,7 +31,7 @@ async function findOrCreateUser(source, profile) {
   let user = await findUser(source, { ...profile, source })
   if (user) return user
   else {
-    let newProf = loginMapper(source, profile)
+    let newProf = createDatabasePayload(source, profile)
     return await UserModel.create(newProf)
   }
 }
@@ -42,7 +42,7 @@ async function findOrCreateUser(source, profile) {
  * @param {object} profile - user profile object
  */
 async function createUser(source, profile) {
-  let newProf = loginMapper(source, profile)
+  let newProf = createDatabasePayload(source, profile)
   return await UserModel.create(newProf)
 }
 
@@ -86,6 +86,10 @@ function determinePayloadFromSource(source, user) {
   return payload
 }
 
+function createDatabasePayload(source, p) {
+  let r = loginMapper(source, p)
+  return { ...r, password: p.password }
+}
 /**
  * Maps disperate responses from login sources to unified object model for database.
  * @param {string} source - source string (instagram, facebook, email)

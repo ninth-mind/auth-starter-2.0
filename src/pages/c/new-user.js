@@ -3,7 +3,13 @@ import axios from 'axios'
 import Link from 'next/link'
 import { toast } from 'react-toastify'
 import { connect } from 'react-redux'
-import { handleError, parseJWT, redirect, setLoading } from '~/lib/utils'
+import {
+  handleError,
+  parseJWT,
+  redirect,
+  setLoading,
+  sanitize
+} from '~/lib/utils'
 
 class NewUser extends React.Component {
   constructor(props) {
@@ -11,9 +17,14 @@ class NewUser extends React.Component {
     this.handleChange = this.handleChange.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
     this.setLoading = this.setLoading.bind(this)
+    this.clear = this.clear.bind(this)
     this.form // added by ref
 
-    this.state = {}
+    this.state = {
+      username: '',
+      email: '',
+      region: ''
+    }
   }
 
   static async getInitialProps({ query }) {
@@ -23,8 +34,21 @@ class NewUser extends React.Component {
   componentDidMount() {
     const { query } = this.props
     if (query && query.token) {
-      this.setState({ ...parseJWT(query.token) })
+      this.setState({
+        ...this.state,
+        ...parseJWT(query.token)
+      })
     }
+  }
+
+  clear(inputs) {
+    this.setState(
+      inputs.reduce((a, f) => {
+        a[f] = ''
+        return a
+      }, {})
+    )
+    this.form.querySelector(`#${inputs[0]}`).focus()
   }
 
   setLoading(isLoading) {
@@ -41,9 +65,18 @@ class NewUser extends React.Component {
 
   async handleSubmit(e) {
     e.preventDefault()
+    // validate inputs
+    let sanitary = sanitize(this.state)
+    if (!sanitary.valid) {
+      toast.warn(`Invalid fields: ${sanitary.invalid.join(', ')}`)
+      this.clear(sanitary.invalid)
+      return
+    }
     // start async process
     this.setLoading(true)
     let data = this.state
+    console.log('DATA', data)
+    debugger
     const captchaToken = await this.props.reCaptcha.execute({
       action: 'complete-profile'
     })
