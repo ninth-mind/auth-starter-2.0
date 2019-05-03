@@ -15,7 +15,6 @@ async function sendEmailConfirmation(email, token) {
       html: templates.confirmationEmailHTML(email, link)
     })
 
-    console.log('EMAIL RESULT', result)
     return result
   } catch (err) {
     return err

@@ -2,6 +2,8 @@ require('dotenv').config()
 const jwt = require('jsonwebtoken')
 const axios = require('axios')
 const passport = require('passport')
+const db = require('../services/database')
+const { RateLimiterMongo } = require('rate-limiter-flexible')
 const { handleError, respond } = require('./utils')
 const secret = process.env.SECRET
 const clientURL = process.env.CLIENT_URL
@@ -96,10 +98,33 @@ function verifyCaptcha(req, res, next) {
   }
 }
 
+//  ___    _ _____ ___   _    ___ __  __ ___ _____ ___ ___
+// | _ \  /_\_   _| __| | |  |_ _|  \/  |_ _|_   _| __| _ \
+// |   / / _ \| | | _|  | |__ | || |\/| || |  | | | _||   /
+// |_|_\/_/ \_\_| |___| |____|___|_|  |_|___| |_| |___|_|_\
+//
+const rateLimiter = new RateLimiterMongo({
+  storeClient: db,
+  points: 100, // Number of points
+  duration: 1 // Per second(s)
+})
+
+function rateLimiterMiddleware(req, res, next) {
+  rateLimiter
+    .consume(req.ip, 1)
+    .then(() => {
+      next()
+    })
+    .catch(() => {
+      respond(res, 429, 'Too many requests')
+    })
+}
+
 module.exports = {
   verifyOrigin,
   verifyCaptcha,
   verifyAuthenticationToken,
   makePermissionsMiddleware,
-  passport
+  passport,
+  rateLimiterMiddleware
 }

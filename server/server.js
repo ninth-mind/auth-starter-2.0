@@ -6,6 +6,8 @@ const next = require('next')
 const path = require('path')
 const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
+const helmet = require('helmet')
+const { rateLimiterMiddleware } = require('./lib/middleware')
 const cors = require('cors')
 const ApiRouter = require('./routers/ApiRouter')
 
@@ -28,6 +30,8 @@ app
     server.use(bodyParser.urlencoded({ extended: false }))
     server.use(bodyParser.json())
     server.use(cookieParser())
+    server.use(helmet())
+    server.use(rateLimiterMiddleware)
 
     server.use((req, res, next) => {
       req.locals = {

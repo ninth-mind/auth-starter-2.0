@@ -6,12 +6,15 @@ Starter repo for user authentication using passport, user payment handling using
 2. `$ npm run dev`
 
 ### TODO
-- [ ] Limit number of requests per IP address per second
-- [ ] Only create token using needed information!!!!
-- [x] set Cookie headers to secure
-- [ ] allow users to sign in using social if email is found associated with social account
-- [ ] If you try and login while logged in — go to profile
-- [ ] Distinguish between Profile page and Account page (account lets you change email and password)
+- [ ] - HIGH - Limit number of requests per IP address per second
+- [ ] - HIGH - Only create token using needed information!!!!
+- [x] - HIGH - set Cookie headers to secure in production
+- [ ] - LOW - allow users to sign in using social if email is found associated with social account
+- [ ]* - LOW -If you try and login while logged in — go to profile
+- [ ] - LOW - Distinguish between Profile page and Account page (account lets you change email and password)
+
+`*` - denotes: only an issue if the user trys to get weird, and doesn't follow designed flow
+
 
 
 

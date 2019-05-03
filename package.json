@@ -4,7 +4,8 @@
   "scripts": {
     "dev": "nodemon -w server server/server.js",
     "build": "next build ./src",
-    "start": "NODE_ENV=production node server/server.js"
+    "start": "NODE_ENV=production node server/server.js",
+    "test": "snyk test"
   },
   "dependencies": {
     "@babel/preset-env": "^7.4.3",
@@ -18,6 +19,7 @@
     "cron": "^1.7.0",
     "dotenv": "^7.0.0",
     "express": "^4.16.4",
+    "helmet": "^3.16.0",
     "jsonwebtoken": "^8.5.1",
     "moment": "^2.24.0",
     "mongoose": "^5.5.1",
@@ -32,6 +34,7 @@
     "passport-instagram": "^1.0.0",
     "passport-local": "^1.0.0",
     "path": "^0.12.7",
+    "rate-limiter-flexible": "^1.0.1",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-google-recaptcha": "^1.0.5",
@@ -48,6 +51,7 @@
     "eslint": "^5.16.0",
     "eslint-plugin-prettier": "^3.0.1",
     "eslint-plugin-react": "^7.12.4",
-    "prettier": "^1.16.4"
+    "prettier": "^1.16.4",
+    "snyk": "^1.161.1"
   }
 }
