@@ -18,8 +18,13 @@ async function findUser(source, profile) {
  * @param {object} profile - profile
  * @param {object} res - express response object
  */
-async function getUsers() {
-  return await UserModel.find({}).sort({ value: -1 })
+async function getUsers(query = {}) {
+  return await UserModel.find(query).sort({ value: -1 })
+}
+
+async function deleteInactiveUsers() {
+  let d = new Date(new Date() - 10 * 60 * 1000)
+  return await UserModel.deleteMany({ confirmed: false, updatedAt: { $lt: d } })
 }
 /**
  * Finds or creates user.
@@ -88,7 +93,8 @@ function determinePayloadFromSource(source, user) {
 
 function createDatabasePayload(source, p) {
   let r = loginMapper(source, p)
-  return { ...r, password: p.password }
+  if (p.password) r = { ...r, password: p.password }
+  return r
 }
 /**
  * Maps disperate responses from login sources to unified object model for database.
@@ -128,6 +134,7 @@ module.exports = {
   findUser,
   createUser,
   getUsers,
+  deleteInactiveUsers,
   findOrCreateUser,
   findOneAndUpdate,
   determinePayloadFromSource,

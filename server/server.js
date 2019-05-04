@@ -9,6 +9,7 @@ const cookieParser = require('cookie-parser')
 const helmet = require('helmet')
 const { rateLimiterMiddleware } = require('./lib/middleware')
 const cors = require('cors')
+
 const ApiRouter = require('./routers/ApiRouter')
 
 const port = process.env.PORT || 3000
@@ -52,6 +53,7 @@ app
       if (err) throw err
       console.log(`~~~~~~~~~~~ LOGS: ${new Date()} ~~~~~~~~~~~`)
       console.log(`Ready on http://localhost:${port}`)
+      const cron = require('./services/cron')
     })
   })
   .catch(ex => {
