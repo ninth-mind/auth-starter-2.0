@@ -1,5 +1,5 @@
 {
-  "name": "leaderboard",
+  "name": "auth-starter",
   "version": "1.0.0",
   "scripts": {
     "dev": "nodemon -w server server/server.js",
