@@ -89,11 +89,12 @@ AuthRouter.post(
       )
       //create new temporary token
       let token = createToken(u.toObject(), true)
+      setCookie(res, token, true)
       let mailResponse = await Mailer.sendEmailConfirmation(email, token)
       respond(res, 200, 'email confirmation sent', mailResponse)
     } catch (err) {
       if (err.errors) {
-        let kind = err.errors.keys()[0]
+        let kind = Object.keys(err.errors)[0]
         return respond(res, 409, `${kind} already exists.`)
       } else handleError(err, res, 1005)
     }
@@ -107,6 +108,21 @@ AuthRouter.get('/logout', verifyAuthenticationToken, (req, res) => {
   res.clearCookie(cookieName)
   respond(res, 200, 'Successfully logged out')
 })
+
+AuthRouter.post(
+  '/email-confirmation',
+  verifyAuthenticationToken,
+  async (req, res) => {
+    const { decodedToken } = req.locals
+    const { source, email } = decodedToken
+    let u = await User.findOrCreateUser(source, decodedToken, { new: true })
+    //create new temporary token
+    let token = createToken(u.toObject(), true)
+    setCookie(res, token, true)
+    let mailResponse = await Mailer.sendEmailConfirmation(email, token)
+    respond(res, 200, 'email confirmation sent', mailResponse)
+  }
+)
 
 /**
  * Confirms users email, once they have been re-routed back using the

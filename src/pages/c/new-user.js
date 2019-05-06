@@ -76,7 +76,6 @@ class NewUser extends React.Component {
     this.setLoading(true)
     let data = this.state
     console.log('DATA', data)
-    debugger
     const captchaToken = await this.props.reCaptcha.execute({
       action: 'complete-profile'
     })
@@ -88,11 +87,8 @@ class NewUser extends React.Component {
     })
       .then(r => {
         this.setLoading(false)
-        toast.success(
-          `Email confirmation sent.
-Check your email to complete registration.`
-        )
-        redirect('/')
+        toast.success(`Email confirmation sent.`)
+        redirect(`/c/confirmation?email=${r.data.data.accepted[0]}`)
       })
       .catch(err => {
         this.setLoading(false)
