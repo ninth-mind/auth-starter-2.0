@@ -1,16 +1,19 @@
 const jwt = require('jsonwebtoken')
 const ErrorCodes = require('./errorCodes')
+const { createTokenPayload } = require('../services/user')
 const {
   secret,
   tempTokenExpiryTime,
   tokenExpiryTime,
   cookieName
 } = require('../config').utils
+
 /**
  * @param {Object} payload - make cookie
  */
 function createToken(profile, isTemp = false) {
-  return jwt.sign(profile, secret, {
+  let payload = createTokenPayload(profile.source, profile)
+  return jwt.sign(payload, secret, {
     expiresIn: isTemp ? tempTokenExpiryTime : tokenExpiryTime
   })
 }
