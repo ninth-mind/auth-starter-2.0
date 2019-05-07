@@ -7,6 +7,7 @@ import axios from 'axios'
 
 function Confirmation(props) {
   const [sent, setSent] = useState(false)
+
   async function handleClick() {
     const { dispatch } = props
     setSent(true)

@@ -22,6 +22,10 @@ async function getUsers(query = {}) {
   return await UserModel.find(query).sort({ value: -1 })
 }
 
+/**
+ * Deletes inactive users that have not confirmed their email and would have an expired token.
+ * (ie token is older than 10 min)
+ */
 async function deleteInactiveUsers() {
   let d = new Date(new Date() - 10 * 60 * 1000)
   return await UserModel.deleteMany({ confirmed: false, updatedAt: { $lt: d } })
@@ -80,21 +84,21 @@ function determineQueryFromSource(source, p) {
   return query
 }
 
-/**
- * Determines the correct Database payload to be sent based on user login strategy
- * @param {string} source - source string (instagram, facebook, email)
- * @param {object} user - know attributes about the user
- */
-function determinePayloadFromSource(source, user) {
-  let { value, username, permissions, email, _id } = user
-  let payload = { value, username, source, permissions, email, id: _id }
-  return payload
-}
-
 function createDatabasePayload(source, p) {
   let r = loginMapper(source, p)
   if (p.password) r = { ...r, password: p.password }
   return r
+}
+
+function createTokenPayload(source, p) {
+  let r = loginMapper(source, p)
+  return {
+    source,
+    id: r.id,
+    email: r.email,
+    username: r.username,
+    permissions: p.permissions
+  }
 }
 /**
  * Maps disperate responses from login sources to unified object model for database.
@@ -131,13 +135,13 @@ function loginMapper(source, p) {
 }
 
 module.exports = {
-  findUser,
+  createTokenPayload,
   createUser,
-  getUsers,
   deleteInactiveUsers,
-  findOrCreateUser,
-  findOneAndUpdate,
-  determinePayloadFromSource,
   determineQueryFromSource,
+  findOneAndUpdate,
+  findOrCreateUser,
+  findUser,
+  getUsers,
   loginMapper
 }

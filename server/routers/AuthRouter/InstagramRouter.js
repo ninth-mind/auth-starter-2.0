@@ -4,14 +4,15 @@ const InstagramRouter = express.Router()
 const InstagramStrategy = require('passport-instagram')
 const User = require('../../services/user')
 const { handleError, createToken, setCookie } = require('../../lib/utils')
-const serverURL = process.env.SERVER_URL
-const clientURL = process.env.CLIENT_URL
+const config = require('../../config')
+const { clientSecret, clientID } = config.instagram
+const { serverURL, clientURL } = config.global
 
 passport.use(
   new InstagramStrategy(
     {
-      clientID: process.env.INSTAGRAM_CLIENT_ID,
-      clientSecret: process.env.INSTAGRAM_CLIENT_SECRET,
+      clientID,
+      clientSecret,
       callbackURL: `${serverURL}/api/auth/instagram/callback`
     },
     (accessToken, refreshToken, profile, done) => {
