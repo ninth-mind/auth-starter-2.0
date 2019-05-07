@@ -1,7 +1,9 @@
 const nodemailer = require('nodemailer')
-const emailUsername = process.env.EMAIL_USERNAME
-const emailPassword = process.env.EMAIL_PASSWORD
-const emailHost = process.env.EMAIL_HOST
+const {
+  emailUsername,
+  emailPassword,
+  emailHost
+} = require('../../config').email
 
 const smtpConfig = {
   // service: 'Godaddy',

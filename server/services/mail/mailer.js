@@ -1,6 +1,6 @@
 const transporter = require('./transporter')
 const templates = require('./emailTemplates')
-const serverURL = process.env.SERVER_URL
+const { serverURL } = require('../../config').global
 /**
  * Sends email confirmation link to users email.
  * @param {string} email : Users email

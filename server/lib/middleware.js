@@ -5,11 +5,10 @@ const passport = require('passport')
 const db = require('../services/database')
 const { RateLimiterMongo } = require('rate-limiter-flexible')
 const { handleError, respond } = require('./utils')
-const secret = process.env.SECRET
-const clientURL = process.env.CLIENT_URL
-const cookieName = process.env.COOKIE_NAME
-const captchaSecretKey = process.env.CAPTCHA_SECRET_KEY
-const captchaThreshold = process.env.CAPTCHA_THRESHOLD
+// config
+const config = require('../config')
+const { clientURL, env } = config.global
+const { secret, cookieName, captchaSecretKey, captchaThreshold } = config.utils
 
 passport.serializeUser(function(user, done) {
   done(null, user)
@@ -20,7 +19,7 @@ passport.deserializeUser(function(user, done) {
 })
 
 function verifyOrigin(req, res, next) {
-  if (process.env.NODE_ENV !== 'production') next()
+  if (env !== 'production') next()
   else if (req.headers.origin !== clientURL)
     respond(res, 403, 'You are not authorized')
   else next()

@@ -14,7 +14,7 @@ const {
   createToken,
   setCookie
 } = require('../../lib/utils')
-const cookieName = process.env.COOKIE_NAME
+const { cookieName } = require('../../config').utils
 const AuthRouter = express.Router()
 
 AuthRouter.use(passport.initialize())

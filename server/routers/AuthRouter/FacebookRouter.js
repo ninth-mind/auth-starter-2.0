@@ -4,14 +4,15 @@ const { passport } = require('../../lib/middleware')
 const FacebookStrategy = require('passport-facebook')
 const User = require('../../services/user')
 const { handleError, createToken, setCookie } = require('../../lib/utils')
-const serverURL = process.env.SERVER_URL
-const clientURL = process.env.CLIENT_URL
+const config = require('../../config')
+const { clientSecret, clientID } = config.facebook
+const { serverURL, clientURL } = config.global
 
 passport.use(
   new FacebookStrategy(
     {
-      clientID: process.env.FACEBOOK_APP_ID,
-      clientSecret: process.env.FACEBOOK_APP_SECRET,
+      clientID,
+      clientSecret,
       callbackURL: `${serverURL}/api/auth/facebook/callback`,
       profileFields: [
         'id',

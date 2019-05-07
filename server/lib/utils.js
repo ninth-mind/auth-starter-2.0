@@ -1,10 +1,11 @@
 const jwt = require('jsonwebtoken')
 const ErrorCodes = require('./errorCodes')
-const secret = process.env.SECRET
-const tokenExpiryTime = process.env.TOKEN_EXPIRATION_TIME
-const tempTokenExpiryTime = process.env.TEMP_TOKEN_EXPIRATION_TIME
-const cookieName = process.env.COOKIE_NAME
-
+const {
+  secret,
+  tempTokenExpiryTime,
+  tokenExpiryTime,
+  cookieName
+} = require('../config').utils
 /**
  * @param {Object} payload - make cookie
  */
