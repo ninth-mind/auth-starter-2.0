@@ -12,14 +12,13 @@ class Terms extends React.Component {
         </p>
         <p>
           Your access to and use of this website, as well as all related
-          websites operated by Smart Patient Academy dba (JMS Benefit Solutions
-          Agency Inc. which includes [www.smarpatientacademy.com and The Patient
-          Identity Profile, among others (collectively the "Site") is subject to
-          the following terms and conditions ("Terms of Use") and all applicable
-          laws. By accessing and browsing the Site, you accept, without
-          limitation or qualification, the Terms of Use and acknowledge that any
-          other agreements between you and the Site are superseded and of no
-          force or effect:
+          websites operated by AuthStarter dba (AuthStarter. which includes
+          [www.authstarter.herokuapp.com and The Patient Identity Profile, among
+          others (collectively the "Site") is subject to the following terms and
+          conditions ("Terms of Use") and all applicable laws. By accessing and
+          browsing the Site, you accept, without limitation or qualification,
+          the Terms of Use and acknowledge that any other agreements between you
+          and the Site are superseded and of no force or effect:
         </p>
         <p>
           1. You agree that the Site itself, as well as all content, videos,
@@ -27,27 +26,27 @@ class Terms extends React.Component {
           available on the Site by us or other third parties, as well as the
           look and feel of all of the foregoing, (collectively referred to as
           the "Content") are maintained for your personal use and information by
-          [Smart Patient Academy and/or JMS Benefit Solutions Agency Inc., (the
-          "Company") and are the property of the Company and/or its third party
-          providers. You agree that such Company Content shall include all
-          proprietary videos, HTML/CSS, Javascript, graphics, voice, and sound
-          recordings, artwork, photos, documents, and text as well as all other
-          materials included in the Site, excluding only the materials you
-          provide. Subject to your compliance with these Terms of Use, the
-          Company hereby grants you a limited license, which is non-exclusive,
-          non-transferable, and non-sublicensable, to access, view, and use the
-          Site solely for your personal purposes. No Company Content may be
-          copied, reproduced, republished, uploaded, posted, transmitted,
-          distributed, used for public or commercial purposes, or downloaded in
-          any way unless written permission is expressly granted by the Company.
-          Modification of the Content or use of the Content for any other
-          purpose is a violation of the copyright and other proprietary rights
-          of the Company, as well as other authors who created the materials,
-          and may be subject to monetary damages and penalties. You may not
-          distribute, modify, transmit or use the content of the Site or any
-          Content, including any and all software, tools, graphics and/or sound
-          files, for public or commercial purposes without the express written
-          permission of the Company.
+          [AuthStarter and/or AuthStarter., (the "Company") and are the property
+          of the Company and/or its third party providers. You agree that such
+          Company Content shall include all proprietary videos, HTML/CSS,
+          Javascript, graphics, voice, and sound recordings, artwork, photos,
+          documents, and text as well as all other materials included in the
+          Site, excluding only the materials you provide. Subject to your
+          compliance with these Terms of Use, the Company hereby grants you a
+          limited license, which is non-exclusive, non-transferable, and
+          non-sublicensable, to access, view, and use the Site solely for your
+          personal purposes. No Company Content may be copied, reproduced,
+          republished, uploaded, posted, transmitted, distributed, used for
+          public or commercial purposes, or downloaded in any way unless written
+          permission is expressly granted by the Company. Modification of the
+          Content or use of the Content for any other purpose is a violation of
+          the copyright and other proprietary rights of the Company, as well as
+          other authors who created the materials, and may be subject to
+          monetary damages and penalties. You may not distribute, modify,
+          transmit or use the content of the Site or any Content, including any
+          and all software, tools, graphics and/or sound files, for public or
+          commercial purposes without the express written permission of the
+          Company.
         </p>
         <p>
           2. All Content, such as text, data, graphics files, videos and sound
