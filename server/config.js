@@ -112,7 +112,7 @@ function determineExport(config) {
       ...configObj[env]
     }
   }
-  if (env === 'development') console.log(result)
+  if (env !== 'production') console.log(result)
   return result
 }
 
