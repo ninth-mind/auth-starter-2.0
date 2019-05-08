@@ -58,19 +58,21 @@ class Login extends React.Component {
       url: `/api/auth/login`,
       data: { ...data, recaptcha: captchaToken }
     })
-      .then(r => {
-        this.setLoading(false)
-        redirect('/u')
-      })
+      .then(r => redirect('/u'))
       .catch(err => {
-        if (err && err.response && err.response.data) {
+        // if user already has an account with a different provider, redirect
+        if (err.response.status === 300)
+          redirect(`/api/auth/${err.response.data.data.source}`)
+        // otherwise raise error message
+        else if (err && err.response && err.response.data) {
           toast.error(err.response.data.msg)
+          // catch all errors
         } else {
           toast.error('Oops. Something went wrong')
           handleError(err)
         }
       })
-      .then(() => this.setLoading(false))
+      .finally(() => this.setLoading(false))
   }
 
   render() {
@@ -80,7 +82,7 @@ class Login extends React.Component {
         <form className="form" onSubmit={this.handleSubmit}>
           <div className="form__input-group">
             <div className="space-between">
-              <label htmlFor="email">Email:</label>
+              <label htmlFor="email">Email/Username:</label>
             </div>
             <div className="space-out">
               <input

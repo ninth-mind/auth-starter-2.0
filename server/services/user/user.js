@@ -76,10 +76,15 @@ async function findOneAndUpdate(source, profile, update, opts) {
 function determineQueryFromSource(source, p) {
   let query = {}
   try {
+    // try and create MongoDB Id
     query = { _id: new ObjectID(p.id.toString()) }
   } catch (err) {
+    // try and find by social id
     if (p.id) query[`${source}.id`] = p.id
-    else query.email = p.email
+    // find by either username or email
+    else {
+      query.$or = [{ email: p.email }, { username: p.username }]
+    }
   }
   return query
 }
@@ -90,16 +95,6 @@ function createDatabasePayload(source, p) {
   return r
 }
 
-function createTokenPayload(source, p) {
-  let r = loginMapper(source, p)
-  return {
-    source,
-    id: r.id,
-    email: r.email,
-    username: r.username,
-    permissions: p.permissions
-  }
-}
 /**
  * Maps disperate responses from login sources to unified object model for database.
  * @param {string} source - source string (instagram, facebook, email)
@@ -135,7 +130,6 @@ function loginMapper(source, p) {
 }
 
 module.exports = {
-  createTokenPayload,
   createUser,
   deleteInactiveUsers,
   determineQueryFromSource,

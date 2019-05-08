@@ -14,7 +14,9 @@ const {
   createToken,
   setCookie
 } = require('../../lib/utils')
+
 const { cookieName } = require('../../config').utils
+
 const AuthRouter = express.Router()
 
 AuthRouter.use(passport.initialize())
@@ -55,11 +57,12 @@ AuthRouter.post('/register', verifyCaptcha, async (req, res) => {
 AuthRouter.post('/login', verifyCaptcha, async (req, res) => {
   try {
     const { email, password } = req.body
-    let u = await User.findUser('email', { email })
+    let u = await User.findUser('email', { email, username: email })
     if (!u) respond(res, 404, 'No user found')
     else {
-      if (!u.password) return respond(res, 409, `User signed using ${u.source}`)
-      else if (!u.confirmed)
+      if (!u.password) {
+        return respond(res, 300, `User signed using ${u.source}`, u)
+      } else if (!u.confirmed)
         return respond(res, 409, `Email has not been confirmed`)
       let isMatch = await u.comparePassword(password)
       if (!isMatch) respond(res, 403, 'Incorrect credentials')
