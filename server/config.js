@@ -106,7 +106,6 @@ function determineExport(config) {
       ...configObj[env]
     }
   }
-  console.log(result)
   return result
 }
 

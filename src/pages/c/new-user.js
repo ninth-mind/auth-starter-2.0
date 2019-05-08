@@ -1,6 +1,5 @@
 import React from 'react'
 import axios from 'axios'
-import Link from 'next/link'
 import { toast } from 'react-toastify'
 import { connect } from 'react-redux'
 import {
@@ -149,9 +148,6 @@ class NewUser extends React.Component {
           </div>
           <button type="submit">Submit</button>
         </form>
-        <Link href="/c/login">
-          <a className="small italic link">Already a member? Login here.</a>
-        </Link>
       </div>
     )
   }

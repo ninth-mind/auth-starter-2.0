@@ -1,6 +1,5 @@
 const jwt = require('jsonwebtoken')
 const ErrorCodes = require('./errorCodes')
-const { createTokenPayload } = require('../services/user')
 const {
   secret,
   tempTokenExpiryTime,
@@ -9,10 +8,23 @@ const {
 } = require('../config').utils
 
 /**
+ * Creates token.
+ * - If the token is meant to be temporary, then pass the entire profile through
+ * to be received on the other end.
+ * - If the token is meant to be permanent, strip the token down to essentials.
  * @param {Object} payload - make cookie
  */
-function createToken(profile, isTemp = false) {
-  let payload = createTokenPayload(profile.source, profile)
+function createToken(p, isTemp = false) {
+  let payload = p
+  // strips down token if is NOT temp
+  if (!isTemp)
+    payload = {
+      source: p.source,
+      id: p._id,
+      email: p.email,
+      username: p.username,
+      permissions: p.permissions
+    }
   return jwt.sign(payload, secret, {
     expiresIn: isTemp ? tempTokenExpiryTime : tokenExpiryTime
   })

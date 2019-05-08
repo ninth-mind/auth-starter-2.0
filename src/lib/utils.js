@@ -87,8 +87,10 @@ export function clean(inputs) {
       result[key] = validator.trim(value)
       // if email
     } else if (key.match(/email/gi)) {
-      let email = validator.trim(value)
-      result[key] = validator.normalizeEmail(email)
+      let emun = validator.trim(value)
+      let isEmail = validator.isEmail(emun)
+      if (isEmail) emun = validator.normalizeEmail(emun)
+      result[key] = emun
       //username
     } else if (key.match(/username/gi)) {
       result[key] = validator.trim(value)

@@ -50,7 +50,6 @@ FacebookRouter.get(
   async (req, res) => {
     try {
       const { profile } = req.user
-      console.log('PROFILE', profile)
       let user = await User.findUser('facebook', profile)
       // if user is found, log them in and redirect to profile
       if (user) {
