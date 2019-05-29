@@ -31,6 +31,15 @@ async function deleteInactiveUsers() {
   return await UserModel.deleteMany({ confirmed: false, updatedAt: { $lt: d } })
 }
 /**
+ * Deletes user that matches profile
+ * @param {object} profile - profile of user to delete
+ */
+async function deleteUser(profile) {
+  let query = determineQueryFromSource(profile.source, profile)
+  return await UserModel.deleteOne(query)
+}
+
+/**
  * Finds or creates user.
  * @param {string} source - source of profile
  * @param {object} profile - user profile object to create *MUST HAVE SOURCE*
@@ -132,6 +141,7 @@ function loginMapper(source, p) {
 module.exports = {
   createUser,
   deleteInactiveUsers,
+  deleteUser,
   determineQueryFromSource,
   findOneAndUpdate,
   findOrCreateUser,

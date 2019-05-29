@@ -30,14 +30,17 @@ export default function withProfile(Component) {
         })
         return { profile: r.data.data }
       } catch (err) {
-        toast.error('Oops. Incorrect Permissions')
-        redirect('/c', ctx)
-        return {}
+        return { error: err.response.data }
       }
     }
 
     componentDidMount() {
-      const { dispatch, initialProfile } = this.props
+      const { dispatch, initialProfile, error } = this.props
+      if (error) {
+        redirect('/')
+        toast.error('Oops, ' + error.msg)
+        return
+      }
       dispatch({
         type: actions.PROFILE,
         username: initialProfile.username,
@@ -49,12 +52,14 @@ export default function withProfile(Component) {
     }
 
     render() {
-      return <Component {...this.props} />
+      if (this.props.error) return <p>Not authorized</p>
+      else return <Component {...this.props} />
     }
   } // component end
 
   const mapStateToProps = (state, ownProps) => {
     return {
+      error: ownProps.error,
       profile: state.profile,
       initialProfile: ownProps.profile
     }
