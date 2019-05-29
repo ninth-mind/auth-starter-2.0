@@ -6,6 +6,7 @@ import { ToastContainer, toast } from 'react-toastify'
 import { setLoading } from '~/lib/utils'
 import Navigation from '~/components/Navigation'
 import Loading from '~/components/Loading'
+import { actions } from '~/store'
 import 'react-toastify/dist/ReactToastify.min.css'
 import './Layout.scss'
 
@@ -23,7 +24,13 @@ class Layout extends React.Component {
   initializeRouter() {
     let { dispatch } = this.props
     Router.events.on('routeChangeStart', url => setLoading(true, dispatch))
-    Router.events.on('routeChangeComplete', () => setLoading(false, dispatch))
+    Router.events.on('routeChangeComplete', url => {
+      setLoading(false, dispatch)
+      dispatch({
+        type: actions.PAGE,
+        currentPage: url
+      })
+    })
     Router.events.on('routeChangeError', () => setLoading(false, dispatch))
   }
 
