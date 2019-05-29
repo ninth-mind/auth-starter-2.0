@@ -1,8 +1,8 @@
 import React from 'react'
-import { connect } from 'react-redux'
-import { signOut } from '~/lib/utils'
+import axios from 'axios'
+import { toast } from 'react-toastify'
+import { signOut, redirect } from '~/lib/utils'
 import { withProfile } from '~/components/HOCs'
-import AddValue from '~/components/AddValue'
 
 class Account extends React.Component {
   constructor(props) {
@@ -15,6 +15,16 @@ class Account extends React.Component {
     signOut(dispatch)
   }
 
+  async deleteAccount() {
+    let r = await axios({
+      method: 'delete',
+      url: '/api/me'
+    })
+    console.log('DELETE USER RESPONSE', r)
+    redirect('/')
+    toast.success('Your account has been deleted')
+  }
+
   render() {
     const p = this.props.profile
     return (
@@ -24,8 +34,9 @@ class Account extends React.Component {
         <h4>Email: {p.email}</h4>
         <h4>Value: {p.value}</h4>
         <p>Nothing here yet....</p>
-        <AddValue />
+
         <button onClick={this.signOut}>Sign Out</button>
+        <button onClick={this.deleteAccount}>Delete Account</button>
       </div>
     )
   }

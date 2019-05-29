@@ -1,6 +1,8 @@
 const express = require('express')
 const MeRouter = express.Router()
 const User = require('../services/user')
+const { cookieName } = require('../config').utils
+
 const {
   verifyAuthenticationToken,
   makePermissionsMiddleware
@@ -39,6 +41,17 @@ MeRouter.post('/', verifyAuthenticationToken, (req, res) => {
       }
     })
     .catch(err => handleError(err, res, 1001))
+})
+
+MeRouter.delete('/', verifyAuthenticationToken, async (req, res) => {
+  const profile = req.locals.decodedToken
+  try {
+    let deleteResponse = await User.deleteUser(profile)
+    res.clearCookie(cookieName)
+    respond(res, 200, 'user deleted', deleteResponse)
+  } catch (err) {
+    handleError(err)
+  }
 })
 
 module.exports = MeRouter
