@@ -146,7 +146,7 @@ AuthRouter.get(
       )
       let newToken = createToken(u.toObject())
       setCookie(res, newToken, true)
-      res.redirect('/u')
+      res.redirect('/u/account')
     } catch (err) {
       handleError(err, res, 1006)
     }

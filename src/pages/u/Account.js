@@ -37,12 +37,14 @@ class Account extends React.Component {
         <h4>Value: {p.value}</h4>
         <p>Nothing here yet....</p>
         <AddValue />
-        <Button onClick={this.signOut}>Sign Out</Button>
+        <Button type="primary" onClick={this.signOut}>
+          Sign Out
+        </Button>
         <Popconfirm
           title="Are you sure delete your account?"
           onConfirm={this.deleteAccount}
         >
-          <Button>Delete Account</Button>
+          <Button type="danger">Delete Account</Button>
         </Popconfirm>
       </div>
     )

@@ -4,7 +4,7 @@ import Head from 'next/head'
 import withReduxStore from '~/lib/with-redux-store'
 import { Provider } from 'react-redux'
 import { StripeProvider } from 'react-stripe-elements'
-import Layout from '~/layouts/Layout'
+import MainLayout from '~/layouts/Layout'
 import '~/styles/main.scss'
 
 class MyApp extends App {
@@ -30,9 +30,9 @@ class MyApp extends App {
           </Head>
 
           <Provider store={reduxStore}>
-            <Layout>
+            <MainLayout>
               <Component {...pageProps} />
-            </Layout>
+            </MainLayout>
           </Provider>
         </Container>
       </StripeProvider>
