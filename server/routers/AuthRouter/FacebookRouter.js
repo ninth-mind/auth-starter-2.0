@@ -55,13 +55,13 @@ FacebookRouter.get(
       if (user) {
         let token = createToken(user.toObject())
         setCookie(res, token)
-        res.redirect('/u')
-        // if NO user, create temp token and redirect to new-user page
+        res.redirect('/u/account')
+        // if NO user, create temp token and redirect to complete-profile page
       } else {
         let newProf = User.loginMapper('facebook', profile)
         let token = createToken(newProf, true)
         setCookie(res, token, true)
-        res.redirect(`/c/new-user?token=${token}`)
+        res.redirect(`/c/complete-profile?token=${token}`)
       }
     } catch (err) {
       handleError(err, res, 1003)

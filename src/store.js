@@ -6,7 +6,8 @@ const initialState = {
     CAPTCHA_SITE_KEY: '6Le87Z0UAAAAALKPzIW8DiLMEzSi9I51FNTnWBQN' // v3 site key
   },
   ui: {
-    isLoading: false
+    isLoading: false,
+    currentPage: '/'
   },
   profile: {
     username: null,
@@ -24,7 +25,8 @@ export const actions = {
   CREDS: 'CREDS',
   PROFILE: 'PROFILE',
   LOGOUT: 'LOGOUT',
-  VALUE: 'SET_VALUE'
+  VALUE: 'SET_VALUE',
+  PAGE: 'PAGE_CHANGE'
 }
 
 function applicationReducer(state = initialState, action) {
@@ -75,6 +77,9 @@ function uiReducer(state = initialState.ui, action) {
   switch (action.type) {
     case actions.LOADING: {
       return { ...state, isLoading: action.isLoading }
+    }
+    case actions.PAGE: {
+      return { ...state, currentPage: action.currentPage }
     }
     default: {
       return state

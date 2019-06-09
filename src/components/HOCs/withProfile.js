@@ -16,7 +16,7 @@ export default function withProfile(Component) {
         if (req) {
           opts = {
             url: `${req.protocol}://${req.headers.host}/api/me`,
-            headers: { cookie: req.headers.cookie }
+            headers: req.headers.cookie ? { cookie: req.headers.cookie } : {}
           }
         } else {
           opts = {
