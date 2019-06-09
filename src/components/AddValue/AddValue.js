@@ -3,7 +3,7 @@ import axios from 'axios'
 import { setLoading } from '~/lib/utils'
 import { actions } from '~/store'
 import { connect } from 'react-redux'
-import { toast } from 'react-toastify'
+import { Button, notification } from 'antd'
 
 class AddValue extends React.Component {
   constructor(props) {
@@ -22,20 +22,27 @@ class AddValue extends React.Component {
       data: { toAdd: 1 }
     })
     if (status === 200 && data) {
-      toast.success(`Value added. Now: ${data.data.value}`)
+      notification.success({
+        message: 'Value Added',
+        duration: 2
+      })
       this.props.dispatch({
         type: actions.VALUE,
         value: data.data.value
       })
 
       setLoading(false, dispatch)
-    } else toast.error('Oops. There was an error')
+    } else
+      notification.error({
+        message: 'Error Adding Value',
+        description: 'There was error adding value to your account'
+      })
   }
 
   render() {
     return (
       <div className="add-value">
-        <button onClick={this.handleSubmit}>PLUS 1</button>
+        <Button onClick={this.handleSubmit}>PLUS 1</Button>
       </div>
     )
   }

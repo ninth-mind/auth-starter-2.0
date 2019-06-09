@@ -1,168 +1,188 @@
 import React from 'react'
 import axios from 'axios'
 import Link from 'next/link'
-import { toast } from 'react-toastify'
-import { connect } from 'react-redux'
-import { handleError, sanitize, redirect, setLoading } from '~/lib/utils'
+import countries from '~/assets/countries'
+import { handleError, redirect, setLoading } from '~/lib/utils'
+import { Form, Input, Button, Select, notification } from 'antd'
+import './c.scss'
 
-class Register extends React.Component {
+// Country Options
+const { Option } = Select
+const countryOptions = countries.map(c => (
+  <Option key={c.code} value={c.code}>
+    {c.name}
+  </Option>
+))
+
+class RegistrationForm extends React.Component {
   constructor(props) {
     super(props)
-    this.state = {
-      email: '',
-      username: '',
-      region: '',
-      password: '',
-      confirm: ''
-    }
-    this.handleChange = this.handleChange.bind(this)
-    this.handleSubmit = this.handleSubmit.bind(this)
-    this.setLoading = this.setLoading.bind(this)
-    this.cleanInputs = this.cleanInputs.bind(this)
-    this.clear = this.clear.bind(this)
-    this.form // added by ref
-  }
 
-  /**
-   * @param {Array} inputs : Array of inputs to clear. The first of which will recieve focus.
-   */
-  clear(inputs) {
-    this.setState(
-      inputs.reduce((a, f) => {
-        a[f] = ''
-        return a
-      }, {})
+    this.handleSubmit = this.handleSubmit.bind(this)
+    this.validatePassword = this.validatePassword.bind(this)
+    this.validateConfirmationPassword = this.validateConfirmationPassword.bind(
+      this
     )
-    this.form.querySelector(`#${inputs[0]}`).focus()
+    this.validateUsername = this.validateUsername.bind(this)
+    this.setLoading = this.setLoading.bind(this)
   }
 
   setLoading(isLoading) {
     setLoading(isLoading, this.props.dispatch)
   }
 
-  cleanInputs() {
-    let { confirm, password } = this.state
-    let r = sanitize(this.state) || []
-    if (confirm !== password) {
-      r.valid = false
-      r.invalid = [...(r.invalid || []), 'password', 'confirm']
-    }
-    return r
-  }
-
-  handleChange(e) {
-    // for form inputs
-    let obj = {}
-    let id = e.target.id
-    let val = e.target.value
-    obj[id] = val
-    this.setState(obj)
-  }
-
   async handleSubmit(e) {
-    const { dispatch } = this.props
     e.preventDefault()
-    // validate inputs
-    let cleaned = this.cleanInputs()
-    if (!cleaned.valid) {
-      toast.warn(`Invalid fields: ${cleaned.invalid.join(', ')}`)
-      this.clear(cleaned.invalid)
-      return
-    }
-
-    // start async process
+    const { dispatch, form, reCaptcha } = this.props
+    let data = form.getFieldsValue()
     this.setLoading(true, dispatch)
-    let data = cleaned.result
-    const captchaToken = await this.props.reCaptcha.execute({
+    const captchaToken = await reCaptcha.execute({
       action: 'register'
     })
     // send request
-    axios({
+    let r = await axios({
       method: 'post',
       url: `/api/auth/register`,
       data: { ...data, recaptcha: captchaToken }
     })
       .then(r => {
-        toast.success(
-          `Email confirmation sent.
-    Check your email to complete registration.`
-        )
+        notification.open({
+          message: 'Email Confirmation sent',
+          description: `An email was sent to ${
+            data.email
+          }. Check your email to complete the registration process.`,
+          duration: 0
+        })
         redirect('/')
       })
       .catch(err => {
-        if (err && err.response && err.response.data) {
-          toast.error(err.response.data.msg)
-        } else {
-          toast.error('Oops. Something went wrong')
-          handleError(err)
+        const opts = {
+          message: 'Error',
+          description: 'Oops! Something went wrong.'
         }
+        if (err && err.response && err.response.data)
+          opts.description = err.response.data.msg
+        notification.error(opts)
+        form.resetFields()
       })
       .finally(() => this.setLoading(false, dispatch))
+  } // end handleSubmit
+
+  validatePassword(rule, value, cb) {
+    if (value.length < 8) cb('Password must be 8 characters')
+    else cb()
+  }
+
+  validateConfirmationPassword(rule, value, cb) {
+    const form = this.props.form
+    const password = form.getFieldValue('password')
+    if (password !== value) cb('Passwords do not match')
+    else cb()
+  }
+  validateUsername(rule, value, cb) {
+    if (value.length < 3) cb('Username is too short')
+    // TODO: add condition that checks database for existing usernames
+    else cb()
   }
 
   render() {
+    const { getFieldDecorator } = this.props.form
+    const formItemLayout = {
+      labelCol: {
+        xs: { span: 24 },
+        sm: { span: 8 }
+      },
+      wrapperCol: {
+        xs: { span: 24 },
+        sm: { span: 16 }
+      }
+    }
     return (
       <div className="register page center">
         <h1>Register</h1>
-        <form
-          className="form"
-          id="register"
+        <Form
+          {...formItemLayout}
           onSubmit={this.handleSubmit}
           ref={n => (this.form = n)}
         >
-          <div className="form__input-group">
-            <label htmlFor="username">Username:</label>
-            <input
-              id="username"
-              type="text"
-              required
-              onChange={this.handleChange}
-              value={this.state.username}
-            />
-          </div>
-          <div className="form__input-group">
-            <label htmlFor="region">Region:</label>
-            <input
-              id="region"
-              type="text"
-              required
-              onChange={this.handleChange}
-              value={this.state.region}
-            />
-          </div>
-          <div className="form__input-group">
-            <label htmlFor="email">Email:</label>
-            <input
-              id="email"
-              type="email"
-              size="30"
-              required
-              onChange={this.handleChange}
-              value={this.state.email}
-            />
-          </div>
-          <div className="form__input-group">
-            <label htmlFor="password">Password:</label>
-            <input
-              id="password"
-              type="password"
-              required
-              onChange={this.handleChange}
-              value={this.state.password}
-            />
-          </div>
-          <div className="form__input-group">
-            <label htmlFor="confirm">Confirm Password:</label>
-            <input
-              id="confirm"
-              type="password"
-              required
-              onChange={this.handleChange}
-              value={this.state.confirm}
-            />
-          </div>
-          <button type="submit">Submit</button>
-        </form>
+          <Form.Item label="Email">
+            {getFieldDecorator('email', {
+              rules: [
+                {
+                  required: true,
+                  type: 'email',
+                  message: 'The input is not valid email.'
+                }
+              ]
+            })(<Input />)}
+          </Form.Item>
+          <Form.Item label="Username" hasFeedback>
+            {getFieldDecorator('username', {
+              rules: [
+                {
+                  required: true,
+                  message: 'Please input your username.'
+                },
+                {
+                  validator: this.validateUsername
+                }
+              ]
+            })(<Input />)}
+          </Form.Item>
+          <Form.Item label="Country">
+            {getFieldDecorator('country ', {
+              rules: [
+                {
+                  required: true,
+                  message: 'Please select a country'
+                }
+              ]
+            })(
+              <Select
+                showSearch
+                placeholder="Select a Country"
+                optionFilterProp="children"
+                filterOption={(input, option) =>
+                  option.props.children
+                    .toLowerCase()
+                    .indexOf(input.toLowerCase()) >= 0
+                }
+              >
+                {countryOptions}
+              </Select>
+            )}
+          </Form.Item>
+          <Form.Item label="Password" hasFeedback>
+            {getFieldDecorator('password', {
+              rules: [
+                {
+                  required: true,
+                  message: 'Please input your password!'
+                },
+                {
+                  validator: this.validatePassword
+                }
+              ]
+            })(<Input.Password />)}
+          </Form.Item>
+          <Form.Item label="Confirm Password" hasFeedback>
+            {getFieldDecorator('confirm', {
+              rules: [
+                {
+                  required: true,
+                  message: 'Please confirm your password!'
+                },
+                {
+                  validator: this.validateConfirmationPassword,
+                  message: 'Passwords do not match'
+                }
+              ]
+            })(<Input.Password />)}
+          </Form.Item>
+          <Button type="primary" htmlType="submit">
+            Submit
+          </Button>
+        </Form>
         <Link href="/c/login">
           <a className="small italic link">Already a member? Login here.</a>
         </Link>
@@ -171,7 +191,7 @@ class Register extends React.Component {
   }
 }
 
-const mapStateToProps = state => ({
-  profile: state.profile
-})
-export default connect(mapStateToProps)(Register)
+const WrappedRegistrationForm = Form.create({ name: 'register' })(
+  RegistrationForm
+)
+export default WrappedRegistrationForm

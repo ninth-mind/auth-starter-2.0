@@ -3,6 +3,8 @@ import axios from 'axios'
 import { toast } from 'react-toastify'
 import { signOut, redirect } from '~/lib/utils'
 import { withProfile } from '~/components/HOCs'
+import { Button, Popconfirm } from 'antd'
+import AddValue from '~/components/AddValue'
 
 class Account extends React.Component {
   constructor(props) {
@@ -34,9 +36,16 @@ class Account extends React.Component {
         <h4>Email: {p.email}</h4>
         <h4>Value: {p.value}</h4>
         <p>Nothing here yet....</p>
-
-        <button onClick={this.signOut}>Sign Out</button>
-        <button onClick={this.deleteAccount}>Delete Account</button>
+        <AddValue />
+        <Button type="primary" onClick={this.signOut}>
+          Sign Out
+        </Button>
+        <Popconfirm
+          title="Are you sure delete your account?"
+          onConfirm={this.deleteAccount}
+        >
+          <Button type="danger">Delete Account</Button>
+        </Popconfirm>
       </div>
     )
   }
