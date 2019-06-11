@@ -3,7 +3,7 @@ import axios from 'axios'
 import { setLoading } from '~/lib/utils'
 import { actions } from '~/store'
 import { connect } from 'react-redux'
-import { Button, notification } from 'antd'
+import { notification, Button } from 'antd'
 
 class AddValue extends React.Component {
   constructor(props) {

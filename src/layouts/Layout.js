@@ -2,14 +2,12 @@ import React from 'react'
 import Router from 'next/router'
 import ReCAPTCHA from 'react-google-recaptcha'
 import { connect } from 'react-redux'
-import { ToastContainer, toast } from 'react-toastify'
 import { setLoading } from '~/lib/utils'
 import Navigation from '~/components/Navigation'
 import { Layout } from 'antd'
 const { Content } = Layout
 import Loading from '~/components/Loading'
 import { actions } from '~/store'
-import 'react-toastify/dist/ReactToastify.min.css'
 import './Layout.scss'
 
 class MainLayout extends React.Component {
@@ -47,10 +45,6 @@ class MainLayout extends React.Component {
     return (
       <Layout className="layout">
         <Navigation />
-        <ToastContainer
-          position={toast.POSITION.BOTTOM_RIGHT}
-          autoClose={5000}
-        />
         <Content>
           {this.props.isLoading && <Loading />}
           {childrenWithProps}

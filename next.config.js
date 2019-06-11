@@ -19,7 +19,7 @@ if (typeof require !== 'undefined') {
   require.extensions['.less'] = file => {}
 }
 
-module.exports = withImages(
+const webpackConfigObj = withImages(
   withCSS(
     withSass(
       withLess({
@@ -33,9 +33,17 @@ module.exports = withImages(
             ...(config.resolve.alias || {}),
             '~': path.resolve(__dirname, './src')
           }
+          config.stats = {
+            ...config.stats,
+            warningsFilter: '[mini-css-extract-plugin]'
+          }
           return config
         }
       })
     )
   )
 )
+
+console.log('WEBPACK CONFIG: ', webpackConfigObj)
+
+module.exports = webpackConfigObj

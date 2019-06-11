@@ -2,8 +2,8 @@ import React from 'react'
 import axios from 'axios'
 import Link from 'next/link'
 import countries from '~/assets/countries'
-import { handleError, redirect, setLoading } from '~/lib/utils'
-import { Form, Input, Button, Select, notification } from 'antd'
+import { redirect, setLoading, handleError } from '~/lib/utils'
+import { notification, Form, Input, Button, Select } from 'antd'
 import './c.scss'
 
 // Country Options
@@ -34,11 +34,17 @@ class RegistrationForm extends React.Component {
   async handleSubmit(e) {
     e.preventDefault()
     const { dispatch, form, reCaptcha } = this.props
-    let data = form.getFieldsValue()
-    this.setLoading(true, dispatch)
-    const captchaToken = await reCaptcha.execute({
-      action: 'register'
-    })
+    //async
+    let data, captchaToken
+    try {
+      this.setLoading(true, dispatch)
+      data = await form.validateFields()
+      this.setLoading(true)
+      captchaToken = await reCaptcha.execute({ action: 'register' })
+    } catch (err) {
+      handleError(err)
+      return
+    }
     // send request
     let r = await axios({
       method: 'post',
@@ -69,18 +75,18 @@ class RegistrationForm extends React.Component {
   } // end handleSubmit
 
   validatePassword(rule, value, cb) {
-    if (value.length < 8) cb('Password must be 8 characters')
+    if (!value || value.length < 8) cb('Password must be 8 characters')
     else cb()
   }
 
   validateConfirmationPassword(rule, value, cb) {
     const form = this.props.form
     const password = form.getFieldValue('password')
-    if (password !== value) cb('Passwords do not match')
+    if (!value || password !== value) cb('Passwords do not match')
     else cb()
   }
   validateUsername(rule, value, cb) {
-    if (value.length < 3) cb('Username is too short')
+    if (!value || value.length < 3) cb('Username is too short')
     // TODO: add condition that checks database for existing usernames
     else cb()
   }
@@ -100,11 +106,7 @@ class RegistrationForm extends React.Component {
     return (
       <div className="register page center">
         <h1>Register</h1>
-        <Form
-          {...formItemLayout}
-          onSubmit={this.handleSubmit}
-          ref={n => (this.form = n)}
-        >
+        <Form className="form" {...formItemLayout} onSubmit={this.handleSubmit}>
           <Form.Item label="Email">
             {getFieldDecorator('email', {
               rules: [
@@ -157,9 +159,6 @@ class RegistrationForm extends React.Component {
               rules: [
                 {
                   required: true,
-                  message: 'Please input your password!'
-                },
-                {
                   validator: this.validatePassword
                 }
               ]
@@ -170,9 +169,6 @@ class RegistrationForm extends React.Component {
               rules: [
                 {
                   required: true,
-                  message: 'Please confirm your password!'
-                },
-                {
                   validator: this.validateConfirmationPassword,
                   message: 'Passwords do not match'
                 }

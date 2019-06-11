@@ -1,29 +1,30 @@
 import React from 'react'
 import axios from 'axios'
-import { toast } from 'react-toastify'
 import { connect } from 'react-redux'
-import {
-  handleError,
-  parseJWT,
-  redirect,
-  setLoading,
-  sanitize
-} from '~/lib/utils'
+import countries from '~/assets/countries'
+import { notification, Form, Input, Button, Select } from 'antd'
+import { parseJWT, redirect, setLoading, handleError } from '~/lib/utils'
+import './c.scss'
 
-class NewUser extends React.Component {
+// Country Options
+const { Option } = Select
+const countryOptions = countries.map(c => (
+  <Option key={c.code} value={c.code}>
+    {c.name}
+  </Option>
+))
+
+class CompleteProfileForm extends React.Component {
   constructor(props) {
     super(props)
-    this.handleChange = this.handleChange.bind(this)
+    this.state = {
+      id: '',
+      source: '',
+      email: ''
+    }
     this.handleSubmit = this.handleSubmit.bind(this)
     this.setLoading = this.setLoading.bind(this)
-    this.clear = this.clear.bind(this)
-    this.form // added by ref
-
-    this.state = {
-      username: '',
-      email: '',
-      region: ''
-    }
+    this.validateUsername = this.validateUsername.bind(this)
   }
 
   static async getInitialProps({ query }) {
@@ -31,53 +32,43 @@ class NewUser extends React.Component {
   }
 
   componentDidMount() {
-    const { query } = this.props
+    const { query, form } = this.props
     if (query && query.token) {
-      this.setState({
-        ...this.state,
-        ...parseJWT(query.token)
+      let knownUserInfo = parseJWT(query.token)
+      this.setState(knownUserInfo)
+      form.setFields({
+        email: { value: knownUserInfo.email },
+        username: { value: knownUserInfo.username }
       })
     }
-  }
-
-  clear(inputs) {
-    this.setState(
-      inputs.reduce((a, f) => {
-        a[f] = ''
-        return a
-      }, {})
-    )
-    this.form.querySelector(`#${inputs[0]}`).focus()
   }
 
   setLoading(isLoading) {
     setLoading(isLoading, this.props.dispatch)
   }
 
-  handleChange(e) {
-    let id = e.target.id
-    let val = e.target.value
-    let obj = {}
-    obj[id] = val
-    this.setState(obj)
+  validateUsername(rule, value, cb) {
+    if (value.length < 3) cb('Username is too short')
+    // TODO: add condition that checks database for existing usernames
+    else cb()
   }
 
   async handleSubmit(e) {
     e.preventDefault()
-    // validate inputs
-    let sanitary = sanitize(this.state)
-    if (!sanitary.valid) {
-      toast.warn(`Invalid fields: ${sanitary.invalid.join(', ')}`)
-      this.clear(sanitary.invalid)
+    // start async process
+    const { form, reCaptcha } = this.props
+    this.setLoading(true)
+    //async
+    let data, captchaToken
+    try {
+      this.setLoading(true)
+      data = await form.validateFields()
+      this.setLoading(true)
+      captchaToken = await reCaptcha.execute({ action: 'complete-profile' })
+    } catch (err) {
+      handleError(err)
       return
     }
-    // start async process
-    this.setLoading(true)
-    let data = this.state
-    console.log('DATA', data)
-    const captchaToken = await this.props.reCaptcha.execute({
-      action: 'complete-profile'
-    })
     // send request
     axios({
       method: 'post',
@@ -85,69 +76,101 @@ class NewUser extends React.Component {
       data: { ...data, recaptcha: captchaToken }
     })
       .then(r => {
-        this.setLoading(false)
-        toast.success(`Email confirmation sent.`)
+        notification.open({
+          message: 'Email Confirmation sent',
+          description: `An email was sent to ${
+            data.email
+          }. Check your email to complete the registration process.`,
+          duration: 0
+        })
         redirect(`/c/confirmation?email=${r.data.data.accepted[0]}`)
       })
       .catch(err => {
-        this.setLoading(false)
-        if (err && err.response && err.response.data) {
-          toast.error(err.response.data.msg)
-        } else {
-          toast.error('Oops. Something went wrong')
-          handleError(err)
+        const opts = {
+          message: 'Error',
+          description: 'Oops! Something went wrong.'
         }
+        if (err && err.response && err.response.data)
+          opts.description = err.response.data.msg
+        notification.error(opts)
+        form.resetFields()
       })
+      .finally(() => this.setLoading(false))
   }
 
   render() {
+    const { getFieldDecorator } = this.props.form
+    const formItemLayout = {
+      labelCol: {
+        xs: { span: 24 },
+        sm: { span: 8 }
+      },
+      wrapperCol: {
+        xs: { span: 24 },
+        sm: { span: 16 }
+      }
+    }
     const s = this.state
     return (
-      <div className="register page center">
+      <div id="complete-profile" className="complete-profile page center">
         <h1>Complete Profile</h1>
         <p>
           There are just a few more things we need to complete your profile.
         </p>
         <h3>ID: {s.id}</h3>
         <h3>Source: {s.source}</h3>
-        <form
-          className="form"
-          id="register"
-          onSubmit={this.handleSubmit}
-          ref={n => (this.form = n)}
-        >
-          <div className="form__input-group">
-            <label htmlFor="username">Username:</label>
-            <input
-              id="username"
-              type="text"
-              required
-              onChange={this.handleChange}
-              value={s.username || ''}
-            />
-          </div>
-          <div className="form__input-group">
-            <label htmlFor="email">Email:</label>
-            <input
-              id="email"
-              type="email"
-              required
-              onChange={this.handleChange}
-              value={s.email || ''}
-            />
-          </div>
-          <div className="form__input-group">
-            <label htmlFor="region">Region:</label>
-            <input
-              id="region"
-              type="text"
-              required
-              onChange={this.handleChange}
-              value={s.region || ''}
-            />
-          </div>
-          <button type="submit">Submit</button>
-        </form>
+        <Form className="form" {...formItemLayout} onSubmit={this.handleSubmit}>
+          <Form.Item label="Username" hasFeedback>
+            {getFieldDecorator('username', {
+              rules: [
+                {
+                  required: true,
+                  message: 'Please input your username.'
+                },
+                {
+                  validator: this.validateUsername
+                }
+              ]
+            })(<Input />)}
+          </Form.Item>
+          <Form.Item label="Email">
+            {getFieldDecorator('email', {
+              rules: [
+                {
+                  required: true,
+                  type: 'email',
+                  message: 'The input is not valid email.'
+                }
+              ]
+            })(<Input />)}
+          </Form.Item>
+          <Form.Item label="Country">
+            {getFieldDecorator('country ', {
+              rules: [
+                {
+                  required: true,
+                  message: 'Please select a country'
+                }
+              ]
+            })(
+              <Select
+                showSearch
+                placeholder="Select a Country"
+                optionFilterProp="children"
+                filterOption={(input, option) =>
+                  option.props.children
+                    .toLowerCase()
+                    .indexOf(input.toLowerCase()) >= 0
+                }
+              >
+                {countryOptions}
+              </Select>
+            )}
+          </Form.Item>
+          <Button type="primary" htmlType="submit">
+            Submit
+          </Button>
+        </Form>
       </div>
     )
   }
@@ -157,4 +180,8 @@ const mapStateToProps = (state, ownProps) => ({
   profile: state.profile,
   query: ownProps.query
 })
-export default connect(mapStateToProps)(NewUser)
+
+const WrappedCompleteProfileForm = Form.create({ name: 'complete-profile' })(
+  CompleteProfileForm
+)
+export default connect(mapStateToProps)(WrappedCompleteProfileForm)
