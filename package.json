@@ -4,6 +4,7 @@
   "scripts": {
     "dev": "nodemon -w server server/server.js",
     "build": "next build ./src",
+    "stage": "NODE_ENV=development node server/server.js",
     "start": "NODE_ENV=production node server/server.js",
     "test-dev": "jest",
     "test": "jest && snyk test"

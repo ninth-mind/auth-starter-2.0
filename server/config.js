@@ -6,8 +6,14 @@ const config = {
       clientURL: 'http://localhost:3000',
       serverURL: 'http://localhost:3000'
     },
+    staging: {
+      env: 'staging',
+      appName: 'auth-starter',
+      clientURL: 'http://localhost:3000',
+      serverURL: 'http://localhost:3000'
+    },
     production: {
-      env: process.env.NODE_ENV || 'development',
+      env: process.env.NODE_ENV,
       appName: 'auth-starter',
       clientURL: 'https://authstarter.herokuapp.com',
       serverURL: 'https://authstarter.herokuapp.com'

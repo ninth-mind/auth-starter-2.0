@@ -1,6 +1,6 @@
 import React from 'react'
 import { injectStripe } from 'react-stripe-elements'
-
+import { Button } from 'antd'
 import CardSection from './CardSection'
 
 class CheckoutForm extends React.Component {
@@ -32,7 +32,7 @@ class CheckoutForm extends React.Component {
       <form onSubmit={this.handleSubmit}>
         <h1>Pay Me!</h1>
         <CardSection />
-        <button>Confirm order</button>
+        <Button type="primary">Confirm order</Button>
       </form>
     )
   }

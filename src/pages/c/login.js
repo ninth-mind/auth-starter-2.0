@@ -41,13 +41,13 @@ class EmailLogin extends React.Component {
       url: `/api/auth/login`,
       data: { ...data, recaptcha: captchaToken }
     })
-      .then(r => redirect('/u/account'))
+      .then(r => redirect('/u/profile'))
       .catch(err => {
         // if user already has an account with a different provider, redirect
-        if (err.response.status === 300)
+        if (err.response.status === 300) {
           redirect(`/api/auth/${err.response.data.data.source}`)
-        // otherwise raise error message
-        else {
+          // otherwise raise error message
+        } else {
           const opts = {
             message: 'Error',
             description: 'Oops! Something went wrong.'

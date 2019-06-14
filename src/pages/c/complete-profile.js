@@ -59,10 +59,12 @@ class CompleteProfileForm extends React.Component {
     const { form, reCaptcha } = this.props
     this.setLoading(true)
     //async
-    let data, captchaToken
+    let data = this.state,
+      captchaToken
     try {
       this.setLoading(true)
-      data = await form.validateFields()
+      let formFields = await form.validateFields()
+      data = { ...data, ...formFields }
       this.setLoading(true)
       captchaToken = await reCaptcha.execute({ action: 'complete-profile' })
     } catch (err) {

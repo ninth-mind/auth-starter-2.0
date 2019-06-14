@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import Link from 'next/link'
 import { connect } from 'react-redux'
 import { setLoading, handleError } from '~/lib/utils'
-import { notification } from 'antd'
+import { notification, Button } from 'antd'
 import axios from 'axios'
 
 function Confirmation(props) {
@@ -52,7 +52,7 @@ function Confirmation(props) {
         confirmed your email.
       </p>
       <Link href="/">
-        <button>Return Home</button>
+        <Button type="primary">Return Home</Button>
       </Link>
       <h2>Didn't receive an email?</h2>
       <p>
@@ -61,9 +61,9 @@ function Confirmation(props) {
         <strong>{props.email}</strong> is the correct email. If neither of those
         seem to be the problem, click the link below to request another email.
       </p>
-      <button onClick={handleClick} disabled={sent}>
+      <Button type="primary" onClick={handleClick} disabled={sent}>
         Request Confirmation Email
-      </button>
+      </Button>
       <hr />
       <h3>Why do you need my email?</h3>
       <p>
