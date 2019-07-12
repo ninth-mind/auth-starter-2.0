@@ -94,7 +94,6 @@ AuthRouter.post(
       let token = createToken(u.toObject(), true)
       setCookie(res, token, true)
       let mailResponse = await Mailer.sendEmailConfirmation(email, token)
-      console.log('MAIL RESPONSE', mailResponse)
       respond(res, 200, 'email confirmation sent', mailResponse)
     } catch (err) {
       if (err.errors) {

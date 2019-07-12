@@ -56,7 +56,7 @@ class CompleteProfileForm extends React.Component {
   async handleSubmit(e) {
     e.preventDefault()
     // start async process
-    const { form, reCaptcha } = this.props
+    const { form, recaptcha } = this.props
     this.setLoading(true)
     //async
     let data = this.state,
@@ -66,7 +66,7 @@ class CompleteProfileForm extends React.Component {
       let formFields = await form.validateFields()
       data = { ...data, ...formFields }
       this.setLoading(true)
-      captchaToken = await reCaptcha.execute({ action: 'complete-profile' })
+      captchaToken = await recaptcha.execute({ action: 'complete-profile' })
     } catch (err) {
       handleError(err)
       return

@@ -1,17 +1,12 @@
 import React from 'react'
-import Checkout from '~/components/Checkout'
-class Buy extends React.Component {
-  constructor(props) {
-    super(props)
-  }
-
-  render() {
-    return (
-      <div className="page">
-        <Checkout />
-      </div>
-    )
-  }
+import { withProfile } from '~/components/HOCs'
+import Checkout from '~/components/Payment'
+function Buy(props) {
+  return (
+    <div className="page">
+      <Checkout {...props} />
+    </div>
+  )
 }
 
-export default Buy
+export default withProfile(Buy)

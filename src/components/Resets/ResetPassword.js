@@ -21,7 +21,7 @@ function PasswordReset(props) {
 
   async function handleSubmit(e) {
     e.preventDefault()
-    const { dispatch, reCaptcha, form } = props
+    const { dispatch, recaptcha, form } = props
 
     //async validate and recaptcha
     let data, captchaToken
@@ -29,7 +29,7 @@ function PasswordReset(props) {
       setLoading(true, dispatch)
       data = await form.validateFields()
       setLoading(true, dispatch)
-      captchaToken = await reCaptcha.execute({ action: 'reset-password' })
+      captchaToken = await recaptcha.execute({ action: 'reset-password' })
     } catch (err) {
       handleError(err)
       return

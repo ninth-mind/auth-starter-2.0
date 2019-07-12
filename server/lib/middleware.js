@@ -87,8 +87,8 @@ function verifyCaptcha(req, res, next) {
         if (status === 200 && data.score >= captchaThreshold && data.success)
           next()
         else {
-          console.log('RECAPTCHA VALUE: ', data)
-          respond(res, 403, 'Invalid reCaptcha', { reCaptcha: data })
+          console.log('recaptcha VALUE: ', data)
+          respond(res, 403, 'Invalid recaptcha', { recaptcha: data })
         }
       })
       .catch(err => handleError(err, res, 4001))

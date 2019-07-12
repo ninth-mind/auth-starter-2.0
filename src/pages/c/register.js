@@ -33,14 +33,14 @@ class RegistrationForm extends React.Component {
 
   async handleSubmit(e) {
     e.preventDefault()
-    const { dispatch, form, reCaptcha } = this.props
+    const { dispatch, form, recaptcha } = this.props
     //async
     let data, captchaToken
     try {
       this.setLoading(true, dispatch)
       data = await form.validateFields()
       this.setLoading(true)
-      captchaToken = await reCaptcha.execute({ action: 'register' })
+      captchaToken = await recaptcha.execute({ action: 'register' })
     } catch (err) {
       handleError(err)
       return

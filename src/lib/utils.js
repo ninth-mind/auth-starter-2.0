@@ -2,6 +2,7 @@ import { actions } from '~/store'
 import validator from 'validator'
 import axios from 'axios'
 import Router from 'next/router'
+import { notification } from 'antd'
 
 export function setLoading(isLoading, dispatch) {
   dispatch({
@@ -93,7 +94,17 @@ export function signOut(dispatch) {
     .catch(err => handleError(err))
 }
 
+/**
+ *
+ * @param {object} err - Error object
+ */
 export function handleError(err) {
+  let msg =
+    typeof err === 'string' ? err : err.message || 'Oops! Something went wrong.'
+  notification.error({
+    message: 'Error',
+    description: msg
+  })
   console.error(err)
 }
 

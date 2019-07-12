@@ -23,14 +23,14 @@ class EmailLogin extends React.Component {
 
   async handleSubmit(e) {
     e.preventDefault()
-    const { form, reCaptcha } = this.props
+    const { form, recaptcha } = this.props
 
     //async
     let data, captchaToken
     try {
       data = await form.validateFields()
       this.setLoading(true)
-      captchaToken = await reCaptcha.execute({ action: 'login' })
+      captchaToken = await recaptcha.execute({ action: 'login' })
     } catch (err) {
       handleError(err)
       return

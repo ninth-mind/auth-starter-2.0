@@ -7,14 +7,14 @@ import { notification, Form, Input, Button } from 'antd'
 function PasswordResetRequest(props) {
   async function handleSubmit(e) {
     e.preventDefault()
-    const { dispatch, reCaptcha, form } = props
+    const { dispatch, recaptcha, form } = props
     //async validate and recaptcha
     let data, captchaToken
     try {
       setLoading(true, dispatch)
       data = await form.validateFields()
       setLoading(true, dispatch)
-      captchaToken = await reCaptcha.execute({
+      captchaToken = await recaptcha.execute({
         action: 'reset-password-request'
       })
     } catch (err) {

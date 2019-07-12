@@ -14,7 +14,7 @@ class MainLayout extends React.Component {
   constructor(props) {
     super(props)
     this.initializeRouter = this.initializeRouter.bind(this)
-    this.reCaptcha // added by ref
+    this.recaptcha // added by ref
   }
 
   componentDidMount() {
@@ -38,7 +38,7 @@ class MainLayout extends React.Component {
     const childrenWithProps = React.Children.map(this.props.children, child => {
       return React.cloneElement(child, {
         ...this.props,
-        reCaptcha: this.reCaptcha
+        recaptcha: this.recaptcha
       })
     })
 
@@ -49,7 +49,7 @@ class MainLayout extends React.Component {
           {this.props.isLoading && <Loading />}
           {childrenWithProps}
           <ReCAPTCHA
-            ref={n => (this.reCaptcha = n)}
+            ref={n => (this.recaptcha = n)}
             sitekey={this.props.captchSiteKey}
             size="invisible"
           />

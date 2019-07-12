@@ -47,6 +47,11 @@ const config = {
       cronPattern: '0 */2 * * * *'
     }
   },
+  stripe: {
+    default: {
+      secretKey: process.env.STRIPE_SECRET_KEY
+    }
+  },
   facebook: {
     default: {
       clientID: process.env.FACEBOOK_APP_ID,
