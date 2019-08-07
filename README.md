@@ -10,6 +10,7 @@ Starter repo for user authentication using passport, user payment handling using
   2) Instagram authentication doesn't return user email.
   3) All login related routes live under `/c/login` route
   4) This uses both SASS and LESS Preprocessors. LESS is used with AntD Design Language and Components found [here](https://ant.design/)
+  5) You have to setup a Google app to send emails using nodemailer from google. [Video here](https://www.youtube.com/watch?v=JJ44WA_eV8E)
 
 ### TODO
 Todos are kept in the auth-starter-2.0 repo's issues.
@@ -22,6 +23,9 @@ npx create-next-app --example with-redux with-redux-app
 # or
 yarn create next-app --example with-redux with-redux-app
 ```
+
+#### Setting up Nodemailer with GMAIL
+[Click here for Video tutorial](https://www.youtube.com/watch?v=JJ44WA_eV8E)
 
 
 

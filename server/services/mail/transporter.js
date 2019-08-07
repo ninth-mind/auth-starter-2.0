@@ -1,23 +1,34 @@
 const nodemailer = require('nodemailer')
 const {
   emailUsername,
-  emailPassword,
-  emailHost
+  googleAccount,
+  googleEmailClientID,
+  googleEmailClientSecret,
+  googleEmailRefreshToken,
+  googleEmailAccessToken
 } = require('../../config').email
 
+/**
+ * I am using Google Emails here. You can use another service.
+ * Check the README to see how to setup google emails using nodemailer
+ */
+
 const smtpConfig = {
-  // service: 'Godaddy',
-  host: emailHost,
-  secure: false,
-  port: 587,
+  host: 'smtp.gmail.com',
+  port: 465,
+  secure: true,
   auth: {
-    user: emailUsername,
-    pass: emailPassword
+    type: 'OAuth2',
+    user: googleAccount,
+    clientId: googleEmailClientID,
+    clientSecret: googleEmailClientSecret,
+    refreshToken: googleEmailRefreshToken,
+    accessToken: googleEmailAccessToken
   }
 }
 
 const emailDefaults = {
-  from: emailUsername,
+  from: emailUsername, // in my case, my email user is different than account name
   subject: 'TEST EMAIL MESSAGE'
 }
 

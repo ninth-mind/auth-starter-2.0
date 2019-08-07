@@ -4,6 +4,7 @@ import { signOut, redirect } from '~/lib/utils'
 import { withProfile } from '~/components/HOCs'
 import { notification, Button, Popconfirm } from 'antd'
 import AddValue from '~/components/AddValue'
+import AddCard from '~/components/Payment/AddCard'
 import { SetEmail } from '~/components/Resets'
 
 class Account extends React.Component {
@@ -39,6 +40,8 @@ class Account extends React.Component {
         <AddValue />
         <hr />
         <SetEmail recaptcha={this.props.recaptcha} />
+        <hr />
+        <AddCard />
         <hr />
         <Button type="primary" onClick={this.signOut}>
           Sign Out

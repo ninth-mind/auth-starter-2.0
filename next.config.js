@@ -33,10 +33,8 @@ const webpackConfigObj = withImages(
             ...(config.resolve.alias || {}),
             '~': path.resolve(__dirname, './src')
           }
-          config.stats = {
-            ...config.stats,
-            warningsFilter: '[mini-css-extract-plugin]'
-          }
+          // turning off warnings because of mini-css-extract-plugin is annoying
+          config.stats = Object.assign(config.stats || {}, { warnings: false })
           return config
         }
       })
