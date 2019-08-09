@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import Link from 'next/link'
 import { connect } from 'react-redux'
 import { setLoading, handleError } from '~/lib/utils'
-import { notification, Button } from 'antd'
+import { Button, notification } from 'antd'
 import axios from 'axios'
 
 function Confirmation(props) {

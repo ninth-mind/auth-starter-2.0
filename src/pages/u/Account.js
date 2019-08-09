@@ -2,7 +2,7 @@ import React from 'react'
 import axios from 'axios'
 import { signOut, redirect } from '~/lib/utils'
 import { withProfile } from '~/components/HOCs'
-import { notification, Button, Popconfirm } from 'antd'
+import { Button, notification, Popconfirm } from 'antd'
 import AddValue from '~/components/AddValue'
 import { SetEmail } from '~/components/Resets'
 

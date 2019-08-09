@@ -1,5 +1,5 @@
 import React from 'react'
-import { notification, Form, Input, Button } from 'antd'
+import { Button, Form, Input, notification } from 'antd'
 import { connect } from 'react-redux'
 import { handleError, setLoading, redirect, signOut } from '~/lib/utils'
 import axios from 'axios'

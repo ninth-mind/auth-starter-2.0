@@ -3,7 +3,7 @@ import axios from 'axios'
 import Link from 'next/link'
 import { connect } from 'react-redux'
 import { redirect, setLoading, handleError } from '~/lib/utils'
-import { notification, Form, Input, Button, Icon } from 'antd'
+import { Button, Form, Icon, Input, notification } from 'antd'
 import './c.scss'
 
 class EmailLogin extends React.Component {

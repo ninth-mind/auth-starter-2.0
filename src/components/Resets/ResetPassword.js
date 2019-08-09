@@ -2,7 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import axios from 'axios'
 import { setLoading, handleError, redirect } from '~/lib/utils'
-import { notification, Form, Input, Button } from 'antd'
+import { Button, Form, Input, notification } from 'antd'
 
 function PasswordReset(props) {
   // validate password

@@ -2,7 +2,7 @@ import React from 'react'
 import axios from 'axios'
 import { connect } from 'react-redux'
 import countries from '~/assets/countries'
-import { notification, Form, Input, Button, Select } from 'antd'
+import { Button, Form, Input, notification, Select } from 'antd'
 import { parseJWT, redirect, setLoading, handleError } from '~/lib/utils'
 import './c.scss'
 

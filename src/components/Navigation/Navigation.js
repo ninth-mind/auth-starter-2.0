@@ -2,7 +2,7 @@ import React from 'react'
 import Link from 'next/link'
 import { connect } from 'react-redux'
 import { signOut } from '~/lib/utils'
-import { Layout, Menu, Icon, Button } from 'antd'
+import { Button, Icon, Layout, Menu } from 'antd'
 const { Header } = Layout
 
 function Navigations(props) {
@@ -17,6 +17,7 @@ function Navigations(props) {
         mode="horizontal"
         style={{ lineHeight: '64px' }}
         selectedKeys={[props.currentPage]}
+        theme="dark"
       >
         <Menu.Item key="/">
           <Link href="/">

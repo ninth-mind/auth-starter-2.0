@@ -3,7 +3,7 @@ import axios from 'axios'
 import Link from 'next/link'
 import countries from '~/assets/countries'
 import { redirect, setLoading, handleError } from '~/lib/utils'
-import { notification, Form, Input, Button, Select } from 'antd'
+import { Button, Form, Input, notification, Select } from 'antd'
 import './c.scss'
 
 // Country Options
