@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button, Form, Input, notification } from 'antd'
+import { Button, Divider, Form, Input, notification } from 'antd'
 import { connect } from 'react-redux'
 import { handleError, setLoading, redirect, signOut } from '~/lib/utils'
 import axios from 'axios'
@@ -80,7 +80,7 @@ function SetEmail(props) {
 
   return (
     <div>
-      <h1>Change Email</h1>
+      <Divider>Change Email</Divider>
       <p>
         <strong>Note:</strong> This will not change the email associated with
         any connected social accounts. This will only change your email

@@ -3,7 +3,7 @@ import axios from 'axios'
 import Link from 'next/link'
 import countries from '~/assets/countries'
 import { redirect, setLoading, handleError } from '~/lib/utils'
-import { Button, Form, Input, notification, Select } from 'antd'
+import { Button, Form, Icon, Input, notification, Select } from 'antd'
 import './c.scss'
 
 // Country Options
@@ -179,6 +179,21 @@ class RegistrationForm extends React.Component {
             Submit
           </Button>
         </Form>
+        <hr />
+        <ul>
+          <li>
+            <Button type="link" href="/api/auth/facebook">
+              <Icon type="facebook" />
+              Login with Facebook
+            </Button>
+          </li>
+          <li>
+            <Button type="link" href="/api/auth/instagram">
+              <Icon type="instagram" />
+              Login with Instagram
+            </Button>
+          </li>
+        </ul>
         <Link href="/c/login">
           <a className="small italic link">Already a member? Login here.</a>
         </Link>

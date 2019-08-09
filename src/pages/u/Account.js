@@ -2,7 +2,7 @@ import React from 'react'
 import axios from 'axios'
 import { signOut, redirect } from '~/lib/utils'
 import { withProfile } from '~/components/HOCs'
-import { Button, notification, Popconfirm } from 'antd'
+import { Button, Divider, notification, Popconfirm } from 'antd'
 import AddValue from '~/components/AddValue'
 import { SetEmail } from '~/components/Resets'
 
@@ -37,9 +37,8 @@ class Account extends React.Component {
         <h4>Value: {p.value}</h4>
         <p>Nothing here yet....</p>
         <AddValue />
-        <hr />
         <SetEmail recaptcha={this.props.recaptcha} />
-        <hr />
+        <Divider>Delete Account</Divider>
         <Button type="primary" onClick={this.signOut}>
           Sign Out
         </Button>
