@@ -4,7 +4,7 @@ import ReCAPTCHA from 'react-google-recaptcha'
 import { connect } from 'react-redux'
 import { setLoading } from '~/lib/utils'
 import Navigation from '~/components/Navigation'
-import { Layout } from 'antd'
+import { Layout, Spin } from 'antd'
 const { Content } = Layout
 import Loading from '~/components/Loading'
 import { actions } from '~/store'
@@ -45,15 +45,16 @@ class MainLayout extends React.Component {
     return (
       <Layout className="layout">
         <Navigation />
-        <Content>
-          {this.props.isLoading && <Loading />}
-          {childrenWithProps}
-          <ReCAPTCHA
-            ref={n => (this.recaptcha = n)}
-            sitekey={this.props.captchSiteKey}
-            size="invisible"
-          />
-        </Content>
+        <Spin spinning={this.props.isLoading} tip="Loading...">
+          <Content>
+            {childrenWithProps}
+            <ReCAPTCHA
+              ref={n => (this.recaptcha = n)}
+              sitekey={this.props.captchSiteKey}
+              size="invisible"
+            />
+          </Content>
+        </Spin>
       </Layout>
     )
   }
