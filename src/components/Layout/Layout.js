@@ -6,7 +6,6 @@ import { setLoading } from '~/lib/utils'
 import Navigation from '~/components/Navigation'
 import { Layout, Spin } from 'antd'
 const { Content } = Layout
-import Loading from '~/components/Loading'
 import { actions } from '~/store'
 import './Layout.scss'
 

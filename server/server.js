@@ -53,7 +53,6 @@ app
       if (err) throw err
       console.log(`~~~~~~~~~~~ LOGS: ${new Date()} ~~~~~~~~~~~`)
       console.log(`Ready on http://localhost:${port}`)
-      console.log(`running in ${process.env.NODE_ENV}`)
       const cron = require('./services/cron')
     })
   })

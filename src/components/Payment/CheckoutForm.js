@@ -2,30 +2,68 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { handleError, setLoading } from '~/lib/utils'
 import { injectStripe } from 'react-stripe-elements'
-import { Button, notification } from 'antd'
+import { Button, Form, Icon, Input, notification, Switch, Popover } from 'antd'
 import axios from 'axios'
-import CardSection from './CardSection'
+import {
+  CardNumberElement,
+  CardExpiryElement,
+  CardCVCElement
+} from 'react-stripe-elements'
+import './CardDetails.scss'
 
+/**
+ * CHECKOUT FORM COMPONENT
+ */
 function CheckoutForm(props) {
+  const { getFieldDecorator } = props.form
+
+  //CSS IN JS STYLES FOR FORM
+  const formItemLayout = {
+    labelCol: {
+      xs: { span: 24 },
+      sm: { span: 8 }
+    },
+    wrapperCol: {
+      xs: { span: 24 },
+      sm: { span: 16 }
+    }
+  }
+  const cardStyles = {
+    base: {
+      color: 'black',
+      fontSize: '16px',
+      lineHeight: '27px'
+    }
+  }
+
+  /**
+   * HANDLE SUBMIT
+   */
   async function handleSubmit(e) {
     // We don't want to let default form submission happen here, which would refresh the page.
     e.preventDefault()
-    const { dispatch, recaptcha, stripe } = props
+    const { dispatch, recaptcha, stripe, form } = props
 
-    //async validate and recaptcha
-    let data, captchaToken
+    let captchaToken, data
+
     try {
       setLoading(true, dispatch)
+      data = await form.validateFields()
+      console.log(data)
+      let path = data.save ? 'charge-save' : 'charge'
+
       captchaToken = await recaptcha.execute({ action: 'charge' })
       const { token } = await stripe.createToken({
-        name: 'Jenny Rosen',
+        name: data.name,
         type: 'card'
       })
-      console.log('TOKEN', token)
+
+      // TODO: If there is not a token, handle appropriately
+
       if (!token) new Error('Error creating stripe token')
       let result = await axios({
         method: 'post',
-        url: '/api/payment/charge',
+        url: `/api/payment/${path}`,
         data: { recaptcha: captchaToken, stripeToken: token, amount: 999 }
       })
 
@@ -40,32 +78,83 @@ function CheckoutForm(props) {
     } finally {
       setLoading(false, dispatch)
     }
-
-    // However, this line of code will do the same thing:
-    //
-    // stripe.createToken({type: 'card', name: 'Jenny Rosen'});
-
-    // You can also use createSource to create Sources. See our Sources
-    // documentation for more: https://stripe.com/docs/stripe-js/reference#stripe-create-source
-    //
-    // stripe.createSource({type: 'card', owner: {
-    //   name: 'Jenny Rosen'
-    // }});
   }
 
+  /**
+   * JSK RETURN VALUE
+   */
   return (
-    <form onSubmit={handleSubmit}>
-      <h1>Pay Me!</h1>
-      <CardSection />
+    <Form
+      className="form"
+      onSubmit={handleSubmit}
+      {...formItemLayout}
+      hideRequiredMark={true}
+    >
+      <h1>Billing Details</h1>
+      <Form.Item label="Name on Card">
+        {getFieldDecorator('name', {
+          rules: [{ required: true }]
+        })(<Input />)}
+      </Form.Item>
+      <Form.Item label="Address">
+        {getFieldDecorator('address', {
+          rules: [{ required: true }]
+        })(<Input />)}
+      </Form.Item>
+      <Form.Item label="City">
+        {getFieldDecorator('city', {
+          rules: [{ required: true }]
+        })(<Input />)}
+      </Form.Item>
+      <Form.Item label="State">
+        {getFieldDecorator('state', {
+          rules: [{ required: true }]
+        })(<Input />)}
+      </Form.Item>
+      <Form.Item label="Zip">
+        {getFieldDecorator('zip', {
+          rules: [{ required: true }]
+        })(<Input />)}
+      </Form.Item>
+      <Form.Item label="Card Number">
+        <CardNumberElement style={cardStyles} />
+      </Form.Item>
+      <Form.Item label="Card Expiration">
+        <CardExpiryElement style={cardStyles} />
+      </Form.Item>
+      <Form.Item label="CVC">
+        <CardCVCElement style={cardStyles} />
+      </Form.Item>
+      <Form.Item label="Save Card">
+        {getFieldDecorator('save', {
+          valuePropName: 'checked',
+          initialValue: true
+        })(
+          <Switch
+            checkedChildren={<Icon type="check" />}
+            unCheckedChildren={<Icon type="close" />}
+          />
+        )}
+        <Popover
+          placement="right"
+          content="We do not store any card information directly"
+        >
+          <Icon className="info-icon" type="info-circle" theme="filled" />
+        </Popover>
+      </Form.Item>
       <Button type="primary" htmlType="submit">
         Confirm order
       </Button>
-    </form>
+    </Form>
   )
 }
 
+/**
+ * EXPORTING
+ */
 const mapStateToProps = state => ({
   profile: state.profile
 })
 
-export default connect(mapStateToProps)(injectStripe(CheckoutForm))
+const wrappedCheckoutForm = Form.create({ name: 'checkout' })(CheckoutForm)
+export default connect(mapStateToProps)(injectStripe(wrappedCheckoutForm))

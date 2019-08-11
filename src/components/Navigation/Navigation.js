@@ -39,9 +39,9 @@ function Navigations(props) {
             </Link>
           </Menu.Item>
         </Menu.SubMenu>
-        <Menu.Item key="buy" disabled={!props.isLoggedIn}>
-          <Link href="/buy">
-            <a>Buy</a>
+        <Menu.Item key="shop">
+          <Link href="/shop">
+            <a>Shop</a>
           </Link>
         </Menu.Item>
         <Menu.SubMenu title={<Icon type="user" />} disabled={!props.isLoggedIn}>
