@@ -2,21 +2,18 @@ import React from 'react'
 import Router from 'next/router'
 import ReCAPTCHA from 'react-google-recaptcha'
 import { connect } from 'react-redux'
-import { ToastContainer, toast } from 'react-toastify'
 import { setLoading } from '~/lib/utils'
 import Navigation from '~/components/Navigation'
-import { Layout } from 'antd'
+import { Layout, Spin } from 'antd'
 const { Content } = Layout
-import Loading from '~/components/Loading'
 import { actions } from '~/store'
-import 'react-toastify/dist/ReactToastify.min.css'
 import './Layout.scss'
 
 class MainLayout extends React.Component {
   constructor(props) {
     super(props)
     this.initializeRouter = this.initializeRouter.bind(this)
-    this.reCaptcha // added by ref
+    this.recaptcha // added by ref
   }
 
   componentDidMount() {
@@ -40,26 +37,23 @@ class MainLayout extends React.Component {
     const childrenWithProps = React.Children.map(this.props.children, child => {
       return React.cloneElement(child, {
         ...this.props,
-        reCaptcha: this.reCaptcha
+        recaptcha: this.recaptcha
       })
     })
 
     return (
       <Layout className="layout">
         <Navigation />
-        <ToastContainer
-          position={toast.POSITION.BOTTOM_RIGHT}
-          autoClose={5000}
-        />
-        <Content>
-          {this.props.isLoading && <Loading />}
-          {childrenWithProps}
-          <ReCAPTCHA
-            ref={n => (this.reCaptcha = n)}
-            sitekey={this.props.captchSiteKey}
-            size="invisible"
-          />
-        </Content>
+        <Spin spinning={this.props.isLoading} tip="Loading...">
+          <Content>
+            {childrenWithProps}
+            <ReCAPTCHA
+              ref={n => (this.recaptcha = n)}
+              sitekey={this.props.captchSiteKey}
+              size="invisible"
+            />
+          </Content>
+        </Spin>
       </Layout>
     )
   }

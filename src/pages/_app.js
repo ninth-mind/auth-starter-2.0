@@ -4,7 +4,7 @@ import Head from 'next/head'
 import withReduxStore from '~/lib/with-redux-store'
 import { Provider } from 'react-redux'
 import { StripeProvider } from 'react-stripe-elements'
-import MainLayout from '~/layouts/Layout'
+import MainLayout from '~/components/Layout'
 import '~/styles/main.scss'
 
 class MyApp extends App {

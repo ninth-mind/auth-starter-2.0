@@ -4,6 +4,7 @@
   "scripts": {
     "dev": "nodemon -w server server/server.js",
     "build": "next build ./src",
+    "stage": "NODE_ENV=development node server/server.js",
     "start": "NODE_ENV=production node server/server.js",
     "test-dev": "jest",
     "test": "jest && snyk test"
@@ -44,10 +45,11 @@
     "react-google-recaptcha": "^1.0.5",
     "react-redux": "^5.0.1",
     "react-stripe-elements": "^2.0.3",
-    "react-toastify": "^5.0.1",
     "redux": "^3.6.0",
     "redux-devtools-extension": "^2.13.2",
-    "validator": "^10.11.0"
+    "stripe": "^7.4.0",
+    "validator": "^10.11.0",
+    "xoauth2": "^1.2.0"
   },
   "license": "ISC",
   "devDependencies": {
@@ -60,6 +62,6 @@
     "eslint-plugin-react": "^7.12.4",
     "jest": "^24.7.1",
     "prettier": "^1.16.4",
-    "snyk": "^1.161.1"
+    "snyk": "^1.193.2"
   }
 }

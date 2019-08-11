@@ -1,10 +1,10 @@
 import React from 'react'
 import axios from 'axios'
-import { toast } from 'react-toastify'
 import { signOut, redirect } from '~/lib/utils'
 import { withProfile } from '~/components/HOCs'
-import { Button, Popconfirm } from 'antd'
+import { Button, Divider, notification, Popconfirm } from 'antd'
 import AddValue from '~/components/AddValue'
+import { SetEmail } from '~/components/Resets'
 
 class Account extends React.Component {
   constructor(props) {
@@ -24,7 +24,7 @@ class Account extends React.Component {
     })
     console.log('DELETE USER RESPONSE', r)
     redirect('/')
-    toast.success('Your account has been deleted')
+    notification.success({ message: 'Your account has been deleted' })
   }
 
   render() {
@@ -37,6 +37,8 @@ class Account extends React.Component {
         <h4>Value: {p.value}</h4>
         <p>Nothing here yet....</p>
         <AddValue />
+        <SetEmail recaptcha={this.props.recaptcha} />
+        <Divider>Delete Account</Divider>
         <Button type="primary" onClick={this.signOut}>
           Sign Out
         </Button>

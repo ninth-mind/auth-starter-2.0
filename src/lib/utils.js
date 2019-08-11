@@ -2,15 +2,7 @@ import { actions } from '~/store'
 import validator from 'validator'
 import axios from 'axios'
 import Router from 'next/router'
-import { useState } from 'react'
-
-export function handleFormInput(initialValue) {
-  let [value, setValue] = useState(initialValue)
-  function handleChange(e) {
-    setValue(e.target.value)
-  }
-  return { value, onChange: handleChange }
-}
+import { notification } from 'antd'
 
 export function setLoading(isLoading, dispatch) {
   dispatch({
@@ -30,52 +22,6 @@ export function redirect(path, ctx) {
   } else {
     Router.push(path)
   }
-}
-
-/**
- * Validates and object, based on their keys
- * @param {object} inputs - object where they key indicates the type of validation
- *                          for the value
- */
-export function sanitize(inputs) {
-  let incorrectFields = []
-  let result = { ...inputs }
-  for (let key in inputs) {
-    let value = inputs[key]
-    // is password
-    if (key.match(/pass|confirm/gi)) {
-      let pass = validator.trim(value)
-      let whitelisted = validator.whitelist(pass, 'a-zA-Z0-9!@#$%*^-')
-      if (
-        value.length < 8 ||
-        !validator.isAscii(pass) ||
-        whitelisted.length !== value.length
-      )
-        incorrectFields.push(key)
-      else result[key] = pass
-      // if email
-    } else if (key.match(/email/gi)) {
-      let email = validator.trim(value)
-      let whitelisted = validator.whitelist(email, 'a-zA-Z0-9@._-')
-      if (!validator.isEmail(email) || whitelisted.length !== value.length)
-        incorrectFields.push(key)
-      else result[key] = validator.normalizeEmail(whitelisted)
-      //username
-    } else if (key.match(/username/gi)) {
-      let un = validator.trim(value)
-      let whitelisted = validator.whitelist(un, 'a-zA-Z0-9@$!._-')
-      if (
-        value.length < 3 ||
-        !validator.isAscii(un) ||
-        whitelisted.length !== value.length
-      )
-        incorrectFields.push(key)
-      else result[key] = validator.trim(value)
-    }
-  }
-
-  if (incorrectFields.length === 0) return { valid: true, result }
-  return { valid: false, invalid: incorrectFields }
 }
 
 export function clean(inputs) {
@@ -148,7 +94,17 @@ export function signOut(dispatch) {
     .catch(err => handleError(err))
 }
 
+/**
+ *
+ * @param {object} err - Error object
+ */
 export function handleError(err) {
+  let msg =
+    typeof err === 'string' ? err : err.message || 'Oops! Something went wrong.'
+  notification.error({
+    message: 'Error',
+    description: msg
+  })
   console.error(err)
 }
 

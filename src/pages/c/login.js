@@ -2,9 +2,9 @@ import React from 'react'
 import axios from 'axios'
 import Link from 'next/link'
 import { connect } from 'react-redux'
-import { redirect, setLoading } from '~/lib/utils'
-import { Form, Input, Button, notification } from 'antd'
-import '../c.scss'
+import { redirect, setLoading, handleError } from '~/lib/utils'
+import { Button, Form, Icon, Input, notification } from 'antd'
+import './c.scss'
 
 class EmailLogin extends React.Component {
   constructor(props) {
@@ -23,24 +23,31 @@ class EmailLogin extends React.Component {
 
   async handleSubmit(e) {
     e.preventDefault()
-    const { dispatch, form, reCaptcha } = this.props
-    let data = form.getFieldsValue()
+    const { form, recaptcha } = this.props
+
     //async
-    this.setLoading(true)
-    const captchaToken = await reCaptcha.execute({ action: 'login' })
+    let data, captchaToken
+    try {
+      data = await form.validateFields()
+      this.setLoading(true)
+      captchaToken = await recaptcha.execute({ action: 'login' })
+    } catch (err) {
+      handleError(err)
+      return
+    }
 
     axios({
       method: 'post',
       url: `/api/auth/login`,
       data: { ...data, recaptcha: captchaToken }
     })
-      .then(r => redirect('/u/account'))
+      .then(r => redirect('/u/profile'))
       .catch(err => {
         // if user already has an account with a different provider, redirect
-        if (err.response.status === 300)
+        if (err.response.status === 300) {
           redirect(`/api/auth/${err.response.data.data.source}`)
-        // otherwise raise error message
-        else {
+          // otherwise raise error message
+        } else {
           const opts = {
             message: 'Error',
             description: 'Oops! Something went wrong.'
@@ -68,7 +75,7 @@ class EmailLogin extends React.Component {
     return (
       <div className="login page center">
         <h1>Login</h1>
-        <Form {...formItemLayout} onSubmit={this.handleSubmit}>
+        <Form className="form" {...formItemLayout} onSubmit={this.handleSubmit}>
           <Form.Item label="Email/Username">
             {getFieldDecorator('email', {
               rules: [
@@ -89,16 +96,33 @@ class EmailLogin extends React.Component {
               ]
             })(<Input.Password />)}
           </Form.Item>
+          <Form.Item>
+            <Link href="/c/reset-password">
+              <a className="small italic link">Forgot your password?</a>
+            </Link>
+          </Form.Item>
           <Button type="primary" htmlType="submit">
             Submit
           </Button>
         </Form>
-        <Link href="/c/reset-password">
-          <a className="small italic link">Forgot your password?</a>
-        </Link>
         <Link href="/c/register">
           <a className="small italic link">Need an account? Register here.</a>
         </Link>
+        <hr />
+        <ul>
+          <li>
+            <Button type="link" href="/api/auth/facebook">
+              <Icon type="facebook" />
+              Login with Facebook
+            </Button>
+          </li>
+          <li>
+            <Button type="link" href="/api/auth/instagram">
+              <Icon type="instagram" />
+              Login with Instagram
+            </Button>
+          </li>
+        </ul>
       </div>
     )
   }
