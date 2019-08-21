@@ -1,5 +1,8 @@
 const UserModel = require('./UserModel')
 const ObjectID = require('mongoose').Types.ObjectId
+const config = require('../../config')
+const stripe = require('stripe')(config.stripe.secretKey)
+
 /**
  * Returns a user or null if not user is found
  * @param {string} source - source of login
@@ -75,6 +78,42 @@ async function createUser(source, profile) {
 async function findOneAndUpdate(source, profile, update, opts) {
   let query = determineQueryFromSource(source, profile)
   return await UserModel.findOneAndUpdate(query, update, opts)
+}
+
+/**
+ *
+ * @param {string} source - source of user account
+ * @param {object} profile - profile data to search for
+ * @param {string} stripeToken - token retrieved from Stripe
+ * @param {object} additionalCardInfo - any additional card info to save
+ */
+async function addCard(source, profile, stripeToken, additionalCardInfo) {
+  const curUser = await findUser(source, { ...profile, source })
+  const { customer, cards } = curUser
+  if (!customer || !customer.id) {
+    const newCustomer = await stripe.customers.create({
+      source: stripeToken.id,
+      email: profile.email
+    })
+
+    const newUser = await findOneAndUpdate(
+      source,
+      profile,
+      {
+        customer: { id: newCustomer.id },
+        $push: {
+          cards: {
+            ...newCustomer,
+            ...additionalCardInfo
+          }
+        }
+      },
+      { new: true }
+    )
+    return newUser
+  } else if (customer && customer.id) {
+    return curUser
+  }
 }
 
 /**

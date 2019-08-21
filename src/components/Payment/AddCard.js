@@ -2,7 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { handleError, setLoading } from '~/lib/utils'
 import { injectStripe } from 'react-stripe-elements'
-import { Button, Form, Icon, Input, notification, Switch, Popover } from 'antd'
+import { Button, Form, Input, notification } from 'antd'
 import axios from 'axios'
 import {
   CardNumberElement,
@@ -51,8 +51,6 @@ function CheckoutForm(props) {
     try {
       setLoading(true, dispatch)
       data = await form.validateFields()
-      console.log(data)
-      let path = data.save ? 'charge-save' : 'charge'
 
       captchaToken = await recaptcha.execute({ action: 'charge' })
       const { token } = await stripe.createToken({
@@ -65,8 +63,8 @@ function CheckoutForm(props) {
       if (!token) new Error('Error creating stripe token')
       let result = await axios({
         method: 'post',
-        url: `/api/payment/${path}`,
-        data: { recaptcha: captchaToken, stripeToken: token, amount: 999 }
+        url: `/api/me/card`,
+        data: { recaptcha: captchaToken, stripeToken: token }
       })
 
       console.log(result)
@@ -106,23 +104,6 @@ function CheckoutForm(props) {
       </Form.Item>
       <Form.Item label="CVC">
         <CardCVCElement style={cardStyles} />
-      </Form.Item>
-      <Form.Item label="Save Card">
-        {getFieldDecorator('save', {
-          valuePropName: 'checked',
-          initialValue: true
-        })(
-          <Switch
-            checkedChildren={<Icon type="check" />}
-            unCheckedChildren={<Icon type="close" />}
-          />
-        )}
-        <Popover
-          placement="right"
-          content="We do not store any card information directly"
-        >
-          <Icon className="info-icon" type="info-circle" theme="filled" />
-        </Popover>
       </Form.Item>
       <Button type="primary" htmlType="submit">
         Confirm order

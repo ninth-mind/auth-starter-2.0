@@ -3,7 +3,7 @@ import axios from 'axios'
 import Link from 'next/link'
 import countries from '~/assets/countries'
 import { redirect, setLoading, handleError } from '~/lib/utils'
-import { Button, Form, Icon, Input, notification, Select } from 'antd'
+import { Button, Form, Icon, Input, notification, Select, Switch } from 'antd'
 import './c.scss'
 
 // Country Options
@@ -174,6 +174,24 @@ class RegistrationForm extends React.Component {
                 }
               ]
             })(<Input.Password />)}
+          </Form.Item>
+          <Form.Item label="Agreements">
+            {getFieldDecorator('agreement', {
+              required: true,
+              valuePropName: 'checked',
+              initialValue: false
+            })(
+              <Switch
+                checkedChildren={<Icon type="check" />}
+                unCheckedChildren={<Icon type="close" />}
+              />
+            )}
+            <p className="small">
+              By checking the box above you agree to the{' '}
+              <Link href="/legal/terms">Terms and Conditions</Link> as well as
+              the policies outlined in our{' '}
+              <Link href="/legal/privacy">Privacy Policy</Link>
+            </p>
           </Form.Item>
           <Button type="primary" htmlType="submit">
             Submit
