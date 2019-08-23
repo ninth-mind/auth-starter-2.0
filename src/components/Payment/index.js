@@ -2,12 +2,10 @@ import React from 'react'
 import { Elements } from 'react-stripe-elements'
 import InjectedCheckoutForm from './CheckoutForm'
 
-function Checkout(props) {
+export function CheckoutForm(props) {
   return (
     <Elements>
       <InjectedCheckoutForm {...props} />
     </Elements>
   )
 }
-
-export default Checkout

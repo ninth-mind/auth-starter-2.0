@@ -3,8 +3,11 @@ const MeRouter = express.Router()
 const User = require('../services/user')
 const Mailer = require('../services/mail')
 const { cookieName } = require('../config').utils
+const config = require('../config')
+const stripe = require('stripe')(config.stripe.secretKey)
 
 const {
+  verifyCaptcha,
   verifyAuthenticationToken,
   makePermissionsMiddleware
 } = require('../lib/middleware')
@@ -96,5 +99,29 @@ MeRouter.post('/email', verifyAuthenticationToken, async (req, res) => {
     } else handleError(err, res, 1005)
   }
 })
+
+// Charge and Save
+MeRouter.post(
+  '/card',
+  verifyAuthenticationToken,
+  verifyCaptcha,
+  async (req, res) => {
+    const { name, stripeToken } = req.body
+    const {
+      decodedToken,
+      decodedToken: { source }
+    } = req.locals
+
+    try {
+      // create customer
+      let card = await User.addCard(source, decodedToken, stripeToken, { name })
+      // TODO: add charge to user history
+      respond(res, 200, 'Card Saved', card)
+    } catch (err) {
+      handleError(err)
+      respond(res, 400, 'Error charging card', err)
+    }
+  }
+)
 
 module.exports = MeRouter

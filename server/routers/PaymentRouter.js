@@ -64,8 +64,6 @@ PaymentRouter.post(
         email: email
       })
 
-      console.log('CUSTOMER', customer)
-
       // create charge
       const charge = await stripe.charges.create({
         amount: amount,
@@ -73,8 +71,6 @@ PaymentRouter.post(
         description: 'Leaderboard',
         customer: customer.id
       })
-
-      console.log('CHARGE', charge)
 
       let u = await User.findOneAndUpdate(
         source,

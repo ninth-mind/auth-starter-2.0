@@ -2,7 +2,6 @@ const UserModel = require('./UserModel')
 const ObjectID = require('mongoose').Types.ObjectId
 const config = require('../../config')
 const stripe = require('stripe')(config.stripe.secretKey)
-
 /**
  * Returns a user or null if not user is found
  * @param {string} source - source of login
@@ -90,7 +89,9 @@ async function findOneAndUpdate(source, profile, update, opts) {
 async function addCard(source, profile, stripeToken, additionalCardInfo) {
   const curUser = await findUser(source, { ...profile, source })
   const { customer, cards } = curUser
+  // there is no customer
   if (!customer || !customer.id) {
+    // create customer
     const newCustomer = await stripe.customers.create({
       source: stripeToken.id,
       email: profile.email
@@ -178,6 +179,7 @@ function loginMapper(source, p) {
 }
 
 module.exports = {
+  addCard,
   createUser,
   deleteInactiveUsers,
   deleteUser,

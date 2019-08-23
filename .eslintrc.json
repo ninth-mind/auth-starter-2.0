@@ -18,7 +18,8 @@
     "jest": true
   },
   "plugins": [
-    "prettier"
+    "prettier",
+    "react-hooks"
   ],
   "rules": {
     "no-console": 0,
@@ -38,7 +39,9 @@
         "singleQuote": true,
         "semi": false
       }
-    ]
+    ],
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn"
   },
   "settings": {
     "react": {

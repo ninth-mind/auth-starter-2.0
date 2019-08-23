@@ -11,10 +11,7 @@ import {
 } from 'react-stripe-elements'
 import './CardDetails.scss'
 
-/**
- * CHECKOUT FORM COMPONENT
- */
-function CheckoutForm(props) {
+function CardDetails(props) {
   const { getFieldDecorator } = props.form
 
   //CSS IN JS STYLES FOR FORM
@@ -52,7 +49,7 @@ function CheckoutForm(props) {
       setLoading(true, dispatch)
       data = await form.validateFields()
 
-      captchaToken = await recaptcha.execute({ action: 'charge' })
+      captchaToken = await recaptcha.execute({ action: 'add-card' })
       const { token } = await stripe.createToken({
         name: data.name,
         type: 'card'
@@ -60,7 +57,7 @@ function CheckoutForm(props) {
 
       // TODO: If there is not a token, handle appropriately
 
-      if (!token) new Error('Error creating stripe token')
+      if (!token) return new Error('Error creating stripe token')
       let result = await axios({
         method: 'post',
         url: `/api/me/card`,
@@ -90,7 +87,6 @@ function CheckoutForm(props) {
       {...formItemLayout}
       hideRequiredMark={true}
     >
-      <h1>Billing Details</h1>
       <Form.Item label="Name on Card">
         {getFieldDecorator('name', {
           rules: [{ required: true }]
@@ -106,7 +102,7 @@ function CheckoutForm(props) {
         <CardCVCElement style={cardStyles} />
       </Form.Item>
       <Button type="primary" htmlType="submit">
-        Confirm order
+        Submit
       </Button>
     </Form>
   )
@@ -119,5 +115,5 @@ const mapStateToProps = state => ({
   profile: state.profile
 })
 
-const wrappedCheckoutForm = Form.create({ name: 'checkout' })(CheckoutForm)
-export default connect(mapStateToProps)(injectStripe(wrappedCheckoutForm))
+const wrappedCardDetails = Form.create({ name: 'CardDetails' })(CardDetails)
+export default connect(mapStateToProps)(injectStripe(wrappedCardDetails))

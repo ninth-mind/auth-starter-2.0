@@ -4,7 +4,7 @@ import { signOut, redirect } from '~/lib/utils'
 import { withProfile } from '~/components/HOCs'
 import { Button, Divider, notification, Popconfirm } from 'antd'
 import AddValue from '~/components/AddValue'
-import { SetEmail } from '~/components/Resets'
+import { SetEmail, CardDetails } from '~/components/AccountManagement'
 
 class Account extends React.Component {
   constructor(props) {
@@ -38,6 +38,8 @@ class Account extends React.Component {
         <p>Nothing here yet....</p>
         <AddValue />
         <SetEmail recaptcha={this.props.recaptcha} />
+        <Divider>Billing Details</Divider>
+        <CardDetails />
         <Divider>Delete Account</Divider>
         <Button type="primary" onClick={this.signOut}>
           Sign Out

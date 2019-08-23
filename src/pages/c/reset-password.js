@@ -1,6 +1,9 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { ResetPassword, ResetPasswordRequest } from '~/components/Resets'
+import {
+  ResetPassword,
+  ResetPasswordRequest
+} from '~/components/AccountManagement'
 
 function ResetPasswordPage(props) {
   return (
