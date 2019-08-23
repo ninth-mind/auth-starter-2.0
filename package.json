@@ -39,6 +39,7 @@
     "passport-instagram": "^1.0.0",
     "passport-local": "^1.0.0",
     "path": "^0.12.7",
+    "prop-types": "^15.7.2",
     "rate-limiter-flexible": "^1.0.1",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",

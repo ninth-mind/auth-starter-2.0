@@ -39,7 +39,11 @@ class Account extends React.Component {
         <AddValue />
         <SetEmail recaptcha={this.props.recaptcha} />
         <Divider>Billing Details</Divider>
-        <CardDetails />
+        <CardDetails
+          {...this.props}
+          submitText="Add Card"
+          handleCard={handleCardDetails}
+        />
         <Divider>Delete Account</Divider>
         <Button type="primary" onClick={this.signOut}>
           Sign Out
@@ -52,6 +56,20 @@ class Account extends React.Component {
         </Popconfirm>
       </div>
     )
+  }
+}
+
+async function handleCardDetails(stripeToken, recaptcha, data) {
+  let result = await axios({
+    method: 'post',
+    url: `/api/me/card`,
+    data: { recaptcha, stripeToken }
+  })
+
+  console.log(result)
+  return {
+    message: 'Card Added',
+    description: 'You card has been added to your account'
   }
 }
 

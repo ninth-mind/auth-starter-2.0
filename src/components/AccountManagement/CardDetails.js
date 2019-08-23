@@ -1,9 +1,9 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { handleError, setLoading } from '~/lib/utils'
 import { injectStripe } from 'react-stripe-elements'
 import { Button, Form, Input, notification } from 'antd'
-import axios from 'axios'
 import {
   CardNumberElement,
   CardExpiryElement,
@@ -11,6 +11,17 @@ import {
 } from 'react-stripe-elements'
 import './CardDetails.scss'
 
+/**
+ * Card Details takes automatically has `dispatch, recaptcha, stripe, & form` injected.
+ * but REQUIRES an `handleCard` function to execute when `stripeToken` and `recaptcha` have completed,
+ * this `handleCard` function should return a message object to be passed to
+ * `notification.success`. `handleCard` will
+ *
+ * the `handleCard` function recieves 3 arguments, the `stripeToken`, `recaptcha`, and `form data`
+ *
+ * Optionally you can also pass children to the `CardDetails` to add form fields
+ * @param {*} props
+ */
 function CardDetails(props) {
   const { getFieldDecorator } = props.form
 
@@ -41,7 +52,7 @@ function CardDetails(props) {
   async function handleSubmit(e) {
     // We don't want to let default form submission happen here, which would refresh the page.
     e.preventDefault()
-    const { dispatch, recaptcha, stripe, form } = props
+    const { dispatch, recaptcha, stripe, form, handleCard } = props
 
     let captchaToken, data
 
@@ -49,26 +60,18 @@ function CardDetails(props) {
       setLoading(true, dispatch)
       data = await form.validateFields()
 
-      captchaToken = await recaptcha.execute({ action: 'add-card' })
+      captchaToken = await recaptcha.execute({ action: 'card-details' })
       const { token } = await stripe.createToken({
         name: data.name,
         type: 'card'
       })
 
       // TODO: If there is not a token, handle appropriately
-
       if (!token) return new Error('Error creating stripe token')
-      let result = await axios({
-        method: 'post',
-        url: `/api/me/card`,
-        data: { recaptcha: captchaToken, stripeToken: token }
-      })
 
-      console.log(result)
-      notification.success({
-        message: 'Card Charged',
-        description: 'You card has been charged'
-      })
+      let message = await handleCard(token, captchaToken, data)
+      console.log(message)
+      notification.success(message)
     } catch (err) {
       handleError(err)
       return
@@ -77,8 +80,9 @@ function CardDetails(props) {
     }
   }
 
+  console.log(props)
   /**
-   * JSK RETURN VALUE
+   * JSX RETURN VALUE
    */
   return (
     <Form
@@ -102,12 +106,16 @@ function CardDetails(props) {
         <CardCVCElement style={cardStyles} />
       </Form.Item>
       <Button type="primary" htmlType="submit">
-        Submit
+        {props.submitText || 'Submit'}
       </Button>
     </Form>
   )
 }
 
+CardDetails.propTypes = {
+  handleCard: PropTypes.func.isRequired,
+  submitText: PropTypes.string
+}
 /**
  * EXPORTING
  */
