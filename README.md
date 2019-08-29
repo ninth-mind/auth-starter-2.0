@@ -12,6 +12,7 @@ Starter repo for user authentication using passport, user payment handling using
   4) This uses both SASS and LESS Preprocessors. LESS is used with AntD Design Language and Components found [here](https://ant.design/)
   5) You have to setup a Google app to send emails using nodemailer from google. [Video here](https://www.youtube.com/watch?v=JJ44WA_eV8E)
   6) Importing all AntD CSS styles in the `main.scss`, this is to avoid `mini-css-extract-plugin` ordering errors described [here](https://github.com/ant-design/ant-design/issues/15696)
+  7) The `CardDetails` component requires passing in `{...props}`
 
 ### TODO
 Todos are kept in the auth-starter-2.0 repo's issues.

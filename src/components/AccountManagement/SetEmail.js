@@ -1,4 +1,5 @@
-import React from 'react'
+import React, { useContext } from 'react'
+import { RecaptchaContext } from '~/store'
 import { Button, Divider, Form, Input, notification } from 'antd'
 import { connect } from 'react-redux'
 import { handleError, setLoading, redirect, signOut } from '~/lib/utils'
@@ -8,9 +9,9 @@ function SetEmail(props) {
   const {
     dispatch,
     form,
-    recaptcha,
     form: { getFieldDecorator }
   } = props
+  const recaptcha = useContext(RecaptchaContext)
 
   function checkEmailsMatch(rule, value, cb) {
     const email = form.getFieldValue('email')
@@ -26,7 +27,7 @@ function SetEmail(props) {
     try {
       data = await form.validateFields()
       setLoading(true, dispatch)
-      captchaToken = await recaptcha.execute({ action: 'login' })
+      captchaToken = await recaptcha.execute({ action: 'set email' })
     } catch (err) {
       setLoading(false, dispatch)
       handleError(err)

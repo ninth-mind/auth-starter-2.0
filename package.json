@@ -39,6 +39,7 @@
     "passport-instagram": "^1.0.0",
     "passport-local": "^1.0.0",
     "path": "^0.12.7",
+    "prop-types": "^15.7.2",
     "rate-limiter-flexible": "^1.0.1",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
@@ -60,6 +61,7 @@
     "eslint": "^5.16.0",
     "eslint-plugin-prettier": "^3.0.1",
     "eslint-plugin-react": "^7.12.4",
+    "eslint-plugin-react-hooks": "^2.0.1",
     "jest": "^24.7.1",
     "prettier": "^1.16.4",
     "snyk": "^1.193.2"

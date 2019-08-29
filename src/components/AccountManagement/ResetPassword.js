@@ -1,10 +1,13 @@
-import React from 'react'
-import { connect } from 'react-redux'
+import React, { useContext } from 'react'
+import { RecaptchaContext } from '~/store'
 import axios from 'axios'
 import { setLoading, handleError, redirect } from '~/lib/utils'
 import { Button, Form, Input, notification } from 'antd'
 
 function PasswordReset(props) {
+  const recaptcha = useContext(RecaptchaContext)
+  const { dispatch, form } = props
+
   // validate password
   function validatePassword(rule, value, cb) {
     if (value.length < 8) cb('Password must be 8 characters')
@@ -21,7 +24,6 @@ function PasswordReset(props) {
 
   async function handleSubmit(e) {
     e.preventDefault()
-    const { dispatch, recaptcha, form } = props
 
     //async validate and recaptcha
     let data, captchaToken
@@ -120,4 +122,5 @@ function PasswordReset(props) {
 const WrappedPasswordResetForm = Form.create({
   name: 'password-reset'
 })(PasswordReset)
-export default connect()(WrappedPasswordResetForm)
+
+export default WrappedPasswordResetForm

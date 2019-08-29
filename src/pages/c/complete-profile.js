@@ -1,4 +1,5 @@
-import React from 'react'
+import React, { useState, useContext, useEffect } from 'react'
+import { RecaptchaContext } from '~/store'
 import axios from 'axios'
 import { connect } from 'react-redux'
 import countries from '~/assets/countries'
@@ -14,169 +15,156 @@ const countryOptions = countries.map(c => (
   </Option>
 ))
 
-class CompleteProfileForm extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      id: '',
-      source: '',
-      email: ''
-    }
-    this.handleSubmit = this.handleSubmit.bind(this)
-    this.setLoading = this.setLoading.bind(this)
-    this.validateUsername = this.validateUsername.bind(this)
+function CompleteProfileForm(props) {
+  // set variables
+  const {
+    dispatch,
+    form,
+    form: { getFieldDecorator },
+    query
+  } = props
+  const initialState = {
+    id: '',
+    source: '',
+    email: ''
   }
+  let [knownUserInfo, setKnownUserInfo] = useState(initialState)
+  // capture context
+  const recaptcha = useContext(RecaptchaContext)
 
-  static async getInitialProps({ query }) {
-    return { query }
-  }
-
-  componentDidMount() {
-    const { query, form } = this.props
+  // set up effects
+  useEffect(() => {
     if (query && query.token) {
-      let knownUserInfo = parseJWT(query.token)
-      this.setState(knownUserInfo)
-      form.setFields({
-        email: { value: knownUserInfo.email },
-        username: { value: knownUserInfo.username }
-      })
+      let parseInfo = parseJWT(query.token)
+      setKnownUserInfo(parseInfo)
     }
-  }
+  }, [query])
 
-  setLoading(isLoading) {
-    setLoading(isLoading, this.props.dispatch)
-  }
-
-  validateUsername(rule, value, cb) {
+  // define functions
+  function validateUsername(rule, value, cb) {
     if (value.length < 3) cb('Username is too short')
     // TODO: add condition that checks database for existing usernames
     else cb()
   }
 
-  async handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault()
     // start async process
-    const { form, recaptcha } = this.props
-    this.setLoading(true)
-    //async
-    let data = this.state,
-      captchaToken
+    setLoading(true, dispatch)
+    let captchaToken,
+      data = knownUserInfo
     try {
-      this.setLoading(true)
       let formFields = await form.validateFields()
       data = { ...data, ...formFields }
-      this.setLoading(true)
       captchaToken = await recaptcha.execute({ action: 'complete-profile' })
+      // send request to server
+      let r = await axios({
+        method: 'post',
+        url: `/api/auth/complete-profile`,
+        data: { ...data, recaptcha: captchaToken }
+      })
+
+      notification.open({
+        message: 'Email Confirmation sent',
+        description: `An email was sent to ${
+          data.email
+        }. Check your email to complete the registration process.`,
+        duration: 0
+      })
+      redirect(`/c/confirmation?email=${r.data.data.accepted[0]}`)
     } catch (err) {
-      handleError(err)
-      return
+      const opts = {
+        message: 'Error',
+        description: 'Oops! Something went wrong.'
+      }
+      if (err && err.response && err.response.data)
+        opts.description = err.response.data.msg
+      notification.error(opts)
+      form.resetFields()
+    } finally {
+      setLoading(false, dispatch)
     }
-    // send request
-    axios({
-      method: 'post',
-      url: `/api/auth/complete-profile`,
-      data: { ...data, recaptcha: captchaToken }
-    })
-      .then(r => {
-        notification.open({
-          message: 'Email Confirmation sent',
-          description: `An email was sent to ${
-            data.email
-          }. Check your email to complete the registration process.`,
-          duration: 0
-        })
-        redirect(`/c/confirmation?email=${r.data.data.accepted[0]}`)
-      })
-      .catch(err => {
-        const opts = {
-          message: 'Error',
-          description: 'Oops! Something went wrong.'
-        }
-        if (err && err.response && err.response.data)
-          opts.description = err.response.data.msg
-        notification.error(opts)
-        form.resetFields()
-      })
-      .finally(() => this.setLoading(false))
   }
 
-  render() {
-    const { getFieldDecorator } = this.props.form
-    const formItemLayout = {
-      labelCol: {
-        xs: { span: 24 },
-        sm: { span: 8 }
-      },
-      wrapperCol: {
-        xs: { span: 24 },
-        sm: { span: 16 }
-      }
+  //styling
+  const formItemLayout = {
+    labelCol: {
+      xs: { span: 24 },
+      sm: { span: 8 }
+    },
+    wrapperCol: {
+      xs: { span: 24 },
+      sm: { span: 16 }
     }
-    const s = this.state
-    return (
-      <div id="complete-profile" className="complete-profile page center">
-        <h1>Complete Profile</h1>
-        <p>
-          There are just a few more things we need to complete your profile.
-        </p>
-        <h3>ID: {s.id}</h3>
-        <h3>Source: {s.source}</h3>
-        <Form className="form" {...formItemLayout} onSubmit={this.handleSubmit}>
-          <Form.Item label="Username" hasFeedback>
-            {getFieldDecorator('username', {
-              rules: [
-                {
-                  required: true,
-                  message: 'Please input your username.'
-                },
-                {
-                  validator: this.validateUsername
-                }
-              ]
-            })(<Input />)}
-          </Form.Item>
-          <Form.Item label="Email">
-            {getFieldDecorator('email', {
-              rules: [
-                {
-                  required: true,
-                  type: 'email',
-                  message: 'The input is not valid email.'
-                }
-              ]
-            })(<Input />)}
-          </Form.Item>
-          <Form.Item label="Country">
-            {getFieldDecorator('country ', {
-              rules: [
-                {
-                  required: true,
-                  message: 'Please select a country'
-                }
-              ]
-            })(
-              <Select
-                showSearch
-                placeholder="Select a Country"
-                optionFilterProp="children"
-                filterOption={(input, option) =>
-                  option.props.children
-                    .toLowerCase()
-                    .indexOf(input.toLowerCase()) >= 0
-                }
-              >
-                {countryOptions}
-              </Select>
-            )}
-          </Form.Item>
-          <Button type="primary" htmlType="submit">
-            Submit
-          </Button>
-        </Form>
-      </div>
-    )
   }
+  const s = knownUserInfo
+
+  return (
+    <div id="complete-profile" className="complete-profile page center">
+      <h1>Complete Profile</h1>
+      <p>There are just a few more things we need to complete your profile.</p>
+      <h3>ID: {s.id}</h3>
+      <h3>Source: {s.source}</h3>
+      <Form className="form" {...formItemLayout} onSubmit={handleSubmit}>
+        <Form.Item label="Username" hasFeedback>
+          {getFieldDecorator('username', {
+            initialValue: s.username,
+            rules: [
+              {
+                required: true,
+                message: 'Please input your username.'
+              },
+              {
+                validator: validateUsername
+              }
+            ]
+          })(<Input />)}
+        </Form.Item>
+        <Form.Item label="Email">
+          {getFieldDecorator('email', {
+            initialValue: s.email,
+            rules: [
+              {
+                required: true,
+                type: 'email',
+                message: 'The input is not valid email.'
+              }
+            ]
+          })(<Input />)}
+        </Form.Item>
+        <Form.Item label="Country">
+          {getFieldDecorator('country ', {
+            initialValue: s.country,
+            rules: [
+              {
+                required: true,
+                message: 'Please select a country'
+              }
+            ]
+          })(
+            <Select
+              showSearch
+              placeholder="Select a Country"
+              optionFilterProp="children"
+              filterOption={(input, option) =>
+                option.props.children
+                  .toLowerCase()
+                  .indexOf(input.toLowerCase()) >= 0
+              }
+            >
+              {countryOptions}
+            </Select>
+          )}
+        </Form.Item>
+        <Button type="primary" htmlType="submit">
+          Submit
+        </Button>
+      </Form>
+    </div>
+  )
 }
+
+CompleteProfileForm.getInitialProps = async ({ query }) => ({ query })
 
 const mapStateToProps = (state, ownProps) => ({
   profile: state.profile,

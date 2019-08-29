@@ -1,5 +1,8 @@
+import React from 'react'
 import { createStore, applyMiddleware } from 'redux'
 import { composeWithDevTools } from 'redux-devtools-extension'
+
+export const RecaptchaContext = React.createContext()
 
 const initialState = {
   constants: {
@@ -26,7 +29,8 @@ export const actions = {
   PROFILE: 'PROFILE',
   LOGOUT: 'LOGOUT',
   VALUE: 'SET_VALUE',
-  PAGE: 'PAGE_CHANGE'
+  PAGE: 'PAGE_CHANGE',
+  SET_CAPTCHA: 'SET_CAPTCHA'
 }
 
 function applicationReducer(state = initialState, action) {
@@ -80,6 +84,10 @@ function uiReducer(state = initialState.ui, action) {
     }
     case actions.PAGE: {
       return { ...state, currentPage: action.currentPage }
+    }
+    case actions.SET_CAPTCHA: {
+      console.log('setting')
+      return { ...state, recaptcha: action.recaptcha }
     }
     default: {
       return state
