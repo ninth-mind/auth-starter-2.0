@@ -1,5 +1,6 @@
 const transporter = require('./transporter')
 const templates = require('./emailTemplates')
+const { emailUsername } = require('../../config').email
 const { serverURL } = require('../../config').global
 /**
  * Sends email confirmation link to users email.
@@ -10,6 +11,7 @@ async function sendEmailConfirmation(email, token) {
   try {
     let link = `${serverURL}/api/auth/email-confirmation/${token}`
     let result = await transporter.sendMail({
+      from: emailUsername,
       to: email,
       subject: 'Confirmation Email',
       html: templates.confirmationEmailHTML(email, link)
@@ -25,6 +27,7 @@ async function sendPasswordChangeEmail(email, token) {
   try {
     let link = `${serverURL}/api/auth/reset-password/${token}`
     let result = await transporter.sendMail({
+      from: emailUsername,
       to: email,
       subject: 'Password Change Request',
       html: templates.resetPasswordHTML(email, link)
@@ -38,6 +41,7 @@ async function sendPasswordChangeEmail(email, token) {
 async function sendNoUserFoundEmail(email) {
   try {
     let result = await transporter.sendMail({
+      from: emailUsername,
       to: email,
       subject: 'Account Change Request',
       html: templates.userNotFoundHTML(email)

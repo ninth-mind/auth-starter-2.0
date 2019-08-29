@@ -1,0 +1,22 @@
+.ant-input::placeholder{
+  color: rgba(0,0,0,0.3)
+}
+
+.card-details {
+  margin: 1rem 0;
+}
+
+.info-icon {
+  position: relative;
+  margin-left: 3px;
+  top: -0.5em;
+}
+
+.StripeElement {
+  background-color: white;
+  border: 1px solid rgb(217,217,217);
+  border-radius: 4px;
+  line-height: 27px;
+  padding: 7px 11px;
+  margin-top: 5px;
+}

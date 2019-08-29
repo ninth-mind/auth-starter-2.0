@@ -2,18 +2,17 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { withProfile } from '~/components/HOCs'
 import AddValue from '~/components/AddValue'
-import { Button } from 'antd'
 
-class Profile extends React.Component {
-  render() {
-    return (
-      <div className="profile page">
-        <p>There isn't much here at the moment</p>
-        <Button>Cool Beans</Button>
-        <AddValue />
-      </div>
-    )
-  }
+function Profile(props) {
+  const p = props.profile
+  return (
+    <div className="profile page">
+      <h1>Profile</h1>
+      <h2>Welcome {p.username},</h2>
+      <h3>Current Value: {p.value}</h3>
+      <AddValue />
+    </div>
+  )
 }
 
 export default connect()(withProfile(Profile))

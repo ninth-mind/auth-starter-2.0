@@ -47,6 +47,7 @@ AuthRouter.post('/register', verifyCaptcha, async (req, res) => {
       let token = createToken(nu.toObject(), true)
       //send confirmation email
       let mailResponse = await Mailer.sendEmailConfirmation(nu.email, token)
+      console.log('MAIL RESPONSE', mailResponse)
       respond(res, 200, 'email confirmation sent', mailResponse)
     }
   } catch (err) {
@@ -94,7 +95,6 @@ AuthRouter.post(
       let token = createToken(u.toObject(), true)
       setCookie(res, token, true)
       let mailResponse = await Mailer.sendEmailConfirmation(email, token)
-      console.log('MAIL RESPONSE', mailResponse)
       respond(res, 200, 'email confirmation sent', mailResponse)
     } catch (err) {
       if (err.errors) {
@@ -146,7 +146,7 @@ AuthRouter.get(
       )
       let newToken = createToken(u.toObject())
       setCookie(res, newToken, true)
-      res.redirect('/u/account')
+      res.redirect('/u/profile')
     } catch (err) {
       handleError(err, res, 1006)
     }

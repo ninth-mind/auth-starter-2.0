@@ -1,16 +1,3 @@
-// import * as utils from './utils'
-
-// describe('Client Utils', () => {
-//   it('validates inputs', () => {
-//     let result = utils.sanitizeInputs({
-//       email: 'jamie',
-//       password: '#$%^&*(',
-//       username: '12'
-//     })
-//     expect(result.valid).toBe(false)
-//   })
-// })
-
 describe('outer', () => {
   describe('describe inner 1', () => {
     test('test 1', () => {

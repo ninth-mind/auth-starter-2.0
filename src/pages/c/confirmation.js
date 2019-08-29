@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import Link from 'next/link'
-import { toast } from 'react-toastify'
 import { connect } from 'react-redux'
 import { setLoading, handleError } from '~/lib/utils'
+import { Button, notification } from 'antd'
 import axios from 'axios'
 
 function Confirmation(props) {
@@ -18,14 +18,20 @@ function Confirmation(props) {
         method: 'post',
         url: '/api/auth/email-confirmation'
       })
-      if (r) toast.success('Email resent.')
-    } catch (err) {
-      if (err && err.response && err.response.data) {
-        toast.error(err.response.data.msg)
-      } else {
-        toast.error('Oops. Something went wrong')
-        handleError(err)
+      if (r) {
+        notification.success({
+          message: 'Email resent'
+        })
       }
+    } catch (err) {
+      handleError(err)
+      const opts = {
+        message: 'Error',
+        description: 'Oops! Something went wrong.'
+      }
+      if (err && err.response && err.response.data)
+        opts.description = err.response.data.msg
+      notification.error(opts)
     } finally {
       setLoading(false, dispatch)
     }
@@ -46,7 +52,7 @@ function Confirmation(props) {
         confirmed your email.
       </p>
       <Link href="/">
-        <button>Return Home</button>
+        <Button type="primary">Return Home</Button>
       </Link>
       <h2>Didn't receive an email?</h2>
       <p>
@@ -55,9 +61,9 @@ function Confirmation(props) {
         <strong>{props.email}</strong> is the correct email. If neither of those
         seem to be the problem, click the link below to request another email.
       </p>
-      <button onClick={handleClick} disabled={sent}>
+      <Button type="primary" onClick={handleClick} disabled={sent}>
         Request Confirmation Email
-      </button>
+      </Button>
       <hr />
       <h3>Why do you need my email?</h3>
       <p>

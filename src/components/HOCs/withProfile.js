@@ -1,6 +1,6 @@
 import React from 'react'
 import axios from 'axios'
-import { toast } from 'react-toastify'
+import { notification } from 'antd'
 import { redirect } from '~/lib/utils'
 import { actions } from '~/store'
 import { connect } from 'react-redux'
@@ -38,7 +38,11 @@ export default function withProfile(Component) {
       const { dispatch, initialProfile, error } = this.props
       if (error) {
         redirect('/')
-        toast.error('Oops, ' + error.msg)
+        notification.error({
+          message: 'Oops',
+          description: error.msg,
+          duration: 0
+        })
         return
       }
       dispatch({

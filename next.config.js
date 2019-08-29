@@ -14,28 +14,35 @@ const themeVariables = lessToJS(
     'utf8'
   )
 )
+
 // fix: prevents error when .less files are required by node
 if (typeof require !== 'undefined') {
   require.extensions['.less'] = file => {}
 }
 
-module.exports = withImages(
-  withCSS(
-    withSass(
-      withLess({
-        lessLoaderOptions: {
-          javascriptEnabled: true,
-          modifyVars: themeVariables // make your antd custom effective
-        },
-        distDir: 'build',
-        webpack: (config, { isServer }) => {
-          config.resolve.alias = {
-            ...(config.resolve.alias || {}),
-            '~': path.resolve(__dirname, './src')
-          }
-          return config
-        }
-      })
-    )
-  )
+//breaking up
+const webpackWithSass = withSass({
+  distDir: 'build',
+  webpack: (config, { isServer }) => {
+    config.resolve.alias = {
+      ...(config.resolve.alias || {}),
+      '~': path.resolve(__dirname, './src')
+    }
+    return config
+  }
+})
+
+const webpackWithLess = withLess({
+  lessLoaderOptions: {
+    javascriptEnabled: true,
+    modifyVars: themeVariables // make your antd custom effective
+  }
+})
+
+const webpackConfigObj = withImages(
+  withCSS({ ...webpackWithLess, ...webpackWithSass })
 )
+
+console.log('WEBPACK CONFIG: ', webpackConfigObj)
+
+module.exports = webpackConfigObj

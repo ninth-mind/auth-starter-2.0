@@ -6,8 +6,14 @@ const config = {
       clientURL: 'http://localhost:3000',
       serverURL: 'http://localhost:3000'
     },
+    staging: {
+      env: 'staging',
+      appName: 'auth-starter',
+      clientURL: 'http://localhost:3000',
+      serverURL: 'http://localhost:3000'
+    },
     production: {
-      env: process.env.NODE_ENV || 'development',
+      env: process.env.NODE_ENV,
       appName: 'auth-starter',
       clientURL: 'https://authstarter.herokuapp.com',
       serverURL: 'https://authstarter.herokuapp.com'
@@ -41,6 +47,11 @@ const config = {
       cronPattern: '0 */2 * * * *'
     }
   },
+  stripe: {
+    default: {
+      secretKey: process.env.STRIPE_SECRET_KEY
+    }
+  },
   facebook: {
     default: {
       clientID: process.env.FACEBOOK_APP_ID,
@@ -57,17 +68,32 @@ const config = {
     default: {
       emailUsername: 'auth-starter@gmail.com',
       emailHost: 'smtp.google.com',
-      emailPassword: '1234567890'
+      emailPassword: '1234567890',
+      googleAccount: 'auth-starter@gmail.com',
+      googleEmailClientID: '000000000000-xxx0.apps.googleusercontent.com',
+      googleEmailClientSecret: 'XxxxxXXxX0xxxxxxxx0XXxX0',
+      googleEmailRefreshToken: '1/XXxXxsss-xxxXXXXXxXxx0XXXxxXXx0x00xxx',
+      googleEmailAccessToken: 'ya29.Xx_XX0xxxxx-xX0X0XxXXxXxXXXxX0x'
     },
     development: {
       emailUsername: process.env.EMAIL_USERNAME,
       emailHost: process.env.EMAIL_HOST,
-      emailPassword: process.env.EMAIL_PASSWORD
+      emailPassword: process.env.EMAIL_PASSWORD,
+      googleAccount: process.env.GOOGLE_ACCOUNT,
+      googleEmailClientID: process.env.GOOGLE_EMAIL_CLIENT_ID,
+      googleEmailClientSecret: process.env.GOOGLE_EMAIL_CLIENT_SECRET,
+      googleEmailRefreshToken: process.env.GOOGLE_EMAIL_REFRESH_TOKEN,
+      googleEmailAccessToken: process.env.GOOGLE_EMAIL_ACCESS_TOKEN
     },
     production: {
       emailUsername: process.env.EMAIL_USERNAME,
       emailHost: process.env.EMAIL_HOST,
-      emailPassword: process.env.EMAIL_PASSWORD
+      emailPassword: process.env.EMAIL_PASSWORD,
+      googleAccount: process.env.GOOGLE_ACCOUNT,
+      googleEmailClientID: process.env.GOOGLE_EMAIL_CLIENT_ID,
+      googleEmailClientSecret: process.env.GOOGLE_EMAIL_CLIENT_SECRET,
+      googleEmailRefreshToken: process.env.GOOGLE_EMAIL_REFRESH_TOKEN,
+      googleEmailAccessToken: process.env.GOOGLE_EMAIL_ACCESS_TOKEN
     }
   },
   utils: {

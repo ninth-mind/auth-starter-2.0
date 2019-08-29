@@ -30,6 +30,9 @@ const UserSchema = mongoose.Schema(
       type: Boolean,
       default: false
     },
+    customer: {
+      id: String
+    },
     instagram: {
       id: { type: String, index: true },
       token: String,

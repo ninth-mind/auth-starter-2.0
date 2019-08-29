@@ -45,7 +45,7 @@ InstagramRouter.get(
       if (user) {
         let token = createToken(user.toObject())
         setCookie(res, token)
-        res.redirect('/u/account')
+        res.redirect('/u/profile')
         // if NO user, create temp token and redirect to complete-profile page
       } else {
         let newProf = User.loginMapper('instagram', profile)
