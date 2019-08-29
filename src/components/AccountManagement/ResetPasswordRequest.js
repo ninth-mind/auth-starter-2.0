@@ -1,13 +1,15 @@
-import React from 'react'
+import React, { useContext } from 'react'
+import { RecaptchaContext } from '~/store'
 import axios from 'axios'
-import { connect } from 'react-redux'
 import { handleError, redirect, setLoading } from '~/lib/utils'
 import { Button, Form, Input, notification } from 'antd'
 
 function PasswordResetRequest(props) {
+  const recaptcha = useContext(RecaptchaContext)
+  const { dispatch, form } = props
+
   async function handleSubmit(e) {
     e.preventDefault()
-    const { dispatch, recaptcha, form } = props
     //async validate and recaptcha
     let data, captchaToken
     try {
@@ -96,4 +98,4 @@ const WrappedPasswordResetRequestForm = Form.create({
   name: 'password-reset-request'
 })(PasswordResetRequest)
 
-export default connect()(WrappedPasswordResetRequestForm)
+export default WrappedPasswordResetRequestForm

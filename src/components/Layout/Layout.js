@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useRef, useEffect } from 'react'
 import Router from 'next/router'
 import ReCAPTCHA from 'react-google-recaptcha'
 import { connect } from 'react-redux'
@@ -6,22 +6,16 @@ import { setLoading } from '~/lib/utils'
 import Navigation from '~/components/Navigation'
 import { Layout, Spin } from 'antd'
 const { Content } = Layout
-import { actions } from '~/store'
+import { actions, RecaptchaContext } from '~/store'
 import './Layout.scss'
 
-class MainLayout extends React.Component {
-  constructor(props) {
-    super(props)
-    this.initializeRouter = this.initializeRouter.bind(this)
-    this.recaptcha // added by ref
-  }
+function MainLayout(props) {
+  const { dispatch } = props
+  let recaptcha = useRef(null)
 
-  componentDidMount() {
-    this.initializeRouter()
-  }
-
-  initializeRouter() {
-    let { dispatch } = this.props
+  // initialize router
+  useEffect(initializeRouter)
+  function initializeRouter() {
     Router.events.on('routeChangeStart', url => setLoading(true, dispatch))
     Router.events.on('routeChangeComplete', url => {
       setLoading(false, dispatch)
@@ -33,36 +27,28 @@ class MainLayout extends React.Component {
     Router.events.on('routeChangeError', () => setLoading(false, dispatch))
   }
 
-  render() {
-    const childrenWithProps = React.Children.map(this.props.children, child => {
-      return React.cloneElement(child, {
-        ...this.props,
-        recaptcha: this.recaptcha
-      })
-    })
-
-    return (
-      <Layout className="layout">
+  return (
+    <Layout className="layout">
+      <RecaptchaContext.Provider value={recaptcha.current}>
         <Navigation />
-        <Spin spinning={this.props.isLoading} tip="Loading...">
+        <Spin spinning={props.isLoading} tip="Loading...">
           <Content>
-            {childrenWithProps}
+            {props.children}
             <ReCAPTCHA
-              ref={n => (this.recaptcha = n)}
-              sitekey={this.props.captchSiteKey}
+              ref={recaptcha}
+              sitekey={props.captchSiteKey}
               size="invisible"
             />
           </Content>
         </Spin>
-      </Layout>
-    )
-  }
+      </RecaptchaContext.Provider>
+    </Layout>
+  )
 }
 
 const mapStateToProps = state => {
   return {
     isLoading: state.ui.isLoading,
-    localStorageName: state.constants.LOCAL_STORAGE_NAME,
     captchSiteKey: state.constants.CAPTCHA_SITE_KEY
   }
 }

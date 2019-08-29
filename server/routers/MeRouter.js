@@ -124,4 +124,21 @@ MeRouter.post(
   }
 )
 
+MeRouter.get('/account', verifyAuthenticationToken, async (req, res) => {
+  const { source } = req.locals.decodedToken
+  try {
+    let user = await User.findUser(source, req.locals.decodedToken)
+    if (!user.customer || !user.customer.id)
+      return respond(res, 403, 'No customer found')
+    else {
+      let customer = await stripe.customers.retrieve(user.customer.id)
+      console.log('customer', customer)
+      respond(res, 200, 'Customer found', customer)
+    }
+  } catch (err) {
+    handleError(err)
+    respond(res, 400, 'Error finding customer', err)
+  }
+})
+
 module.exports = MeRouter

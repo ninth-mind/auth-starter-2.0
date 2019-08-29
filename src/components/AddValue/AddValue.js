@@ -5,47 +5,44 @@ import { actions } from '~/store'
 import { connect } from 'react-redux'
 import { Button, notification } from 'antd'
 
-class AddValue extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = {}
-    this.handleSubmit = this.handleSubmit.bind(this)
-  }
+function AddValue(props) {
+  const { dispatch } = props
 
-  async handleSubmit() {
-    const { dispatch } = this.props
+  async function handleSubmit(e) {
+    e.preventDefault()
     setLoading(true, dispatch)
 
-    let { status, data } = await axios({
-      method: 'post',
-      url: '/api/me',
-      data: { toAdd: 1 }
-    })
-    if (status === 200 && data) {
-      notification.success({
-        message: 'Value Added',
-        duration: 2
+    try {
+      let { status, data } = await axios({
+        method: 'post',
+        url: '/api/me',
+        data: { toAdd: 1 }
       })
-      this.props.dispatch({
-        type: actions.VALUE,
-        value: data.data.value
-      })
+      if (status === 200 && data) {
+        notification.success({
+          message: 'Value Added',
+          duration: 2
+        })
 
-      setLoading(false, dispatch)
-    } else
+        dispatch({
+          type: actions.VALUE,
+          value: data.data.value
+        })
+        setLoading(false, dispatch)
+      }
+    } catch (err) {
       notification.error({
         message: 'Error Adding Value',
         description: 'There was error adding value to your account'
       })
+    }
   }
 
-  render() {
-    return (
-      <div className="add-value">
-        <Button onClick={this.handleSubmit}>PLUS 1</Button>
-      </div>
-    )
-  }
+  return (
+    <div className="add-value">
+      <Button onClick={handleSubmit}>PLUS 1</Button>
+    </div>
+  )
 }
 
 export default connect()(AddValue)

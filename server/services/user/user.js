@@ -88,33 +88,21 @@ async function findOneAndUpdate(source, profile, update, opts) {
  */
 async function addCard(source, profile, stripeToken, additionalCardInfo) {
   const curUser = await findUser(source, { ...profile, source })
-  const { customer, cards } = curUser
+  const { customer } = curUser
+  let newCustomer
   // there is no customer
   if (!customer || !customer.id) {
     // create customer
-    const newCustomer = await stripe.customers.create({
+    newCustomer = await stripe.customers.create({
       source: stripeToken.id,
       email: profile.email
     })
-
-    const newUser = await findOneAndUpdate(
-      source,
-      profile,
-      {
-        customer: { id: newCustomer.id },
-        $push: {
-          cards: {
-            ...newCustomer,
-            ...additionalCardInfo
-          }
-        }
-      },
-      { new: true }
-    )
-    return newUser
   } else if (customer && customer.id) {
-    return curUser
+    newCustomer = await stripe.customers.createSource(customer.id, {
+      source: stripeToken.id
+    })
   }
+  return newCustomer
 }
 
 /**

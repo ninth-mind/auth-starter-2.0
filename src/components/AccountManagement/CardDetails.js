@@ -1,5 +1,6 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import PropTypes from 'prop-types'
+import { RecaptchaContext } from '~/store'
 import { connect } from 'react-redux'
 import { handleError, setLoading } from '~/lib/utils'
 import { injectStripe } from 'react-stripe-elements'
@@ -24,6 +25,7 @@ import './CardDetails.scss'
  */
 function CardDetails(props) {
   const { getFieldDecorator } = props.form
+  const recaptcha = useContext(RecaptchaContext)
 
   //CSS IN JS STYLES FOR FORM
   const formItemLayout = {
@@ -52,7 +54,7 @@ function CardDetails(props) {
   async function handleSubmit(e) {
     // We don't want to let default form submission happen here, which would refresh the page.
     e.preventDefault()
-    const { dispatch, recaptcha, stripe, form, handleCard } = props
+    const { dispatch, stripe, form, handleCard } = props
 
     let captchaToken, data
 
@@ -80,7 +82,6 @@ function CardDetails(props) {
     }
   }
 
-  console.log(props)
   /**
    * JSX RETURN VALUE
    */

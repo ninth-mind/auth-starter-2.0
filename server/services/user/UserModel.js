@@ -4,21 +4,6 @@ const uniqueValidator = require('mongoose-unique-validator')
 const bcrypt = require('bcryptjs')
 const SALT_WORK_FACTOR = 10
 
-const CardSchema = mongoose.Schema({
-  name: {
-    string: String
-  },
-  customerId: String,
-  last4: {
-    type: String,
-    trim: true
-  },
-  brand: {
-    type: String,
-    trim: true
-  }
-})
-
 const UserSchema = mongoose.Schema(
   {
     source: String,
@@ -48,8 +33,6 @@ const UserSchema = mongoose.Schema(
     customer: {
       id: String
     },
-    charges: [],
-    cards: [CardSchema],
     instagram: {
       id: { type: String, index: true },
       token: String,
