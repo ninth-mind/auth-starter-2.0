@@ -1,6 +1,6 @@
 import React from 'react'
 import axios from 'axios'
-import { signOut, redirect, handleError } from '~/lib/utils'
+import { redirect } from '~/lib/utils'
 import { withProfile } from '~/components/HOCs'
 import { Button, Divider, notification, Popconfirm } from 'antd'
 import AddValue from '~/components/AddValue'

@@ -8,12 +8,6 @@ import { Button, Form, Icon, Input, notification } from 'antd'
 import './c.scss'
 
 function EmailLogin(props) {
-  // constructor(props) {
-  //   super(props)
-  //   handleSubmit = handleSubmit.bind(this)
-  //   setLoading = setLoading.bind(this)
-  // }
-
   /**
    * @param {Array} inputs : Array of inputs to clear. The first of which will recieve focus.
    */

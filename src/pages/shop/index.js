@@ -1,2 +1,2 @@
-import Shop from './Shop'
-export default Shop
+import shop from './shop-1'
+export default shop

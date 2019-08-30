@@ -1,5 +1,4 @@
 import React from 'react'
-
 function Privacy(props) {
   return (
     <div className="privacy page">
