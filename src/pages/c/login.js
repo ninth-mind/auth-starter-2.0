@@ -3,8 +3,8 @@ import { RecaptchaContext } from '~/store'
 import axios from 'axios'
 import Link from 'next/link'
 import { connect } from 'react-redux'
-import { redirect, setLoading, handleError } from '~/lib/utils'
-import { Button, Form, Icon, Input, notification } from 'antd'
+import { redirect, setLoading } from '~/lib/utils'
+import { Button, Form, Icon, Input, Modal, notification } from 'antd'
 import './c.scss'
 
 function EmailLogin(props) {
@@ -14,9 +14,12 @@ function EmailLogin(props) {
   const recaptcha = useContext(RecaptchaContext)
   const {
     dispatch,
+    query,
     form,
     form: { getFieldDecorator }
   } = props
+
+  let loginAttempt = query['login-attempt']
 
   // styling
   const formItemLayout = {
@@ -48,7 +51,7 @@ function EmailLogin(props) {
     } catch (err) {
       console.log(err)
       // if user already has an account with a different provider, redirect
-      if (err.response.status === 300) {
+      if (err && err.response && err.response.status === 300) {
         redirect(`/api/auth/${err.response.data.data.source}`)
         // otherwise raise error message
       } else {
@@ -68,6 +71,17 @@ function EmailLogin(props) {
   return (
     <div className="login page center">
       <h1>Login</h1>
+      <Modal
+        visible={!!loginAttempt}
+        title="No account found"
+        onOk={() => redirect(`/api/auth/${loginAttempt}/register`)}
+        onCancel={() => redirect('/c/login')}
+      >
+        <p>
+          Looks like you don't have an account yet. Would you like to create an
+          account here using <strong>{loginAttempt}</strong>?
+        </p>
+      </Modal>
       <Form className="form" {...formItemLayout} onSubmit={handleSubmit}>
         <Form.Item label="Email/Username">
           {getFieldDecorator('email', {
@@ -104,13 +118,13 @@ function EmailLogin(props) {
       <hr />
       <ul>
         <li>
-          <Button type="link" href="/api/auth/facebook">
+          <Button type="link" href="/api/auth/facebook/login">
             <Icon type="facebook" />
             Login with Facebook
           </Button>
         </li>
         <li>
-          <Button type="link" href="/api/auth/instagram">
+          <Button type="link" href="/api/auth/instagram/login">
             <Icon type="instagram" />
             Login with Instagram
           </Button>
@@ -120,7 +134,12 @@ function EmailLogin(props) {
   )
 }
 
-const mapStateToProps = state => ({ profile: state.profile })
+EmailLogin.getInitialProps = async ({ query }) => ({ query })
+
+const mapStateToProps = (state, ownProps) => ({
+  profile: state.profile,
+  query: ownProps.query
+})
 
 const WrappedLoginForm = Form.create({ name: 'login' })(EmailLogin)
 export default connect(mapStateToProps)(WrappedLoginForm)
