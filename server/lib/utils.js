@@ -30,6 +30,12 @@ function createToken(p, isTemp = false) {
   })
 }
 
+/**
+ * Sets cookie ok the response header sent back to the frontend
+ * @param {object} res - response object
+ * @param {string} token - token to set in the cookie
+ * @param {boolean} overwrite - whether or not to overwrite the existing cookie
+ */
 function setCookie(res, token, overwrite = false) {
   res.cookie(cookieName, token, {
     httpOnly: true,

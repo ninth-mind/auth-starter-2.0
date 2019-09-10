@@ -189,13 +189,13 @@ function RegistrationForm(props) {
       <hr />
       <ul>
         <li>
-          <Button type="link" href="/api/auth/facebook">
+          <Button type="link" href="/api/auth/facebook/register">
             <Icon type="facebook" />
             Login with Facebook
           </Button>
         </li>
         <li>
-          <Button type="link" href="/api/auth/instagram">
+          <Button type="link" href="/api/auth/instagram/register">
             <Icon type="instagram" />
             Login with Instagram
           </Button>

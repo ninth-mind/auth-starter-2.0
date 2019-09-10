@@ -28,17 +28,22 @@ function CompleteProfileForm(props) {
     source: '',
     email: ''
   }
-  let [knownUserInfo, setKnownUserInfo] = useState(initialState)
   // capture context
   const recaptcha = useContext(RecaptchaContext)
 
   // set up effects
+  // FOR SOME REASON WHEN I PARSE THE TOKEN IN THIS EFFECT
+  // I DONT GET A CSS ERROR WHEN POPULATING THE
+  // FIELDS WITH THEIR DEFAULT VALUE
+  let [knownUserInfo, setKnownUserInfo] = useState(initialState)
   useEffect(() => {
     if (query && query.token) {
       let parseInfo = parseJWT(query.token)
       setKnownUserInfo(parseInfo)
     }
   }, [query])
+  // THE ABOVE BIT OF CODE SHOULD BE AS SIMPLE AS
+  // let knownUserInfo = parseJWT(query.token)
 
   // define functions
   function validateUsername(rule, value, cb) {

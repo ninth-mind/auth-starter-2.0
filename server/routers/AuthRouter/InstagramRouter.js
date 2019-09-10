@@ -8,12 +8,16 @@ const config = require('../../config')
 const { clientSecret, clientID } = config.instagram
 const { serverURL, clientURL } = config.global
 
+/**
+ * Configure the strategies
+ */
 passport.use(
+  'instagram-login-strategy',
   new InstagramStrategy(
     {
       clientID,
       clientSecret,
-      callbackURL: `${serverURL}/api/auth/instagram/callback`
+      callbackURL: `${serverURL}/api/auth/instagram/login/callback`
     },
     (accessToken, refreshToken, profile, done) => {
       //gets user from spotify and passes it to /spotify/callback
@@ -23,9 +27,28 @@ passport.use(
   )
 )
 
+passport.use(
+  'instagram-register-strategy',
+  new InstagramStrategy(
+    {
+      clientID,
+      clientSecret,
+      callbackURL: `${serverURL}/api/auth/instagram/register/callback`
+    },
+    (accessToken, refreshToken, profile, done) => {
+      //gets user from spotify and passes it to /spotify/callback
+      let obj = { accessToken, refreshToken, profile }
+      return done(null, obj)
+    }
+  )
+)
+
+/**
+ * set the routes
+ */
 InstagramRouter.get(
-  '/',
-  passport.authenticate('instagram', {
+  '/register',
+  passport.authenticate('instagram-register-strategy', {
     failureRedirect: `${clientURL}/c`,
     session: false,
     showDialog: true
@@ -33,8 +56,20 @@ InstagramRouter.get(
 )
 
 InstagramRouter.get(
-  '/callback',
-  passport.authenticate('instagram', {
+  '/login',
+  passport.authenticate('instagram-login-strategy', {
+    failureRedirect: `${clientURL}/c`,
+    session: false,
+    showDialog: true
+  })
+)
+
+/**
+ * callback routes
+ */
+InstagramRouter.get(
+  '/register/callback',
+  passport.authenticate('instagram-register-strategy', {
     failureRedirect: '/c'
   }),
   async (req, res) => {
@@ -52,6 +87,30 @@ InstagramRouter.get(
         let token = createToken(newProf, true)
         setCookie(res, token, true)
         res.redirect(`/c/complete-profile?token=${token}`)
+      }
+    } catch (err) {
+      handleError(err, res, 1003)
+    }
+  }
+)
+
+InstagramRouter.get(
+  '/login/callback',
+  passport.authenticate('instagram-login-strategy', {
+    failureRedirect: '/c'
+  }),
+  async (req, res) => {
+    try {
+      const { profile } = req.user
+      let user = await User.findUser('instagram', profile)
+      // if user is found, log them in and redirect to profile
+      if (user) {
+        let token = createToken(user.toObject())
+        setCookie(res, token)
+        res.redirect('/u/profile')
+        // if NO user, create temp token and redirect to complete-profile page
+      } else {
+        res.redirect(`/c/login?login-attempt=instagram`)
       }
     } catch (err) {
       handleError(err, res, 1003)
