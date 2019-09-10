@@ -39,16 +39,19 @@ AuthRouter.get('/', verifyAuthenticationToken, (req, res) => {
  */
 AuthRouter.post('/register', verifyCaptcha, async (req, res) => {
   try {
+    //check if user exists
     let u = await User.findUser('email', req.body)
+    // if not respond with NO USER
     if (u) respond(res, 409, 'User already exists')
     else {
-      // create user
+      // otherwise create user
       let nu = await User.createUser('email', req.body)
+      // create JWT token to pass back to FE
       let token = createToken(nu.toObject(), true)
       //send confirmation email
       let mailResponse = await Mailer.sendEmailConfirmation(nu.email, token)
-      console.log('MAIL RESPONSE', mailResponse)
-      respond(res, 200, 'email confirmation sent', mailResponse)
+      // respond with success message
+      respond(res, 200, 'email confirmation sent')
     }
   } catch (err) {
     handleError(err, res, 1003)
@@ -57,8 +60,10 @@ AuthRouter.post('/register', verifyCaptcha, async (req, res) => {
 
 AuthRouter.post('/login', verifyCaptcha, async (req, res) => {
   try {
+    // see if user exists
     const { email, password } = req.body
     let u = await User.findUser('email', { email, username: email })
+    // if there is not a user, respond accordingly
     if (!u) respond(res, 404, 'No user found')
     else {
       if (!u.password) {
