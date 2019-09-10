@@ -105,7 +105,7 @@ function CompleteProfileForm(props) {
   const s = knownUserInfo
 
   return (
-    <div id="complete-profile" className="complete-profile page center">
+    <div id="complete-profile" className="complete-profile page">
       <h1>Complete Profile</h1>
       <p>There are just a few more things we need to complete your profile.</p>
       <h3>ID: {s.id}</h3>

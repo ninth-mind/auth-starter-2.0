@@ -23,7 +23,7 @@ function Navigations(props) {
           <Link href="/">
             <span>
               <Icon type="star" />
-              Leaderboard
+              Home
             </span>
           </Link>
         </Menu.Item>

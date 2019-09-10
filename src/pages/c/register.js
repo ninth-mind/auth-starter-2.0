@@ -89,7 +89,7 @@ function RegistrationForm(props) {
   }
 
   return (
-    <div className="register page center">
+    <div className="register page">
       <h1>Register</h1>
       <Form className="form" {...formItemLayout} onSubmit={handleSubmit}>
         <Form.Item label="Email">

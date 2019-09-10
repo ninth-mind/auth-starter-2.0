@@ -69,7 +69,7 @@ function EmailLogin(props) {
   }
 
   return (
-    <div className="login page center">
+    <div className="login page">
       <h1>Login</h1>
       <Modal
         visible={!!loginAttempt}
