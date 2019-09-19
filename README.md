@@ -1,3 +1,7 @@
+# Portfolio
+
+This is my portfolio. Built on top of the `Auth-Starter-2.0` package. 
+
 # Auth Starter 2.0
 Starter repo for user authentication using passport, user payment handling using Stripe, and SSR using Next. Component Library AntD
 
