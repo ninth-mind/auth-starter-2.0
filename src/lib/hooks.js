@@ -17,9 +17,31 @@ export function useServerProfile(profile) {
       }
     }
     fetchData()
-
     return
   }, [newProfile])
 
   return newProfile
+}
+
+export function useStrapi(endpoint) {
+  let [data, setData] = useState([])
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        let r = await axios({
+          method: 'get',
+          url: `http://localhost:1337/${endpoint}`
+        })
+        console.log('ENDPOINT', r)
+        setData(r.data)
+      } catch (err) {
+        console.log(err)
+      }
+    }
+    fetchData()
+    return
+  }, [endpoint])
+
+  return data
 }

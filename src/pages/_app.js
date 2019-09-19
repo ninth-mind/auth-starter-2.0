@@ -21,7 +21,7 @@ class MyApp extends App {
       <StripeProvider stripe={this.state.stripe}>
         <Container>
           <Head>
-            <title>Leaderboard!</title>
+            <title>Jamie Skinner - Portfolio</title>
             <meta
               name="viewport"
               content="initial-scale=1.0, width=device-width, initial-width=1"

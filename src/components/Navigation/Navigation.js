@@ -44,6 +44,11 @@ function Navigations(props) {
             <a>Shop</a>
           </Link>
         </Menu.Item>
+        <Menu.Item key="work">
+          <Link href="/work">
+            <a>Work</a>
+          </Link>
+        </Menu.Item>
         <Menu.SubMenu title={<Icon type="user" />} disabled={!props.isLoggedIn}>
           <Menu.Item key="/u/account">
             <Link href="/u/account">
