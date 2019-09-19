@@ -27,18 +27,11 @@ function Navigations(props) {
             </span>
           </Link>
         </Menu.Item>
-        <Menu.SubMenu title="Login/Register">
-          <Menu.Item key="/c/login">
-            <Link href="/c/login">
-              <a>Login</a>
-            </Link>
-          </Menu.Item>
-          <Menu.Item key="/c/register">
-            <Link href="/c/register">
-              <a>Register</a>
-            </Link>
-          </Menu.Item>
-        </Menu.SubMenu>
+        <Menu.Item key="/c/login">
+          <Link href="/c/login">
+            <a>Login/Register</a>
+          </Link>
+        </Menu.Item>
         <Menu.Item key="shop">
           <Link href="/shop">
             <a>Shop</a>
