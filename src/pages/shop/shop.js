@@ -5,7 +5,6 @@ import ProductCard from '~/components/Cards/ProductCard'
 
 function Shop(props) {
   let products = useStrapi('products')
-  console.log(products)
   let ps = products.map((p, i) => (
     <ProductCard
       key={p.id}

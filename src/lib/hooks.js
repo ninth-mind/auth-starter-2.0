@@ -33,7 +33,6 @@ export function useStrapi(endpoint) {
           method: 'get',
           url: `http://localhost:1337/${endpoint}`
         })
-        console.log('ENDPOINT', r)
         setData(r.data)
       } catch (err) {
         console.log(err)

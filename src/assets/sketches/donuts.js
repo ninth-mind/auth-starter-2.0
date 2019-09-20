@@ -16,7 +16,7 @@ function Donuts() {
       w: 300,
       h: 300
     }
-    let scene, camera, renderer, cube, cube2, light
+    let scene, camera, renderer, mesh
 
     function setup(canvas) {
       scene = new THREE.Scene()
@@ -27,37 +27,22 @@ function Donuts() {
         alpha: true
       })
 
-      let geo = new THREE.BoxGeometry(1, 1, 1)
-      let green = new THREE.MeshLambertMaterial({
-        color: 0x00ff00,
-        wireframe: true
-      })
-      let red = new THREE.MeshLambertMaterial({
-        color: 0xff0000,
-        wireframe: true
-      })
-      cube = new THREE.Mesh(geo, green)
-      cube.position.x = 0.2
-      cube2 = new THREE.Mesh(geo, red)
-      cube.position.x = -0.2
-      scene.add(cube)
-      scene.add(cube2)
+      console.log(THREE)
 
-      light = new THREE.PointLight(0xffffff, 1, 20)
-      light.position.z = 5
+      let geometry = new THREE.TorusGeometry(8, 2, 16, 100)
+      let material = new THREE.PointsMaterial({ color: 0x000000, size: 0.25 })
+      mesh = new THREE.Points(geometry, material)
 
-      scene.add(light)
-      camera.position.z = 2
+      scene.add(mesh)
 
+      camera.position.z = 20
       renderer.setSize(opts.w, opts.h)
     }
 
     function animate() {
       renderer.render(scene, camera)
-      cube.rotation.x += 0.01
-      cube.rotation.y += 0.01
-      // cube2.rotation.x -= 0.01
-      cube2.rotation.y -= 0.01
+      // mesh.rotation.x += 0.01
+      mesh.rotation.y += 0.01
 
       requestAnimationFrame(animate)
     }

@@ -6,7 +6,9 @@ import { setLoading } from '~/lib/utils'
 import Navigation from '~/components/Navigation'
 import { Layout, Spin } from 'antd'
 const { Content } = Layout
-import { actions, RecaptchaContext } from '~/store'
+import Panel from '~/components/Panel'
+import Donuts from '~/assets/sketches/Donuts'
+import { RecaptchaContext } from '~/store'
 import './Layout.scss'
 
 function MainLayout(props) {
@@ -17,13 +19,7 @@ function MainLayout(props) {
   useEffect(initializeRouter)
   function initializeRouter() {
     Router.events.on('routeChangeStart', url => setLoading(true, dispatch))
-    Router.events.on('routeChangeComplete', url => {
-      setLoading(false, dispatch)
-      dispatch({
-        type: actions.PAGE,
-        currentPage: url
-      })
-    })
+    Router.events.on('routeChangeComplete', url => setLoading(false, dispatch))
     Router.events.on('routeChangeError', () => setLoading(false, dispatch))
   }
 

@@ -10,7 +10,8 @@ const initialState = {
   },
   ui: {
     isLoading: false,
-    currentPage: '/'
+    currentPage: '/',
+    panels: []
   },
   profile: {
     username: null,
@@ -29,8 +30,7 @@ export const actions = {
   PROFILE: 'PROFILE',
   LOGOUT: 'LOGOUT',
   VALUE: 'SET_VALUE',
-  PAGE: 'PAGE_CHANGE',
-  SET_CAPTCHA: 'SET_CAPTCHA'
+  PANEL_TOGGLE: 'PANEL_TOGGLE'
 }
 
 function applicationReducer(state = initialState, action) {
@@ -82,12 +82,19 @@ function uiReducer(state = initialState.ui, action) {
     case actions.LOADING: {
       return { ...state, isLoading: action.isLoading }
     }
-    case actions.PAGE: {
-      return { ...state, currentPage: action.currentPage }
-    }
-    case actions.SET_CAPTCHA: {
-      console.log('setting')
-      return { ...state, recaptcha: action.recaptcha }
+    case actions.PANEL_TOGGLE: {
+      let panels = state.panels
+      if (action.state === 'open') {
+        if (panels.indexOf(action.title) >= 0) return state
+        return { ...state, panels: [...panels, action.title] }
+      } else {
+        let temp = [...panels]
+        temp.splice(panels.indexOf(action.title), 1)
+        return {
+          ...state,
+          panels: temp
+        }
+      }
     }
     default: {
       return state
