@@ -16,14 +16,8 @@ function MainLayout(props) {
   // initialize router
   useEffect(initializeRouter)
   function initializeRouter() {
-    Router.events.on('routeChangeStart', url => setLoading(true, dispatch))
-    Router.events.on('routeChangeComplete', url => {
-      setLoading(false, dispatch)
-      dispatch({
-        type: actions.PAGE,
-        currentPage: url
-      })
-    })
+    Router.events.on('routeChangeStart', () => setLoading(true, dispatch))
+    Router.events.on('routeChangeComplete', () => setLoading(false, dispatch))
     Router.events.on('routeChangeError', () => setLoading(false, dispatch))
   }
 

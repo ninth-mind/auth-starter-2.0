@@ -28,9 +28,7 @@ export const actions = {
   CREDS: 'CREDS',
   PROFILE: 'PROFILE',
   LOGOUT: 'LOGOUT',
-  VALUE: 'SET_VALUE',
-  PAGE: 'PAGE_CHANGE',
-  SET_CAPTCHA: 'SET_CAPTCHA'
+  VALUE: 'SET_VALUE'
 }
 
 function applicationReducer(state = initialState, action) {
@@ -81,13 +79,6 @@ function uiReducer(state = initialState.ui, action) {
   switch (action.type) {
     case actions.LOADING: {
       return { ...state, isLoading: action.isLoading }
-    }
-    case actions.PAGE: {
-      return { ...state, currentPage: action.currentPage }
-    }
-    case actions.SET_CAPTCHA: {
-      console.log('setting')
-      return { ...state, recaptcha: action.recaptcha }
     }
     default: {
       return state
