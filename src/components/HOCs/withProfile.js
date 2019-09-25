@@ -36,6 +36,7 @@ export default function withProfile(Component) {
 
     componentDidMount() {
       const { dispatch, initialProfile, error } = this.props
+
       if (error) {
         redirect('/')
         notification.error({
@@ -45,13 +46,15 @@ export default function withProfile(Component) {
         })
         return
       }
+
       dispatch({
         type: actions.PROFILE,
         username: initialProfile.username,
         email: initialProfile.email,
         id: initialProfile.id,
         value: initialProfile.value,
-        source: initialProfile.source
+        source: initialProfile.source,
+        permissions: initialProfile.permissions
       })
     }
 

@@ -6,7 +6,11 @@ export const RecaptchaContext = React.createContext()
 
 const initialState = {
   constants: {
-    CAPTCHA_SITE_KEY: '6Le87Z0UAAAAALKPzIW8DiLMEzSi9I51FNTnWBQN' // v3 site key
+    CAPTCHA_SITE_KEY: '6Le87Z0UAAAAALKPzIW8DiLMEzSi9I51FNTnWBQN', // v3 site key,
+    CMS_URL: 'http://localhost:1337/admin'
+  },
+  cart: {
+    products: []
   },
   ui: {
     isLoading: false,
@@ -20,7 +24,8 @@ const initialState = {
     value: null,
     source: null,
     id: null,
-    token: null
+    token: null,
+    permissions: []
   }
 }
 
@@ -32,14 +37,18 @@ export const actions = {
   LOGOUT: 'LOGOUT',
   VALUE: 'SET_VALUE',
   PANEL_TOGGLE: 'PANEL_TOGGLE',
-  DRAWER_TOGGLE: 'DRAWER_TOGGLE'
+  DRAWER_TOGGLE: 'DRAWER_TOGGLE',
+  ADD_TO_CART: 'ADD_TO_CART',
+  REMOVE_FROM_CART: 'ADD_TO_CART',
+  EDIT_CART: 'EDIT_CART'
 }
 
 function applicationReducer(state = initialState, action) {
   return {
     constants: state.constants,
     ui: uiReducer(state.ui, action),
-    profile: profileReducer(state.profile, action)
+    profile: profileReducer(state.profile, action),
+    cart: cartReducer(state.cart, action)
   }
 }
 
@@ -102,6 +111,32 @@ function uiReducer(state = initialState.ui, action) {
       }
     }
     case actions.DRAWER_TOGGLE: {
+      return {
+        ...state,
+        checkoutDrawerIsVisible: action.state || !state.checkoutDrawerIsVisible
+      }
+    }
+    default: {
+      return state
+    }
+  }
+}
+
+function cartReducer(state = initialState.cart, action) {
+  switch (action.type) {
+    case actions.ADD_TO_CART: {
+      return {
+        ...state,
+        checkoutDrawerIsVisible: action.state || !state.checkoutDrawerIsVisible
+      }
+    }
+    case actions.REMOVE_FROM_CART: {
+      return {
+        ...state,
+        checkoutDrawerIsVisible: action.state || !state.checkoutDrawerIsVisible
+      }
+    }
+    case actions.EDIT_CART: {
       return {
         ...state,
         checkoutDrawerIsVisible: action.state || !state.checkoutDrawerIsVisible

@@ -8,7 +8,7 @@ const { Header } = Layout
 
 function Navigations(props) {
   const { dispatch } = props
-
+  console.log(props.cmsURL)
   function handleSignOut() {
     const { dispatch } = props
     signOut(dispatch)
@@ -62,6 +62,13 @@ function Navigations(props) {
           </Menu.Item>
         </Menu.SubMenu>
         <Menu.SubMenu title={<Icon type="user" />} disabled={!props.isLoggedIn}>
+          {props.permissions.includes('admin') && (
+            <Menu.Item key="cms-link">
+              <a href={props.cmsURL} target="_blank" rel="noopener noreferrer">
+                Admin Page
+              </a>
+            </Menu.Item>
+          )}
           <Menu.Item key="/u/account">
             <Link href="/u/account">
               <a>Account</a>
@@ -86,7 +93,9 @@ function Navigations(props) {
 const mapStateToProps = state => {
   return {
     currentPage: state.ui.currentPage,
-    isLoggedIn: state.profile.email
+    isLoggedIn: state.profile.email,
+    permissions: state.profile.permissions,
+    cmsURL: state.constants.CMS_URL
   }
 }
 

@@ -2,19 +2,19 @@ const config = {
   global: {
     default: {
       env: process.env.NODE_ENV || 'development',
-      appName: 'auth-starter',
+      appName: 'jamieskinner.me',
       clientURL: 'http://localhost:3000',
       serverURL: 'http://localhost:3000'
     },
     staging: {
       env: 'staging',
-      appName: 'auth-starter',
+      appName: 'jamieskinner.me',
       clientURL: 'http://localhost:3000',
       serverURL: 'http://localhost:3000'
     },
     production: {
       env: process.env.NODE_ENV,
-      appName: 'auth-starter',
+      appName: 'jamieskinner.me',
       clientURL: 'https://authstarter.herokuapp.com',
       serverURL: 'https://authstarter.herokuapp.com'
     }
@@ -101,7 +101,7 @@ const config = {
       secret: 'ThisIsMySuperSecureSecret',
       tokenExpiryTime: '1hr',
       tempTokenExpiryTime: '10min',
-      cookieName: 'auth-starter',
+      cookieName: 'jamieskinner.me',
       captchaSecretKey: process.env.CAPTCHA_SECRET_KEY,
       captchaThreshold: 0.01
     },
@@ -109,7 +109,7 @@ const config = {
       secret: process.env.SECRET,
       tokenExpiryTime: '1hr',
       tempTokenExpiryTime: '10min',
-      cookieName: 'auth-starter',
+      cookieName: 'jamieskinner.me',
       captchaSecretKey: process.env.CAPTCHA_SECRET_KEY,
       captchaThreshold: 0.01
     },
@@ -117,7 +117,7 @@ const config = {
       secret: process.env.SECRET,
       tokenExpiryTime: '24hr',
       tempTokenExpiryTime: '10min',
-      cookieName: 'auth-starter',
+      cookieName: 'jamieskinner.me',
       captchaSecretKey: process.env.CAPTCHA_SECRET_KEY,
       captchaThreshold: 0.01
     }

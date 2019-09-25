@@ -3,8 +3,33 @@
   font-size: 12px;
   background-color: white;
   border: 1px solid rgba(0,0,0,0.2);
-  min-width: 100px;
-  max-width: 200px;
+  max-width: 300px;
   display: flex;
   flex-flow: column nowrap;
+}
+
+.product-image {
+  width: 200px;
+  height: 200px;
+  align-self: center;
+  margin-bottom: 1em;
+}
+
+.product-details,
+.product-details__options {
+  display: flex;
+  flex-flow: column nowrap;
+  margin: 0.5em 0;
+}
+
+.product-details__price {
+  font-size: 2em;
+  margin-right: 2em;
+}
+
+.product-details__meta {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-around;
+  align-items: center;
 }
