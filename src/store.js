@@ -11,7 +11,7 @@ const initialState = {
   ui: {
     isLoading: false,
     currentPage: '/',
-    panels: []
+    panels: ['donut']
   },
   profile: {
     username: null,
@@ -83,13 +83,16 @@ function uiReducer(state = initialState.ui, action) {
       return { ...state, isLoading: action.isLoading }
     }
     case actions.PANEL_TOGGLE: {
-      let panels = state.panels
+      const panels = state.panels
+      const key = action.title.toLowerCase()
       if (action.state === 'open') {
-        if (panels.indexOf(action.title) >= 0) return state
-        return { ...state, panels: [...panels, action.title] }
+        // check if it exists then add it
+        if (panels.indexOf(key) >= 0) return state
+        return { ...state, panels: [...panels, key] }
       } else {
+        // remove it from panels array
         let temp = [...panels]
-        temp.splice(panels.indexOf(action.title), 1)
+        temp.splice(panels.indexOf(key), 1)
         return {
           ...state,
           panels: temp

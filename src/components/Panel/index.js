@@ -1,2 +1,3 @@
 import Panel from './Panel'
-export default Panel
+import PanelManager from './PanelManager'
+export { Panel, PanelManager }

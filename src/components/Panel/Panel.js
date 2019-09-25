@@ -13,26 +13,13 @@ function Panel(props) {
     setSize({ width: size.width, height: size.height })
   }
 
-  const onLoad = useCallback(() => {
-    dispatch({
-      type: actions.PANEL_TOGGLE,
-      state: 'open',
-      title: title
-    })
-  }, [dispatch, title])
-
-  const onClose = useCallback(() => {
+  function handleClose(e) {
     dispatch({
       type: actions.PANEL_TOGGLE,
       state: 'close',
-      title: title
+      title: props.title
     })
-  }, [dispatch, title])
-
-  useEffect(() => {
-    onLoad()
-    return onClose
-  }, [onClose, onLoad])
+  }
 
   // TODO: Refactor this to be more DRY
   if (props.resizable) {
@@ -49,7 +36,12 @@ function Panel(props) {
               <div className="panel__header__title">{title}</div>
               <PanelHeaderSpacer />
               <div className="panel__header__controls">
-                <button className="panel__controls__close">X</button>
+                <button
+                  className="panel__controls__close"
+                  onClick={handleClose}
+                >
+                  +
+                </button>
               </div>
             </header>
             <div className="panel__content">{children}</div>
@@ -66,7 +58,9 @@ function Panel(props) {
             <div className="panel__header__title">{title}</div>
             <PanelHeaderSpacer />
             <div className="panel__header__controls">
-              <button className="panel__controls__close">+</button>
+              <button className="panel__controls__close" onClick={handleClose}>
+                +
+              </button>
             </div>
           </header>
           <div className="panel__content">{children}</div>

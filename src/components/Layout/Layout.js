@@ -6,8 +6,7 @@ import { setLoading } from '~/lib/utils'
 import Navigation from '~/components/Navigation'
 import { Layout, Spin } from 'antd'
 const { Content } = Layout
-import Panel from '~/components/Panel'
-import Donuts from '~/assets/sketches/Donuts'
+import { PanelManager } from '~/components/Panel'
 import { RecaptchaContext } from '~/store'
 import './Layout.scss'
 
@@ -29,6 +28,7 @@ function MainLayout(props) {
         <Navigation />
         <Spin spinning={props.isLoading} tip="Loading...">
           <Content>
+            <PanelManager />
             {props.children}
             <ReCAPTCHA
               ref={recaptcha}

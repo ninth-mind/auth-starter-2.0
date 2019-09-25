@@ -4,9 +4,19 @@ import Link from 'next/link'
 import axios from 'axios'
 import { connect } from 'react-redux'
 import './home.scss'
+import { actions } from '../../store'
 
 function Home(props) {
+  const { dispatch } = props
   let [open, setOpen] = useState(false)
+
+  function openDonuts() {
+    dispatch({
+      type: actions.PANEL_TOGGLE,
+      state: 'open',
+      title: 'Donuts'
+    })
+  }
 
   return (
     <div className="page">

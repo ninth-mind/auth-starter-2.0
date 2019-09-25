@@ -3,12 +3,23 @@ import Link from 'next/link'
 import { connect } from 'react-redux'
 import { signOut } from '~/lib/utils'
 import { Button, Icon, Layout, Menu } from 'antd'
+import { actions } from '../../store'
 const { Header } = Layout
 
 function Navigations(props) {
+  const { dispatch } = props
+
   function handleSignOut() {
     const { dispatch } = props
     signOut(dispatch)
+  }
+
+  function openPanel(title) {
+    dispatch({
+      type: actions.PANEL_TOGGLE,
+      state: 'open',
+      title: title
+    })
   }
 
   return (
@@ -42,6 +53,14 @@ function Navigations(props) {
             <a>Work</a>
           </Link>
         </Menu.Item>
+        <Menu.SubMenu title={<Icon type="meh" />}>
+          <Menu.Item key="donut">
+            <a onClick={() => openPanel('donut')}>Donut</a>
+          </Menu.Item>
+          <Menu.Item key="words">
+            <a onClick={() => openPanel('word')}>Words</a>
+          </Menu.Item>
+        </Menu.SubMenu>
         <Menu.SubMenu title={<Icon type="user" />} disabled={!props.isLoggedIn}>
           <Menu.Item key="/u/account">
             <Link href="/u/account">
