@@ -11,7 +11,8 @@ const initialState = {
   ui: {
     isLoading: false,
     currentPage: '/',
-    panels: []
+    panels: [],
+    checkoutDrawerIsVisible: false
   },
   profile: {
     username: null,
@@ -30,7 +31,8 @@ export const actions = {
   PROFILE: 'PROFILE',
   LOGOUT: 'LOGOUT',
   VALUE: 'SET_VALUE',
-  PANEL_TOGGLE: 'PANEL_TOGGLE'
+  PANEL_TOGGLE: 'PANEL_TOGGLE',
+  DRAWER_TOGGLE: 'DRAWER_TOGGLE'
 }
 
 function applicationReducer(state = initialState, action) {
@@ -94,6 +96,12 @@ function uiReducer(state = initialState.ui, action) {
           ...state,
           panels: temp
         }
+      }
+    }
+    case actions.DRAWER_TOGGLE: {
+      return {
+        ...state,
+        checkoutDrawerIsVisible: action.state || !state.checkoutDrawerIsVisible
       }
     }
     default: {

@@ -4,10 +4,9 @@ import ReCAPTCHA from 'react-google-recaptcha'
 import { connect } from 'react-redux'
 import { setLoading } from '~/lib/utils'
 import Navigation from '~/components/Navigation'
+import CartDrawer from '~/components/CartDrawer'
 import { Layout, Spin } from 'antd'
 const { Content } = Layout
-import Panel from '~/components/Panel'
-import Donuts from '~/assets/sketches/Donuts'
 import { RecaptchaContext } from '~/store'
 import './Layout.scss'
 
@@ -36,6 +35,7 @@ function MainLayout(props) {
               size="invisible"
             />
           </Content>
+          <CartDrawer />
         </Spin>
       </RecaptchaContext.Provider>
     </Layout>

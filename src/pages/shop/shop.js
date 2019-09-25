@@ -1,9 +1,13 @@
 import React from 'react'
 import Link from 'next/link'
 import { useStrapi } from '~/lib/hooks'
+import { connect } from 'react-redux'
 import ProductCard from '~/components/Cards/ProductCard'
+import { actions } from '../../store'
 
 function Shop(props) {
+  const { dispatch } = props
+
   let products = useStrapi('products')
   let ps = products.map((p, i) => (
     <ProductCard
@@ -16,15 +20,20 @@ function Shop(props) {
     />
   ))
 
+  function toggleDrawer() {
+    dispatch({
+      type: actions.DRAWER_TOGGLE,
+      state: true
+    })
+  }
+
   return (
     <div className="page shop">
       <h1>Shop</h1>
       {(ps.length && ps) || <p>Nothing here yet..</p>}
-      <Link href="/shop/checkout">
-        <a>Checkout</a>
-      </Link>
+      <a onClick={toggleDrawer}>View Cart</a>
     </div>
   )
 }
 
-export default Shop
+export default connect()(Shop)
