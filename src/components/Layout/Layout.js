@@ -4,15 +4,16 @@ import ReCAPTCHA from 'react-google-recaptcha'
 import { connect } from 'react-redux'
 import { setLoading } from '~/lib/utils'
 import Navigation from '~/components/Navigation'
-import CartDrawer from '~/components/CartDrawer'
-import { Layout, Spin } from 'antd'
+import { CartDrawer } from '~/components/Cart'
+import { Button, Layout, Spin } from 'antd'
 import { PanelManager } from '~/components/Panel'
 import { RecaptchaContext } from '~/store'
 const { Content } = Layout
 import './Layout.scss'
+import { actions } from '../../store'
 
 function MainLayout(props) {
-  const { dispatch } = props
+  const { dispatch, products } = props
   let recaptcha = useRef(null)
 
   // initialize router
@@ -21,6 +22,12 @@ function MainLayout(props) {
     Router.events.on('routeChangeStart', url => setLoading(true, dispatch))
     Router.events.on('routeChangeComplete', url => setLoading(false, dispatch))
     Router.events.on('routeChangeError', () => setLoading(false, dispatch))
+  }
+
+  function toggleCart() {
+    dispatch({
+      type: actions.DRAWER_TOGGLE
+    })
   }
 
   return (
@@ -38,6 +45,11 @@ function MainLayout(props) {
             />
           </Content>
           <CartDrawer />
+          {products.length > 0 && (
+            <Button className="view-cart" type="primary" onClick={toggleCart}>
+              View Cart ({products.length})
+            </Button>
+          )}
         </Spin>
       </RecaptchaContext.Provider>
     </Layout>
@@ -47,7 +59,8 @@ function MainLayout(props) {
 const mapStateToProps = state => {
   return {
     isLoading: state.ui.isLoading,
-    captchSiteKey: state.constants.CAPTCHA_SITE_KEY
+    captchSiteKey: state.constants.CAPTCHA_SITE_KEY,
+    products: state.cart.products
   }
 }
 

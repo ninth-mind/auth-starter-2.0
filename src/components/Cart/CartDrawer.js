@@ -3,9 +3,10 @@ import { connect } from 'react-redux'
 import { Button, Drawer } from 'antd'
 import Link from 'next/link'
 import { actions } from '~/store'
+import Cart from './Cart'
 
 function CartDrawer(props) {
-  const { dispatch, isVisible } = props
+  const { dispatch, isVisible, products } = props
 
   function toggleDrawer() {
     dispatch({
@@ -15,24 +16,25 @@ function CartDrawer(props) {
 
   return (
     <Drawer
-      title="Checkout"
+      title="Cart"
       width={520}
       closable={true}
       visible={isVisible}
       onClose={toggleDrawer}
     >
+      <Cart />
       <Link href="/shop/checkout">
-        <Button type="primary">Checkout</Button>
+        <Button type="primary" disabled={products.length <= 0}>
+          Checkout
+        </Button>
       </Link>
-      <Button type="primary" onClick={toggleDrawer}>
-        close
-      </Button>
     </Drawer>
   )
 }
 
 const mapStateToProps = state => ({
-  isVisible: state.ui.checkoutDrawerIsVisible
+  isVisible: state.ui.checkoutDrawerIsVisible,
+  products: state.cart.products
 })
 
 export default connect(mapStateToProps)(CartDrawer)

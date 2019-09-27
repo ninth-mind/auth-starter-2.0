@@ -125,9 +125,9 @@ function uiReducer(state = initialState.ui, action) {
 function cartReducer(state = initialState.cart, action) {
   switch (action.type) {
     case actions.ADD_TO_CART: {
+      const { productId, title, quantity, price } = action
       return {
-        ...state,
-        checkoutDrawerIsVisible: action.state || !state.checkoutDrawerIsVisible
+        products: [...state.products, { id: productId, quantity, title, price }]
       }
     }
     case actions.REMOVE_FROM_CART: {

@@ -1,11 +1,13 @@
 .product-card {
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: space-between;
   padding: 1em;
   font-size: 12px;
   background-color: white;
   border: 1px solid rgba(0,0,0,0.2);
   max-width: 300px;
-  display: flex;
-  flex-flow: column nowrap;
+  margin: 0 1rem;
 }
 
 .product-image {
@@ -32,4 +34,26 @@
   flex-flow: row wrap;
   justify-content: space-around;
   align-items: center;
+}
+
+.card__actions {
+  display: flex;
+  justify-content: space-between;
+}
+
+.product-cart-status {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  color: rgb(0, 165, 0);
+  font-weight: bold;
+
+  & .check-icon {
+    margin-right: 0.5em;
+  }
+}
+
+.check-icon,
+.cart-icon {
+  font-size: 18px;
 }

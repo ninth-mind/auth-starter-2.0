@@ -10,7 +10,6 @@ function PanelManager(props) {
   let [panelModuleList, setPanelList] = useState([])
 
   const getModules = useCallback(async () => {
-    console.log('running get modules')
     if (panels.length > 0) {
       let promises = []
       panels.forEach(pname => {
