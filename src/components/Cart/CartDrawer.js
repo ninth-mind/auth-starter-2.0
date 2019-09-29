@@ -24,7 +24,11 @@ function CartDrawer(props) {
     >
       <Cart />
       <Link href="/shop/checkout">
-        <Button type="primary" disabled={products.length <= 0}>
+        <Button
+          type="primary"
+          disabled={products.length <= 0}
+          onClick={toggleDrawer}
+        >
           Checkout
         </Button>
       </Link>

@@ -4,7 +4,7 @@ import ProductCard from '~/components/Cards/ProductCard'
 import './shop.scss'
 
 function Shop(props) {
-  let productsForSale = useStrapi('products')
+  let productsForSale = useStrapi('/products')
   let ps = productsForSale.map((p, i) => (
     <ProductCard
       key={p.id}

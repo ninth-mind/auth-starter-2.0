@@ -2,7 +2,7 @@ import React from 'react'
 import axios from 'axios'
 import { Cart } from '~/components/Cart'
 import { withProfile } from '~/components/HOCs'
-import { CardDetails } from '~/components/AccountManagement'
+import { CardDetails, AddressDetails } from '~/components/AccountManagement'
 
 function Checkout(props) {
   async function handleCardDetails(stripeToken, recaptchaToken, data) {
@@ -24,6 +24,7 @@ function Checkout(props) {
       <h2>What is in your cart:</h2>
       <Cart />
       <CardDetails handleCard={handleCardDetails} submitText="Pay" />
+      <AddressDetails />
     </div>
   )
 }

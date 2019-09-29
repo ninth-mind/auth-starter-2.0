@@ -192,10 +192,13 @@ function cartReducer(state = initialState.cart, action) {
   }
 }
 
-export function initializeStore(initialState = initialState) {
+function initStore(initialState = initialState) {
   return createStore(
     applicationReducer,
     initialState,
     composeWithDevTools(applyMiddleware())
   )
 }
+
+const initializeStore = initStore.bind(null, initialState)
+export { initializeStore }

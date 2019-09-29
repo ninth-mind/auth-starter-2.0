@@ -31,7 +31,7 @@ export function useStrapi(endpoint) {
       try {
         let r = await axios({
           method: 'get',
-          url: `http://localhost:1337/${endpoint}`
+          url: `http://localhost:1337${endpoint}`
         })
         setData(r.data)
       } catch (err) {

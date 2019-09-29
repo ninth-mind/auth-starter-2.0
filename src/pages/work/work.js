@@ -4,10 +4,11 @@ import { useStrapi } from '~/lib/hooks'
 import { Markdown } from 'react-showdown'
 
 function Work(props) {
-  let pages = useStrapi('pages')
+  let pages = useStrapi('/pages')
+  console.log(pages)
   let items = pages.map(page => (
     <li key={page.link}>
-      <Link href={`/work/${page.link}`}>
+      <Link href="/work/[id]" as={`/work/${page.link}`}>
         <a>{page.title}</a>
       </Link>
     </li>
