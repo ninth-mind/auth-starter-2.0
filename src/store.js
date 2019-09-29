@@ -10,6 +10,8 @@ const initialState = {
     CMS_URL: 'http://localhost:1337/admin'
   },
   cart: {
+    total: 0,
+    items: 0,
     products: []
   },
   ui: {
@@ -39,7 +41,7 @@ export const actions = {
   PANEL_TOGGLE: 'PANEL_TOGGLE',
   DRAWER_TOGGLE: 'DRAWER_TOGGLE',
   ADD_TO_CART: 'ADD_TO_CART',
-  REMOVE_FROM_CART: 'ADD_TO_CART',
+  REMOVE_FROM_CART: 'REMOVE_FORM_CART',
   EDIT_CART: 'EDIT_CART'
 }
 
@@ -126,20 +128,62 @@ function cartReducer(state = initialState.cart, action) {
   switch (action.type) {
     case actions.ADD_TO_CART: {
       const { productId, title, quantity, price } = action
+      // determine if it is already in the cart
+      let cartIndex = state.products.findIndex(p => p.id === productId)
+      let newProducts = [...state.products]
+      // if it is, update quantity
+      if (cartIndex >= 0) {
+        let curQuant = state.products[cartIndex].quantity
+        let newProduct = {
+          id: productId,
+          quantity: curQuant + quantity,
+          title,
+          price
+        }
+        newProducts.splice(cartIndex, 1, newProduct)
+        // otherwise create it and add it
+      } else {
+        newProducts.push({ id: productId, quantity, title, price })
+      }
+
+      // return updated total, new products
       return {
-        products: [...state.products, { id: productId, quantity, title, price }]
+        items: state.items + quantity,
+        total: state.total + price * quantity,
+        products: newProducts
       }
     }
+
     case actions.REMOVE_FROM_CART: {
-      return {
+      let index = state.products.findIndex(e => e.id === action.id)
+      let newProducts = [...state.products]
+      newProducts.splice(index, 1)
+      let newState = {
         ...state,
-        checkoutDrawerIsVisible: action.state || !state.checkoutDrawerIsVisible
+        total: newProducts.reduce((a, p) => a + p.quantity * p.price, 0),
+        items: newProducts.reduce((a, p) => a + p.quantity, 0),
+        products: newProducts
       }
+      console.log(newState)
+      return newState
     }
+
     case actions.EDIT_CART: {
+      // find index of product to edit
+      let index = state.products.findIndex(e => e.id === action.id)
+      let curP = state.products[index]
+      // get difference between value and desired value
+      let diff = action.quantity - curP.quantity
+      //create new product
+      let newP = { ...curP, quantity: curP.quantity + diff }
+      // duplicate product array and replace current entry with updated
+      let newProducts = [...state.products]
+      newProducts.splice(index, 1, newP)
       return {
         ...state,
-        checkoutDrawerIsVisible: action.state || !state.checkoutDrawerIsVisible
+        total: newProducts.reduce((a, p) => a + p.quantity * p.price, 0),
+        items: newProducts.reduce((a, p) => a + p.quantity, 0),
+        products: newProducts
       }
     }
     default: {

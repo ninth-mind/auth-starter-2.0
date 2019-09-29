@@ -1,15 +1,11 @@
 import React from 'react'
 import { useStrapi } from '~/lib/hooks'
-import { connect } from 'react-redux'
 import ProductCard from '~/components/Cards/ProductCard'
-import { actions } from '../../store'
 import './shop.scss'
 
 function Shop(props) {
-  const { dispatch } = props
-
-  let products = useStrapi('products')
-  let ps = products.map((p, i) => (
+  let productsForSale = useStrapi('products')
+  let ps = productsForSale.map((p, i) => (
     <ProductCard
       key={p.id}
       id={p.id}
@@ -31,4 +27,4 @@ function Shop(props) {
   )
 }
 
-export default connect()(Shop)
+export default Shop

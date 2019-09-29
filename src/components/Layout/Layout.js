@@ -13,7 +13,7 @@ import './Layout.scss'
 import { actions } from '../../store'
 
 function MainLayout(props) {
-  const { dispatch, products } = props
+  const { dispatch, cartItems } = props
   let recaptcha = useRef(null)
 
   // initialize router
@@ -45,9 +45,9 @@ function MainLayout(props) {
             />
           </Content>
           <CartDrawer />
-          {products.length > 0 && (
+          {cartItems > 0 && (
             <Button className="view-cart" type="primary" onClick={toggleCart}>
-              View Cart ({products.length})
+              View Cart ({cartItems})
             </Button>
           )}
         </Spin>
@@ -60,7 +60,7 @@ const mapStateToProps = state => {
   return {
     isLoading: state.ui.isLoading,
     captchSiteKey: state.constants.CAPTCHA_SITE_KEY,
-    products: state.cart.products
+    cartItems: state.cart.items
   }
 }
 
