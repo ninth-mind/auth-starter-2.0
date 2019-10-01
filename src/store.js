@@ -1,11 +1,13 @@
 import React from 'react'
 import { createStore, applyMiddleware } from 'redux'
 import { composeWithDevTools } from 'redux-devtools-extension'
+import ls from 'local-storage'
 
 export const RecaptchaContext = React.createContext()
 
 const initialState = {
   constants: {
+    CART_NAME: 'jamieskinner.me-cart',
     CAPTCHA_SITE_KEY: '6Le87Z0UAAAAALKPzIW8DiLMEzSi9I51FNTnWBQN', // v3 site key,
     CMS_URL: 'http://localhost:1337/admin'
   },
@@ -42,7 +44,8 @@ export const actions = {
   DRAWER_TOGGLE: 'DRAWER_TOGGLE',
   ADD_TO_CART: 'ADD_TO_CART',
   REMOVE_FROM_CART: 'REMOVE_FORM_CART',
-  EDIT_CART: 'EDIT_CART'
+  EDIT_CART: 'EDIT_CART',
+  SET_CART: 'SET_CART'
 }
 
 function applicationReducer(state = initialState, action) {
@@ -147,25 +150,27 @@ function cartReducer(state = initialState.cart, action) {
       }
 
       // return updated total, new products
-      return {
+      const cart = {
         items: state.items + quantity,
         total: state.total + price * quantity,
         products: newProducts
       }
+      ls.set(initialState.constants.CART_NAME, cart)
+      return cart
     }
 
     case actions.REMOVE_FROM_CART: {
       let index = state.products.findIndex(e => e.id === action.id)
       let newProducts = [...state.products]
       newProducts.splice(index, 1)
-      let newState = {
+      let cart = {
         ...state,
         total: newProducts.reduce((a, p) => a + p.quantity * p.price, 0),
         items: newProducts.reduce((a, p) => a + p.quantity, 0),
         products: newProducts
       }
-      console.log(newState)
-      return newState
+      ls.set(initialState.constants.CART_NAME, cart)
+      return cart
     }
 
     case actions.EDIT_CART: {
@@ -179,12 +184,18 @@ function cartReducer(state = initialState.cart, action) {
       // duplicate product array and replace current entry with updated
       let newProducts = [...state.products]
       newProducts.splice(index, 1, newP)
-      return {
+      const cart = {
         ...state,
         total: newProducts.reduce((a, p) => a + p.quantity * p.price, 0),
         items: newProducts.reduce((a, p) => a + p.quantity, 0),
         products: newProducts
       }
+      ls.set(initialState.constants.CART_NAME, cart)
+      return cart
+    }
+
+    case actions.SET_CART: {
+      return action.data
     }
     default: {
       return state

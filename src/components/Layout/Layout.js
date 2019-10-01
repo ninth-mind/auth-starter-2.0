@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react'
+import React, { useRef, useEffect, useCallback } from 'react'
 import Router from 'next/router'
 import ReCAPTCHA from 'react-google-recaptcha'
 import { connect } from 'react-redux'
@@ -11,18 +11,29 @@ import { RecaptchaContext } from '~/store'
 const { Content } = Layout
 import './Layout.scss'
 import { actions } from '../../store'
+import ls from 'local-storage'
 
 function MainLayout(props) {
-  const { dispatch, cartItems } = props
+  const { dispatch, cartItems, cartName } = props
   let recaptcha = useRef(null)
 
-  // initialize router
-  useEffect(initializeRouter)
-  function initializeRouter() {
+  const init = useCallback(() => {
+    // init router
     Router.events.on('routeChangeStart', url => setLoading(true, dispatch))
     Router.events.on('routeChangeComplete', url => setLoading(false, dispatch))
     Router.events.on('routeChangeError', () => setLoading(false, dispatch))
-  }
+
+    const cart = ls.get(cartName)
+    if (cart) {
+      dispatch({
+        type: actions.SET_CART,
+        data: cart
+      })
+    }
+  }, [cartName, dispatch])
+
+  // initialize router
+  useEffect(init, [])
 
   function toggleCart() {
     dispatch({
@@ -60,6 +71,7 @@ const mapStateToProps = state => {
   return {
     isLoading: state.ui.isLoading,
     captchSiteKey: state.constants.CAPTCHA_SITE_KEY,
+    cartName: state.constants.CART_NAME,
     cartItems: state.cart.items
   }
 }

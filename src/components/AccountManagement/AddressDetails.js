@@ -1,16 +1,26 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import { Button, Form, Input } from 'antd'
+import { Form, Input, Select } from 'antd'
+const { Option } = Select
+import states from '~/assets/states'
+
+// Country Options
+function getStateOptions() {
+  let options = []
+  for (let [key, value] of Object.entries(states)) {
+    options.push(
+      <Option key={key} value={value}>
+        {value}
+      </Option>
+    )
+  }
+  return options
+}
 
 function AddressDetails(props) {
-  async function handleSubmit(e) {
-    e.preventDefault()
-    const { form, dispatch } = props
-    let data = await form.validateFields()
-    console.log(data)
-  }
-
   const {
+    form,
     form: { getFieldDecorator }
   } = props
 
@@ -24,10 +34,16 @@ function AddressDetails(props) {
       sm: { span: 16 }
     }
   }
+
+  function handleChange() {
+    let values = form.getFieldsValue()
+    props.callback(values)
+  }
+
   return (
     <div className="address-details">
       <h1>Address Details</h1>
-      <Form className="form" {...formItemLayout} onSubmit={handleSubmit}>
+      <Form className="form" {...formItemLayout} onChange={handleChange}>
         <Form.Item label="Address" hasFeedback>
           {getFieldDecorator('Address', {
             rules: [{ required: true }]
@@ -40,17 +56,26 @@ function AddressDetails(props) {
           {getFieldDecorator('City')(<Input />)}
         </Form.Item>
         <Form.Item label="State" hasFeedback>
-          {getFieldDecorator('State')(<Input />)}
+          {getFieldDecorator('State')(
+            <Select
+              showSearch
+              placeholder="Select a Country"
+              optionFilterProp="children"
+            >
+              {getStateOptions()}
+            </Select>
+          )}
         </Form.Item>
         <Form.Item label="ZIP Code" hasFeedback>
           {getFieldDecorator('ZIP Code')(<Input />)}
         </Form.Item>
-        <Button type="primary" htmlType="submit">
-          Submit
-        </Button>
       </Form>
     </div>
   )
+}
+
+AddressDetails.PropTypes = {
+  callback: PropTypes.func.required
 }
 
 const mapStateToProps = state => ({
