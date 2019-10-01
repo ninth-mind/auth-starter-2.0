@@ -5,7 +5,12 @@ import { redirect } from '~/lib/utils'
 import { actions } from '~/store'
 import { connect } from 'react-redux'
 
-export default function withProfile(Component) {
+/**
+ *
+ * @param {function} Component - Component to wrap with profile information
+ * @param {boolean} blocking - boolean value whether or not to reroute on error
+ */
+export default function withProfile(Component, blocking) {
   //component start
   class PrivateRoute extends React.Component {
     static async getInitialProps(ctx) {
@@ -37,7 +42,8 @@ export default function withProfile(Component) {
     componentDidMount() {
       const { dispatch, initialProfile, error } = this.props
 
-      if (error) {
+      // only reroute if it is blocking
+      if (error && blocking) {
         redirect('/')
         notification.error({
           message: 'Oops',
@@ -47,19 +53,21 @@ export default function withProfile(Component) {
         return
       }
 
-      dispatch({
-        type: actions.PROFILE,
-        username: initialProfile.username,
-        email: initialProfile.email,
-        id: initialProfile.id,
-        value: initialProfile.value,
-        source: initialProfile.source,
-        permissions: initialProfile.permissions
-      })
+      if (!error) {
+        dispatch({
+          type: actions.PROFILE,
+          username: initialProfile.username,
+          email: initialProfile.email,
+          id: initialProfile.id,
+          value: initialProfile.value,
+          source: initialProfile.source,
+          permissions: initialProfile.permissions
+        })
+      }
     }
 
     render() {
-      if (this.props.error) return <p>Not authorized</p>
+      if (this.props.error && blocking) return <p>Not authorized</p>
       else return <Component {...this.props} />
     }
   } // component end

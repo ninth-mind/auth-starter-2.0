@@ -74,7 +74,7 @@ function AddressDetails(props) {
   )
 }
 
-AddressDetails.PropTypes = {
+AddressDetails.propTypes = {
   callback: PropTypes.func.required
 }
 

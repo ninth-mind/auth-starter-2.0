@@ -15,4 +15,4 @@ function Profile(props) {
   )
 }
 
-export default connect()(withProfile(Profile))
+export default connect()(withProfile(Profile, true))

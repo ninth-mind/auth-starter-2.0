@@ -73,4 +73,4 @@ function Account(props) {
   )
 }
 
-export default withProfile(Account)
+export default withProfile(Account, true)

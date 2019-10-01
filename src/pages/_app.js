@@ -19,12 +19,12 @@ class MyApp extends App {
     const { Component, pageProps, reduxStore } = this.props
     return (
       <StripeProvider stripe={this.state.stripe}>
-        <Container>
+        <>
           <Head>
             <title>Jamie Skinner - Portfolio</title>
             <meta
               name="viewport"
-              content="initial-scale=1.0, width=device-width, initial-width=1"
+              content="initial-scale=1.0, width=device-width"
             />
             <script src="https://js.stripe.com/v3/" />
           </Head>
@@ -34,7 +34,7 @@ class MyApp extends App {
               <Component {...pageProps} />
             </MainLayout>
           </Provider>
-        </Container>
+        </>
       </StripeProvider>
     )
   }

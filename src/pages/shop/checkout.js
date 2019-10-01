@@ -29,4 +29,4 @@ function Checkout(props) {
   )
 }
 
-export default withProfile(Checkout)
+export default withProfile(Checkout, false)

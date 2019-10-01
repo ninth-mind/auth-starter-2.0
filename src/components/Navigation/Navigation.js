@@ -8,7 +8,6 @@ const { Header } = Layout
 
 function Navigations(props) {
   const { dispatch } = props
-  console.log(props.cmsURL)
   function handleSignOut() {
     const { dispatch } = props
     signOut(dispatch)

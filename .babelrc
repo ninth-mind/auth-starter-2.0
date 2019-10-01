@@ -15,9 +15,9 @@
     [
       "import",
       {
-        "libraryName": "antd",
+        "libraryName": "antd"
         // "style": true // importing styles in `main.scss`
-      },
+      }
     ]
   ]
 }
