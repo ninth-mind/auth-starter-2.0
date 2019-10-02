@@ -12,7 +12,6 @@ function Checkout(props) {
       data: { recaptcha: recaptchaToken, stripeToken, amount: 999 }
     })
 
-    console.log(result)
     return {
       message: 'Card Charged',
       description: 'You card has been charged'
@@ -24,7 +23,7 @@ function Checkout(props) {
       <h2>What is in your cart:</h2>
       <Cart />
       <CardDetails handleCard={handleCardDetails} submitText="Pay" />
-      <AddressDetails />
+      <AddressDetails callback={c => console.log(c)} />
     </div>
   )
 }

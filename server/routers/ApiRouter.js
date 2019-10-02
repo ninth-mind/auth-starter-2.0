@@ -5,6 +5,7 @@ const PaymentRouter = require('./PaymentRouter')
 const MeRouter = require('./MeRouter')
 const MailRouter = require('./MailRouter')
 const LeadersRouter = require('./LeadersRouter')
+const ProductRouter = require('./ProductRouter')
 const db = require('../services/database')
 
 ApiRouter.get('/', (req, res) => {
@@ -16,5 +17,6 @@ ApiRouter.use('/me', MeRouter)
 ApiRouter.use('/mail', MailRouter)
 ApiRouter.use('/leaders', LeadersRouter)
 ApiRouter.use('/payment', PaymentRouter)
+ApiRouter.use('/product', PaymentRouter)
 
 module.exports = ApiRouter
