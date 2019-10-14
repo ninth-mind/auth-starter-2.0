@@ -17,6 +17,6 @@ ApiRouter.use('/me', MeRouter)
 ApiRouter.use('/mail', MailRouter)
 ApiRouter.use('/leaders', LeadersRouter)
 ApiRouter.use('/payment', PaymentRouter)
-ApiRouter.use('/product', PaymentRouter)
+ApiRouter.use('/product', ProductRouter)
 
 module.exports = ApiRouter

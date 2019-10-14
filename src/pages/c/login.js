@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { connect } from 'react-redux'
 import { redirect, setLoading } from '~/lib/utils'
 import { Button, Form, Icon, Input, Modal, notification } from 'antd'
+import { defaultFormItemLayout } from '~/components/Layout/antLayouts'
 import './c.scss'
 
 function EmailLogin(props) {
@@ -20,18 +21,6 @@ function EmailLogin(props) {
   } = props
 
   let loginAttempt = query['login-attempt']
-
-  // styling
-  const formItemLayout = {
-    labelCol: {
-      xs: { span: 24 },
-      sm: { span: 8 }
-    },
-    wrapperCol: {
-      xs: { span: 24 },
-      sm: { span: 16 }
-    }
-  }
 
   async function handleSubmit(e) {
     e.preventDefault()
@@ -82,7 +71,7 @@ function EmailLogin(props) {
           account here using <strong>{loginAttempt}</strong>?
         </p>
       </Modal>
-      <Form className="form" {...formItemLayout} onSubmit={handleSubmit}>
+      <Form className="form" {...defaultFormItemLayout} onSubmit={handleSubmit}>
         <Form.Item label="Email/Username">
           {getFieldDecorator('email', {
             rules: [

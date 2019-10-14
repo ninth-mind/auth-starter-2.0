@@ -3,6 +3,7 @@ import { RecaptchaContext } from '~/store'
 import axios from 'axios'
 import { handleError, redirect, setLoading } from '~/lib/utils'
 import { Button, Form, Input, notification } from 'antd'
+import { defaultFormItemLayout } from '~/components/Layout/antLayouts'
 
 function PasswordResetRequest(props) {
   const recaptcha = useContext(RecaptchaContext)
@@ -55,16 +56,6 @@ function PasswordResetRequest(props) {
   const {
     form: { getFieldDecorator }
   } = props
-  const formItemLayout = {
-    labelCol: {
-      xs: { span: 24 },
-      sm: { span: 8 }
-    },
-    wrapperCol: {
-      xs: { span: 24 },
-      sm: { span: 16 }
-    }
-  }
 
   return (
     <div className="password page">
@@ -74,7 +65,7 @@ function PasswordResetRequest(props) {
         information
       </p>
 
-      <Form className="form" {...formItemLayout} onSubmit={handleSubmit}>
+      <Form className="form" {...defaultFormItemLayout} onSubmit={handleSubmit}>
         <Form.Item label="Email" hasFeedback>
           {getFieldDecorator('email', {
             rules: [

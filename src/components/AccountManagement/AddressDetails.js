@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Form, Input, Select, Switch, Tabs } from 'antd'
 import states from '~/assets/states'
+import { defaultFormItemLayout } from '~/components/Layout/antLayouts'
 const { Option } = Select
 const { TabPane } = Tabs
 
@@ -26,19 +27,8 @@ const AddressForm = Form.create({ name: 'Address Form' })(props => {
     form: { getFieldDecorator }
   } = props
 
-  const formItemLayout = {
-    labelCol: {
-      xs: { span: 24 },
-      sm: { span: 8 }
-    },
-    wrapperCol: {
-      xs: { span: 24 },
-      sm: { span: 16 }
-    }
-  }
-
   return (
-    <Form className="form" {...formItemLayout} onChange={handleChange}>
+    <Form className="form" {...defaultFormItemLayout} onChange={handleChange}>
       <Form.Item label="Address Line 1" hasFeedback>
         {getFieldDecorator('Address', {
           rules: [{ required: true }]

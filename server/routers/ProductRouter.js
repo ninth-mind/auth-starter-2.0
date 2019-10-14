@@ -15,17 +15,17 @@ const config = require('../config')
  */
 ProductRouter.post('/', (req, res) => {
   console.log(req.body)
-  res.send('it worked')
+  res.send('it worked - post')
 })
 
 ProductRouter.put('/', (req, res) => {
   console.log(req.body)
-  res.send('it worked')
+  res.send('it worked  - put')
 })
 
-ProductRouter.delete('/', (req, res) => {
-  console.log(req.body)
-  res.send('it worked')
+ProductRouter.delete('/:id', (req, res) => {
+  console.log(req.params)
+  res.send('it worked  - delete')
 })
 
 module.exports = ProductRouter

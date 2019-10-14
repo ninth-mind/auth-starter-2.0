@@ -22,7 +22,7 @@ function Checkout(props) {
     <div className="page">
       <h2>What is in your cart:</h2>
       <Cart />
-      <CardDetails handleCard={handleCardDetails} submitText="Pay" />
+      <CardDetails handleSubmit={handleCardDetails} submitText="Pay" />
       <AddressDetails callback={c => console.log(c)} />
     </div>
   )
