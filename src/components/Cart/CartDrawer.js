@@ -1,6 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { Button, Drawer } from 'antd'
+import { Button, Drawer, Popconfirm } from 'antd'
 import Link from 'next/link'
 import { actions } from '~/store'
 import Cart from './Cart'
@@ -11,6 +11,12 @@ function CartDrawer(props) {
   function toggleDrawer() {
     dispatch({
       type: actions.DRAWER_TOGGLE
+    })
+  }
+
+  function clear() {
+    dispatch({
+      type: actions.CLEAR_CART
     })
   }
 
@@ -32,6 +38,11 @@ function CartDrawer(props) {
           Checkout
         </Button>
       </Link>
+      <Popconfirm title="Are you sure you want to clear?" onConfirm={clear}>
+        <Button type="secondary" disabled={products.length <= 0}>
+          Clear
+        </Button>
+      </Popconfirm>
     </Drawer>
   )
 }

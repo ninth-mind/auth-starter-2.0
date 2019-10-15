@@ -17,6 +17,8 @@ function MainLayout(props) {
   const { dispatch, cartItems, cartName } = props
   let recaptcha = useRef(null)
 
+  // initialise router events
+  // load previous session details through cookie
   const init = useCallback(() => {
     // init router
     Router.events.on('routeChangeStart', url => setLoading(true, dispatch))
@@ -71,7 +73,8 @@ const mapStateToProps = state => {
   return {
     isLoading: state.ui.isLoading,
     captchSiteKey: state.constants.CAPTCHA_SITE_KEY,
-    cartName: state.constants.CART_NAME,
+    cartName: state.constants.CART_COOKIE,
+    mainCookie: state.constants.MAIN_COOKIE,
     cartItems: state.cart.items
   }
 }

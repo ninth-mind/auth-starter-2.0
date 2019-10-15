@@ -4,12 +4,6 @@ import React, { useRef, useEffect, useCallback } from 'react'
 function Donuts() {
   let threeMountPoint = useRef(null)
 
-  useEffect(() => {
-    if (threeMountPoint && threeMountPoint.current) {
-      memoSketch()
-    }
-  }, [threeMountPoint, memoSketch])
-
   const memoSketch = useCallback(() => {
     // globals
     let opts = {
@@ -50,6 +44,12 @@ function Donuts() {
     setup(threeMountPoint.current)
     animate()
   }, [threeMountPoint])
+
+  useEffect(() => {
+    if (threeMountPoint && threeMountPoint.current) {
+      memoSketch()
+    }
+  }, [threeMountPoint, memoSketch])
 
   return <canvas ref={threeMountPoint} />
 }

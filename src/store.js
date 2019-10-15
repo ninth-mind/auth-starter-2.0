@@ -7,7 +7,8 @@ export const RecaptchaContext = React.createContext()
 
 const initialState = {
   constants: {
-    CART_NAME: 'jamieskinner.me-cart',
+    MAIN_COOKIE: 'jamieskinner.me',
+    CART_COOKIE: 'jamieskinner.me-cart',
     CAPTCHA_SITE_KEY: '6Le87Z0UAAAAALKPzIW8DiLMEzSi9I51FNTnWBQN', // v3 site key,
     CMS_URL: 'http://localhost:1337/admin'
   },
@@ -35,7 +36,6 @@ const initialState = {
 
 export const actions = {
   LOADING: 'LOADING',
-  // AUTH
   CREDS: 'CREDS',
   PROFILE: 'PROFILE',
   LOGOUT: 'LOGOUT',
@@ -45,7 +45,8 @@ export const actions = {
   ADD_TO_CART: 'ADD_TO_CART',
   REMOVE_FROM_CART: 'REMOVE_FORM_CART',
   EDIT_CART: 'EDIT_CART',
-  SET_CART: 'SET_CART'
+  SET_CART: 'SET_CART',
+  CLEAR_CART: 'CLEAR_CART'
 }
 
 function applicationReducer(state = initialState, action) {
@@ -155,7 +156,7 @@ function cartReducer(state = initialState.cart, action) {
         total: state.total + price * quantity,
         products: newProducts
       }
-      ls.set(initialState.constants.CART_NAME, cart)
+      ls.set(initialState.constants.CART_COOKIE, cart)
       return cart
     }
 
@@ -169,7 +170,7 @@ function cartReducer(state = initialState.cart, action) {
         items: newProducts.reduce((a, p) => a + p.quantity, 0),
         products: newProducts
       }
-      ls.set(initialState.constants.CART_NAME, cart)
+      ls.set(initialState.constants.CART_COOKIE, cart)
       return cart
     }
 
@@ -190,13 +191,24 @@ function cartReducer(state = initialState.cart, action) {
         items: newProducts.reduce((a, p) => a + p.quantity, 0),
         products: newProducts
       }
-      ls.set(initialState.constants.CART_NAME, cart)
+      ls.set(initialState.constants.CART_COOKIE, cart)
       return cart
     }
 
     case actions.SET_CART: {
       return action.data
     }
+
+    case actions.CLEAR_CART: {
+      const emptyCart = {
+        total: 0,
+        items: 0,
+        products: []
+      }
+      ls.set(initialState.constants.CART_COOKIE, emptyCart)
+      return emptyCart
+    }
+
     default: {
       return state
     }
