@@ -1,4 +1,4 @@
-import App, { Container } from 'next/app'
+import App from 'next/app'
 import React from 'react'
 import Head from 'next/head'
 import withReduxStore from '~/lib/with-redux-store'
@@ -12,6 +12,7 @@ class MyApp extends App {
     super(props)
     this.state = { stripe: null }
   }
+
   componentDidMount() {
     this.setState({ stripe: window.Stripe('pk_test_tZ1UTEHPHFd9dsZzi03UyKNB') })
   }

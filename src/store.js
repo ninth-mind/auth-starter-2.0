@@ -5,13 +5,14 @@ import ls from 'local-storage'
 
 export const RecaptchaContext = React.createContext()
 
-const initialState = {
-  constants: {
-    MAIN_COOKIE: 'jamieskinner.me',
-    CART_COOKIE: 'jamieskinner.me-cart',
-    CAPTCHA_SITE_KEY: '6Le87Z0UAAAAALKPzIW8DiLMEzSi9I51FNTnWBQN', // v3 site key,
-    CMS_URL: 'http://localhost:1337/admin'
-  },
+export const config = {
+  APP_NAME: 'jamieskinner.me',
+  CART_NAME: 'jamieskinner.me-cart',
+  CAPTCHA_SITE_KEY: '6Le87Z0UAAAAALKPzIW8DiLMEzSi9I51FNTnWBQN', // v3 site key,
+  CMS_URL: 'http://localhost:1337/admin'
+}
+
+export const initialState = {
   cart: {
     total: 0,
     items: 0,
@@ -49,9 +50,24 @@ export const actions = {
   CLEAR_CART: 'CLEAR_CART'
 }
 
+const initializeStore = initStore.bind(null, initialState)
+export { initializeStore }
+
+function initStore(initialState = initialState) {
+  return createStore(
+    applicationReducer,
+    initialState,
+    composeWithDevTools(applyMiddleware())
+  )
+}
+
+//  ___ ___ ___  _   _  ___ ___ ___  ___
+// | _ \ __|   \| | | |/ __| __| _ \/ __|
+// |   / _|| |) | |_| | (__| _||   /\__ \
+// |_|_\___|___/ \___/ \___|___|_|_\|___/
+//
 function applicationReducer(state = initialState, action) {
   return {
-    constants: state.constants,
     ui: uiReducer(state.ui, action),
     profile: profileReducer(state.profile, action),
     cart: cartReducer(state.cart, action)
@@ -61,6 +77,8 @@ function applicationReducer(state = initialState, action) {
 function profileReducer(state = initialState.profile, action) {
   switch (action.type) {
     case actions.CREDS: {
+      let cur = ls.get(config.APP_NAME)
+      ls.set(config.APP_NAME, { ...cur, token: action.token })
       return {
         ...state,
         username: action.username,
@@ -86,6 +104,7 @@ function profileReducer(state = initialState.profile, action) {
       }
     }
     case actions.LOGOUT: {
+      ls.remove(config.APP_NAME)
       return initialState.profile
     }
     default: {
@@ -156,7 +175,7 @@ function cartReducer(state = initialState.cart, action) {
         total: state.total + price * quantity,
         products: newProducts
       }
-      ls.set(initialState.constants.CART_COOKIE, cart)
+      ls.set(config.CART_NAME, cart)
       return cart
     }
 
@@ -170,7 +189,7 @@ function cartReducer(state = initialState.cart, action) {
         items: newProducts.reduce((a, p) => a + p.quantity, 0),
         products: newProducts
       }
-      ls.set(initialState.constants.CART_COOKIE, cart)
+      ls.set(config.CART_NAME, cart)
       return cart
     }
 
@@ -191,7 +210,7 @@ function cartReducer(state = initialState.cart, action) {
         items: newProducts.reduce((a, p) => a + p.quantity, 0),
         products: newProducts
       }
-      ls.set(initialState.constants.CART_COOKIE, cart)
+      ls.set(config.CART_NAME, cart)
       return cart
     }
 
@@ -205,7 +224,7 @@ function cartReducer(state = initialState.cart, action) {
         items: 0,
         products: []
       }
-      ls.set(initialState.constants.CART_COOKIE, emptyCart)
+      ls.set(config.CART_NAME, emptyCart)
       return emptyCart
     }
 
@@ -214,14 +233,3 @@ function cartReducer(state = initialState.cart, action) {
     }
   }
 }
-
-function initStore(initialState = initialState) {
-  return createStore(
-    applicationReducer,
-    initialState,
-    composeWithDevTools(applyMiddleware())
-  )
-}
-
-const initializeStore = initStore.bind(null, initialState)
-export { initializeStore }

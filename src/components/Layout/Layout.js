@@ -7,14 +7,23 @@ import Navigation from '~/components/Navigation'
 import { CartDrawer } from '~/components/Cart'
 import { Button, Layout, Spin } from 'antd'
 import { PanelManager } from '~/components/Panel'
-import { RecaptchaContext } from '~/store'
+import { RecaptchaContext, config } from '~/store'
 const { Content } = Layout
 import './Layout.scss'
 import { actions } from '../../store'
 import ls from 'local-storage'
 
+/**
+ * THE MAIN LAYOUT
+ *
+ * Main layout is loaded in the root of the app. meaning this code gets executed on
+ * every page. This is where router initialization happens, and other important
+ * site-wide set up occurs.
+ * @param {*} props
+ */
 function MainLayout(props) {
-  const { dispatch, cartItems, cartName } = props
+  const { CAPTCHA_SITE_KEY, CART_NAME } = config
+  const { dispatch, cartItems } = props
   let recaptcha = useRef(null)
 
   // initialise router events
@@ -25,14 +34,14 @@ function MainLayout(props) {
     Router.events.on('routeChangeComplete', url => setLoading(false, dispatch))
     Router.events.on('routeChangeError', () => setLoading(false, dispatch))
 
-    const cart = ls.get(cartName)
+    const cart = ls.get(CART_NAME)
     if (cart) {
       dispatch({
         type: actions.SET_CART,
         data: cart
       })
     }
-  }, [cartName, dispatch])
+  }, [CART_NAME, dispatch])
 
   // initialize router
   useEffect(init, [])
@@ -53,7 +62,7 @@ function MainLayout(props) {
             {props.children}
             <ReCAPTCHA
               ref={recaptcha}
-              sitekey={props.captchSiteKey}
+              sitekey={CAPTCHA_SITE_KEY}
               size="invisible"
             />
           </Content>
@@ -72,9 +81,6 @@ function MainLayout(props) {
 const mapStateToProps = state => {
   return {
     isLoading: state.ui.isLoading,
-    captchSiteKey: state.constants.CAPTCHA_SITE_KEY,
-    cartName: state.constants.CART_COOKIE,
-    mainCookie: state.constants.MAIN_COOKIE,
     cartItems: state.cart.items
   }
 }

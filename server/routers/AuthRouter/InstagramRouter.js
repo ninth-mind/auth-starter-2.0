@@ -3,7 +3,12 @@ const { passport } = require('../../lib/middleware')
 const InstagramRouter = express.Router()
 const InstagramStrategy = require('passport-instagram')
 const User = require('../../services/user')
-const { handleError, createToken, setCookie } = require('../../lib/utils')
+const {
+  handleError,
+  createToken,
+  setCookie,
+  respond
+} = require('../../lib/utils')
 const config = require('../../config')
 const { clientSecret, clientID } = config.instagram
 const { serverURL, clientURL } = config.global
@@ -20,7 +25,6 @@ passport.use(
       callbackURL: `${serverURL}/api/auth/instagram/login/callback`
     },
     (accessToken, refreshToken, profile, done) => {
-      //gets user from spotify and passes it to /spotify/callback
       let obj = { accessToken, refreshToken, profile }
       return done(null, obj)
     }
@@ -36,7 +40,6 @@ passport.use(
       callbackURL: `${serverURL}/api/auth/instagram/register/callback`
     },
     (accessToken, refreshToken, profile, done) => {
-      //gets user from spotify and passes it to /spotify/callback
       let obj = { accessToken, refreshToken, profile }
       return done(null, obj)
     }
@@ -106,8 +109,10 @@ InstagramRouter.get(
       // if user is found, log them in and redirect to profile
       if (user) {
         let token = createToken(user.toObject())
-        setCookie(res, token)
+        setCookie(res, token, true)
+        // respond(res, 200, 'User found. Logging in', { token })
         res.redirect('/u/profile')
+
         // if NO user, create temp token and redirect to complete-profile page
       } else {
         res.redirect(`/c/login?login-attempt=instagram`)

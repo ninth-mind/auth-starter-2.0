@@ -1,6 +1,6 @@
 # Portfolio
 
-This is my portfolio. Built on top of the `Auth-Starter-2.0` package. 
+This is my portfolio. Built on top of the `Auth-Starter-2.0` package.
 
 # Auth Starter 2.0
 Starter repo for user authentication using passport, user payment handling using Stripe, and SSR using Next. Component Library AntD
@@ -21,6 +21,10 @@ Starter repo for user authentication using passport, user payment handling using
 ### TODO
 Todos are kept in the auth-starter-2.0 repo's issues.
 You can also search the code base for `TODO:` for small refactors
+- Set the HTTP Cookie to Secure
+- Check for `Referer` when checking cookie
+  - https://blog.webf.zone/ultimate-guide-to-http-cookies-2aa3e083dbae
+- If you try and login while logged in — go to profile
 
 
 #### Creating your own Next App using `create-next-app`

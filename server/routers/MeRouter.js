@@ -22,10 +22,13 @@ MeRouter.get(
   makePermissionsMiddleware(['view_profile']),
   (req, res) => {
     const { source } = req.locals.decodedToken
+    // grab token out of cookies, and send to client
+    let token = req.cookies[config.global.appName]
     User.findUser(source, req.locals.decodedToken)
       .then(user => {
+        res.clearCookie()
         if (!user) respond(res, 403, 'Not authorized')
-        else respond(res, 200, 'User Found', user)
+        else respond(res, 200, 'User Found', { user, token })
       })
       .catch(err => handleError(err, res, 1001))
   }

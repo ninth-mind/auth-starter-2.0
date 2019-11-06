@@ -34,6 +34,7 @@ function RegistrationForm(props) {
         url: `/api/auth/register`,
         data: { ...data, recaptcha: captchaToken }
       })
+
       notification.open({
         message: 'Email Confirmation sent',
         description: `An email was sent to ${
@@ -41,6 +42,7 @@ function RegistrationForm(props) {
         }. Check your email to complete the registration process.`,
         duration: 0
       })
+
       redirect('/')
     } catch (err) {
       const opts = {

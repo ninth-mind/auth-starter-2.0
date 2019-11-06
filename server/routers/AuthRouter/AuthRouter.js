@@ -49,7 +49,7 @@ AuthRouter.post('/register', verifyCaptcha, async (req, res) => {
       // create JWT token to pass back to FE
       let token = createToken(nu.toObject(), true)
       //send confirmation email
-      let mailResponse = await Mailer.sendEmailConfirmation(nu.email, token)
+      await Mailer.sendEmailConfirmation(nu.email, token)
       // respond with success message
       respond(res, 200, 'email confirmation sent')
     }
@@ -75,7 +75,7 @@ AuthRouter.post('/login', verifyCaptcha, async (req, res) => {
       else {
         let token = createToken(u.toObject())
         setCookie(res, token)
-        respond(res, 200, 'login successful', u.toObject())
+        respond(res, 200, 'login successful', { token })
       }
     }
   } catch (err) {

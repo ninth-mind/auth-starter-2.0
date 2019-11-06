@@ -28,12 +28,26 @@ function verifyOrigin(req, res, next) {
 // middleware to protect routes from unAuthorized tokens
 function verifyAuthenticationToken(req, res, next) {
   try {
-    // check if the token is in the cookies or the req.params
+    const { headers } = req
+    // ensure request comes from correct origin and referer
+    // protects against csrf (cross site request forgery)
+    if (headers.origin || headers.referer) {
+      if (
+        (headers.origin && !headers.origin.includes(clientURL)) ||
+        (headers.referer && !headers.referer.includes(clientURL))
+      )
+        return respond(res, 403, 'Unrecognized referer or origin')
+    }
+
+    // check if the token is in the cookies or the
+    // req.params or in the Authorization header
     let token
     if (req.params.token) {
       token = req.params.token
     } else if (req.cookies && req.cookies[cookieName]) {
       token = req.cookies[cookieName]
+    } else if (req.headers.authorization) {
+      token = req.headers.authorization.split(' ')[1]
     }
 
     // verify token

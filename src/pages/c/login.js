@@ -3,9 +3,10 @@ import { RecaptchaContext } from '~/store'
 import axios from 'axios'
 import Link from 'next/link'
 import { connect } from 'react-redux'
-import { redirect, setLoading } from '~/lib/utils'
+import { redirect, handleToken } from '~/lib/utils'
 import { Button, Form, Icon, Input, Modal, notification } from 'antd'
 import { defaultFormItemLayout } from '~/components/Layout/antLayouts'
+import { actions } from '~/store'
 import './c.scss'
 
 function EmailLogin(props) {
@@ -22,6 +23,13 @@ function EmailLogin(props) {
 
   let loginAttempt = query['login-attempt']
 
+  function setLoading() {
+    dispatch({
+      type: actions.LOADING,
+      isLoading: true
+    })
+  }
+
   async function handleSubmit(e) {
     e.preventDefault()
 
@@ -36,6 +44,10 @@ function EmailLogin(props) {
         url: `/api/auth/login`,
         data: { ...data, recaptcha: captchaToken }
       })
+
+      if (r.data && r.data.data && r.data.data.token)
+        handleToken(r.data.data.token, dispatch)
+
       redirect('/u/profile')
     } catch (err) {
       console.log(err)
@@ -107,13 +119,21 @@ function EmailLogin(props) {
       <hr />
       <ul>
         <li>
-          <Button type="link" href="/api/auth/facebook/login">
+          <Button
+            type="link"
+            onClick={setLoading}
+            href="/api/auth/facebook/login"
+          >
             <Icon type="facebook" />
             Login with Facebook
           </Button>
         </li>
         <li>
-          <Button type="link" href="/api/auth/instagram/login">
+          <Button
+            type="link"
+            onClick={setLoading}
+            href="/api/auth/instagram/login"
+          >
             <Icon type="instagram" />
             Login with Instagram
           </Button>

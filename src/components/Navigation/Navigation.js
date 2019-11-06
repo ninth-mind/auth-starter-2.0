@@ -3,10 +3,11 @@ import Link from 'next/link'
 import { connect } from 'react-redux'
 import { signOut } from '~/lib/utils'
 import { Button, Icon, Layout, Menu } from 'antd'
-import { actions } from '../../store'
+import { actions, config } from '~/store'
 const { Header } = Layout
 
 function Navigations(props) {
+  const { CMS_URL } = config
   const { dispatch } = props
   function handleSignOut() {
     const { dispatch } = props
@@ -63,7 +64,7 @@ function Navigations(props) {
         <Menu.SubMenu title={<Icon type="user" />} disabled={!props.isLoggedIn}>
           {props.permissions.includes('admin') && (
             <Menu.Item key="cms-link">
-              <a href={props.cmsURL} target="_blank" rel="noopener noreferrer">
+              <a href={CMS_URL} target="_blank" rel="noopener noreferrer">
                 Admin Page
               </a>
             </Menu.Item>
@@ -93,8 +94,7 @@ const mapStateToProps = state => {
   return {
     currentPage: state.ui.currentPage,
     isLoggedIn: state.profile.email,
-    permissions: state.profile.permissions,
-    cmsURL: state.constants.CMS_URL
+    permissions: state.profile.permissions
   }
 }
 

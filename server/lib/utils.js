@@ -39,6 +39,7 @@ function createToken(p, isTemp = false) {
 function setCookie(res, token, overwrite = false) {
   res.cookie(cookieName, token, {
     httpOnly: true,
+    sameSite: true,
     secure: process.env.NODE_ENV === 'production',
     overwrite
   })

@@ -24,6 +24,7 @@ function CompleteProfileForm(props) {
     form: { getFieldDecorator },
     query
   } = props
+
   const initialState = {
     id: '',
     source: '',

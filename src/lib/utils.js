@@ -1,4 +1,5 @@
-import { actions } from '~/store'
+import { actions, config } from '~/store'
+import ls from 'local-storage'
 import validator from 'validator'
 import axios from 'axios'
 import Router from 'next/router'
@@ -66,6 +67,8 @@ export function parseJWT(token) {
  */
 export function handleToken(token, dispatch) {
   if (token) {
+    // set token in localstorage
+    ls.set(config.APP_NAME, { token })
     let { email, source, username, id } = parseJWT(token)
     dispatch({
       type: actions.CREDS,
