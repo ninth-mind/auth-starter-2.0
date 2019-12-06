@@ -5,21 +5,10 @@ import { withProfile } from '~/components/HOCs'
 import { Button, Divider, notification, Popconfirm } from 'antd'
 import AddValue from '~/components/AddValue'
 import { SetEmail, CardDetails } from '~/components/AccountManagement'
-import { useProfile } from '~/lib/hooks'
-import { actions } from '~/store'
 import { connect } from 'react-redux'
 
 function Account(props) {
   const { dispatch } = props
-  let p = useProfile({}, true)
-
-  // if (Object.keys(p).length) {
-  //   // dispatch user info to store
-  //   dispatch({
-  //     type: actions.CREDS,
-  //     ...p
-  //   })
-  // }
 
   function signOut() {
     signOut(dispatch)
@@ -59,6 +48,7 @@ function Account(props) {
     }
   }
 
+  const p = props.profile
   return (
     <div className="page">
       <h1>Account</h1>
@@ -84,8 +74,4 @@ function Account(props) {
   )
 }
 
-const mapStateToProps = state => ({
-  profile: state.profile
-})
-
-export default connect(mapStateToProps)(Account)
+export default connect()(withProfile(Account, true))

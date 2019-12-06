@@ -12,6 +12,7 @@ const { Content } = Layout
 import './Layout.scss'
 import { actions } from '../../store'
 import ls from 'local-storage'
+import axios from 'axios'
 
 /**
  * THE MAIN LAYOUT
@@ -34,6 +35,7 @@ function MainLayout(props) {
     Router.events.on('routeChangeComplete', url => setLoading(false, dispatch))
     Router.events.on('routeChangeError', () => setLoading(false, dispatch))
 
+    // load shopping cart
     const cart = ls.get(CART_NAME)
     if (cart) {
       dispatch({
@@ -45,6 +47,26 @@ function MainLayout(props) {
 
   // initialize router
   useEffect(init, [])
+
+  // check if user is logged in
+  useEffect(() => {
+    async function checkIfUserIsLoggedIn() {
+      const r = await axios({
+        url: '/api/me',
+        method: 'get'
+      })
+
+      if (r.data.data) {
+        let { user, token } = r.data.data
+        dispatch({
+          type: actions.PROFILE,
+          ...user,
+          token
+        })
+      }
+    }
+    checkIfUserIsLoggedIn()
+  }, [dispatch])
 
   function toggleCart() {
     dispatch({
