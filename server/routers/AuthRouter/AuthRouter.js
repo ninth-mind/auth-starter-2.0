@@ -122,9 +122,9 @@ AuthRouter.post(
   '/email-confirmation',
   verifyAuthenticationToken,
   async (req, res) => {
-    const { decodedToken } = req.locals
-    const { source, email } = decodedToken
-    let u = await User.findOrCreateUser(source, decodedToken, { new: true })
+    const { userInfo } = req.locals
+    const { source, email } = userInfo
+    let u = await User.findOrCreateUser(source, userInfo, { new: true })
     //create new temporary token
     let token = createToken(u.toObject(), true)
     setCookie(res, token, true)
@@ -142,10 +142,10 @@ AuthRouter.get(
   verifyAuthenticationToken,
   async (req, res) => {
     try {
-      let { decodedToken } = req.locals
+      let { userInfo } = req.locals
       let u = await User.findOneAndUpdate(
-        decodedToken.source,
-        decodedToken,
+        userInfo.source,
+        userInfo,
         { $set: { confirmed: true, permissions: ['view_profile'] } },
         { new: true }
       )
@@ -204,9 +204,9 @@ AuthRouter.put(
   verifyAuthenticationToken,
   async (req, res) => {
     try {
-      const { decodedToken } = req.locals
+      const { userInfo } = req.locals
       const { password } = req.body
-      let u = await User.findUser('email', { email: decodedToken.email })
+      let u = await User.findUser('email', { email: userInfo.email })
       if (!u) respond(res, 401, 'No user found')
       else {
         u.password = password

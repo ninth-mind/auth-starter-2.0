@@ -4,7 +4,8 @@ const {
   secret,
   tempTokenExpiryTime,
   tokenExpiryTime,
-  cookieName
+  cookieName,
+  cookieExpiration
 } = require('../config').utils
 
 /**
@@ -41,6 +42,7 @@ function setCookie(res, token, overwrite = false) {
     httpOnly: true,
     sameSite: true,
     secure: process.env.NODE_ENV === 'production',
+    expires: new Date(Date.now() + cookieExpiration),
     overwrite
   })
 }

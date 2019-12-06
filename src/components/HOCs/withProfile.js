@@ -41,7 +41,6 @@ export default function withProfile(Component, blocking) {
 
     componentDidMount() {
       const { dispatch, initialProfile, error } = this.props
-
       // only reroute if it is blocking
       if (error && blocking) {
         redirect('/')
@@ -56,12 +55,13 @@ export default function withProfile(Component, blocking) {
       if (!error) {
         dispatch({
           type: actions.PROFILE,
-          username: initialProfile.username,
-          email: initialProfile.email,
-          id: initialProfile.id,
-          value: initialProfile.value,
-          source: initialProfile.source,
-          permissions: initialProfile.permissions
+          username: initialProfile.user.username,
+          email: initialProfile.user.email,
+          id: initialProfile.user.id,
+          value: initialProfile.user.value,
+          token: initialProfile.token,
+          source: initialProfile.user.source,
+          permissions: initialProfile.user.permissions
         })
       }
     }

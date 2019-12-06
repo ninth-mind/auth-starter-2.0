@@ -61,7 +61,7 @@ function verifyAuthenticationToken(req, res, next) {
           return respond(res, 403, 'Your session has expired')
         } else return handleError(err, res, 4000)
       }
-      req.locals = { decodedToken: decoded, token }
+      req.locals = { userInfo: decoded, token }
       next()
     })
   } catch (err) {
@@ -76,7 +76,7 @@ function verifyAuthenticationToken(req, res, next) {
  */
 function makePermissionsMiddleware(permissions) {
   return function(req, res, next) {
-    const userPermissions = req.locals.decodedToken.permissions
+    const userPermissions = req.locals.userInfo.permissions
     let isAllowed = permissions.reduce((allowed, p) => {
       return userPermissions.includes(p) && allowed
     }, true)

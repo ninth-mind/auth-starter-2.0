@@ -102,6 +102,7 @@ const config = {
       tokenExpiryTime: '1hr',
       tempTokenExpiryTime: '10min',
       cookieName: 'jamieskinner.me',
+      cookieExpiration: 4 * 3600000, // 1 hour
       captchaSecretKey: process.env.CAPTCHA_SECRET_KEY,
       captchaThreshold: 0.01
     },
@@ -110,6 +111,7 @@ const config = {
       tokenExpiryTime: '1hr',
       tempTokenExpiryTime: '10min',
       cookieName: 'jamieskinner.me',
+      cookieExpiration: 4 * 3600000, // 1 hour
       captchaSecretKey: process.env.CAPTCHA_SECRET_KEY,
       captchaThreshold: 0.01
     },
@@ -118,6 +120,7 @@ const config = {
       tokenExpiryTime: '24hr',
       tempTokenExpiryTime: '10min',
       cookieName: 'jamieskinner.me',
+      cookieExpiration: 72 * 3600000, // 72 hours
       captchaSecretKey: process.env.CAPTCHA_SECRET_KEY,
       captchaThreshold: 0.01
     }

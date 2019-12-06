@@ -11,8 +11,8 @@ MailRouter.post(
   '/email-confirmation',
   verifyAuthenticationToken,
   (req, res) => {
-    let { decodedToken } = req.locals
-    Mailer.sendEmailConfirmation(decodedToken)
+    let { userInfo } = req.locals
+    Mailer.sendEmailConfirmation(userInfo)
       .then(r => res.send('ok'))
       .catch(err => handleError(err, res, 1008))
   }

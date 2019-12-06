@@ -1,18 +1,16 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { useProfile } from '~/lib/hooks'
+import { withProfile } from '~/components/HOCs'
 import AddValue from '~/components/AddValue'
 import { Skeleton } from 'antd'
-import { actions } from '~/store'
 
 function Profile(props) {
-  const { dispatch } = props
-  const p = useProfile({}, true, dispatch)
-
+  const p = props.profile
   let content = <Skeleton avatar active paragraph={{ rows: 2 }} />
 
   // check if the profile is empty
-  if (Object.keys(p).length)
+  if (Object.keys(p).length) {
+    // set content to Profile page
     content = (
       <>
         <h2>Welcome {p.username},</h2>
@@ -20,6 +18,7 @@ function Profile(props) {
         <AddValue />
       </>
     )
+  }
 
   return (
     <div className="profile page">
@@ -29,4 +28,4 @@ function Profile(props) {
   )
 }
 
-export default connect()(Profile)
+export default connect()(withProfile(Profile, true))

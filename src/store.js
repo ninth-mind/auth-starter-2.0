@@ -85,8 +85,9 @@ function profileReducer(state = initialState.profile, action) {
         source: action.source,
         email: action.email,
         value: action.value,
+        id: action.id,
         token: action.token,
-        id: action.id
+        permissions: action.permissions
       }
     }
     case actions.VALUE: {
@@ -96,11 +97,11 @@ function profileReducer(state = initialState.profile, action) {
       }
     }
     case actions.PROFILE: {
-      let dup = { ...action }
-      delete dup.type
+      let dupe = { ...action }
+      delete dupe.type
       return {
         ...state,
-        ...dup
+        ...dupe
       }
     }
     case actions.LOGOUT: {

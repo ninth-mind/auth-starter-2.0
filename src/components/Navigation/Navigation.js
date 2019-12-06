@@ -9,6 +9,7 @@ const { Header } = Layout
 function Navigations(props) {
   const { CMS_URL } = config
   const { dispatch } = props
+
   function handleSignOut() {
     const { dispatch } = props
     signOut(dispatch)
