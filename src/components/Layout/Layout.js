@@ -27,7 +27,7 @@ function MainLayout(props) {
   const { dispatch, cartItems } = props
   let recaptcha = useRef(null)
 
-  // initialise router events
+  // initialize router events
   // load previous session details through cookie
   const init = useCallback(() => {
     // init router

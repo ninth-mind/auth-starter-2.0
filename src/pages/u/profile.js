@@ -1,11 +1,14 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { withProfile } from '~/components/HOCs'
+import { useProfile } from '~/lib/hooks'
 import AddValue from '~/components/AddValue'
 import { Skeleton } from 'antd'
 
 function Profile(props) {
-  const p = props.profile
+  const { dispatch } = props
+  const serverProfile = useProfile({}, false, dispatch)
+  const p = { ...serverProfile, ...props.profile }
+
   let content = <Skeleton avatar active paragraph={{ rows: 2 }} />
 
   // check if the profile is empty
@@ -28,4 +31,8 @@ function Profile(props) {
   )
 }
 
-export default connect()(withProfile(Profile, true))
+const mapStateToProps = state => ({
+  profile: state.profile
+})
+
+export default connect(mapStateToProps)(Profile)

@@ -151,7 +151,7 @@ AuthRouter.get(
       )
       let newToken = createToken(u.toObject())
       setCookie(res, newToken, true)
-      res.redirect('/u/profile')
+      res.redirect(`/u/profile`)
     } catch (err) {
       handleError(err, res, 1006)
     }

@@ -3,12 +3,7 @@ const { passport } = require('../../lib/middleware')
 const InstagramRouter = express.Router()
 const InstagramStrategy = require('passport-instagram')
 const User = require('../../services/user')
-const {
-  handleError,
-  createToken,
-  setCookie,
-  respond
-} = require('../../lib/utils')
+const { handleError, createToken, setCookie } = require('../../lib/utils')
 const config = require('../../config')
 const { clientSecret, clientID } = config.instagram
 const { serverURL, clientURL } = config.global
@@ -82,7 +77,7 @@ InstagramRouter.get(
       // if user is found, log them in and redirect to profile
       if (user) {
         let token = createToken(user.toObject())
-        setCookie(res, token)
+        setCookie(res, token, true)
         res.redirect('/u/profile')
         // if NO user, create temp token and redirect to complete-profile page
       } else {
@@ -115,7 +110,9 @@ InstagramRouter.get(
 
         // if NO user, create temp token and redirect to complete-profile page
       } else {
-        res.redirect(`/c/login?login-attempt=instagram`)
+        res.redirect(
+          `/c/login?login-attempt=instagram&username=${profile.username}`
+        )
       }
     } catch (err) {
       handleError(err, res, 1003)

@@ -1,14 +1,17 @@
 import React from 'react'
 import axios from 'axios'
 import { redirect } from '~/lib/utils'
-import { withProfile } from '~/components/HOCs'
 import { Button, Divider, notification, Popconfirm } from 'antd'
 import AddValue from '~/components/AddValue'
 import { SetEmail, CardDetails } from '~/components/AccountManagement'
 import { connect } from 'react-redux'
+import { useProfile } from '~/lib/hooks'
 
 function Account(props) {
   const { dispatch } = props
+  const serverProfile = useProfile({}, true, dispatch)
+  const p = { ...serverProfile, ...props.profile }
+  console.log(serverProfile)
 
   function signOut() {
     signOut(dispatch)
@@ -48,7 +51,6 @@ function Account(props) {
     }
   }
 
-  const p = props.profile
   return (
     <div className="page">
       <h1>Account</h1>
@@ -74,4 +76,8 @@ function Account(props) {
   )
 }
 
-export default connect()(withProfile(Account, true))
+const mapStateToProps = state => ({
+  profile: state.profile
+})
+
+export default connect(mapStateToProps)(Account)

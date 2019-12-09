@@ -2,7 +2,7 @@ require('dotenv').config()
 const jwt = require('jsonwebtoken')
 const axios = require('axios')
 const passport = require('passport')
-const db = require('../services/database')
+const mongoDB = require('../connections/mongoDB')
 const { RateLimiterMongo } = require('rate-limiter-flexible')
 const { handleError, respond } = require('./utils')
 // config
@@ -117,7 +117,7 @@ function verifyCaptcha(req, res, next) {
 // |_|_\/_/ \_\_| |___| |____|___|_|  |_|___| |_| |___|_|_\
 //
 const rateLimiter = new RateLimiterMongo({
-  storeClient: db,
+  storeClient: mongoDB.connection,
   points: 100, // Number of points
   duration: 1 // Per second(s)
 })

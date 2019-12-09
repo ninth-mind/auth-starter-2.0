@@ -6,7 +6,10 @@ const MeRouter = require('./MeRouter')
 const MailRouter = require('./MailRouter')
 const LeadersRouter = require('./LeadersRouter')
 const ProductRouter = require('./ProductRouter')
-const db = require('../services/database')
+const mongoDB = require('../connections/mongoDB')
+const graphDB = require('../connections/neo4jDB')
+
+graphDB.connect()
 
 ApiRouter.get('/', (req, res) => {
   res.send(`Congrats!, You've reached the API`)

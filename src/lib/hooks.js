@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import axios from 'axios'
 import { redirect } from '~/lib/utils'
 import { notification } from 'antd'
+import { actions } from '~/store'
 
 /**
  *
@@ -38,7 +39,7 @@ export function useStrapi(endpoint) {
  * @param {object} initialProfile - initial profile the user should have
  * @param {bool} blocking - boolean if it should redirect on profile failure
  */
-export function useProfile(initialProfile, blocking = false) {
+export function useProfile(initialProfile, blocking = false, dispatch) {
   let [profile, setProfile] = useState(initialProfile || {})
 
   useEffect(() => {
@@ -50,8 +51,16 @@ export function useProfile(initialProfile, blocking = false) {
         })
 
         let { token, user } = r.data.data
+        const payload = { ...user, token }
+        setProfile(payload)
 
-        setProfile({ ...user, token })
+        if (Object.keys(payload).length && dispatch) {
+          console.log('updating store')
+          dispatch({
+            type: actions.CREDS,
+            ...payload
+          })
+        }
       } catch (err) {
         console.log(err)
         redirect('/c/login')
@@ -64,7 +73,38 @@ export function useProfile(initialProfile, blocking = false) {
 
     fetchData()
     return
-  }, [blocking])
+  }, [blocking, dispatch])
 
   return profile
 }
+
+// export function useProfile(initialProfile, blocking = false, dispatch) {
+//   let [profile, setProfile] = useState(initialProfile || {})
+
+//   useEffect(() => {
+//     async function fetchData() {
+//       try {
+//         let r = await axios({
+//           method: 'get',
+//           url: `/api/me`
+//         })
+
+//         let { token, user } = r.data.data
+
+//         setProfile({ ...user, token })
+//       } catch (err) {
+//         console.log(err)
+//         redirect('/c/login')
+//         notification.error({
+//           message: 'Oops',
+//           description: 'You are not logged in yet.'
+//         })
+//       }
+//     }
+
+//     fetchData()
+//     return
+//   }, [blocking])
+
+//   return profile
+// }

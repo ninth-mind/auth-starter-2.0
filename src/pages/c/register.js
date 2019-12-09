@@ -43,7 +43,7 @@ function RegistrationForm(props) {
         duration: 0
       })
 
-      redirect('/')
+      redirect('/c/confirmation')
     } catch (err) {
       const opts = {
         message: 'Error',

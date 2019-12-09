@@ -21,25 +21,40 @@ const config = {
   },
   database: {
     default: {
-      uri: 'mongodb://localhost:27017/test',
-      options: {
-        // useMongoClient: true
-        useCreateIndex: true,
-        useNewUrlParser: true,
-        useFindAndModify: false
+      mongo: {
+        uri: 'mongodb://localhost:27017/test',
+        options: {
+          // useMongoClient: true
+          useCreateIndex: true,
+          useNewUrlParser: true,
+          useFindAndModify: false
+        }
+      },
+      neo4j: {
+        password: '12341234'
       }
     },
     development: {
-      uri: 'mongodb://localhost:27017/test',
-      options: {
-        // useMongoClient: true
-        useCreateIndex: true,
-        useNewUrlParser: true,
-        useFindAndModify: false
+      mongo: {
+        uri: 'mongodb://localhost:27017/test',
+        options: {
+          // useMongoClient: true
+          useCreateIndex: true,
+          useNewUrlParser: true,
+          useFindAndModify: false
+        }
+      },
+      neo4j: {
+        password: '12341234'
       }
     },
     production: {
-      uri: process.env.MONGO_URL
+      mongo: {
+        uri: process.env.MONGO_URL
+      },
+      neo4j: {
+        password: process.env.NEO4J_PASSWORD
+      }
     }
   },
   cron: {
@@ -100,7 +115,7 @@ const config = {
     default: {
       secret: 'ThisIsMySuperSecureSecret',
       tokenExpiryTime: '1hr',
-      tempTokenExpiryTime: '10min',
+      tempTokenExpiryTime: '30min',
       cookieName: 'jamieskinner.me',
       cookieExpiration: 4 * 3600000, // 1 hour
       captchaSecretKey: process.env.CAPTCHA_SECRET_KEY,
@@ -109,7 +124,7 @@ const config = {
     development: {
       secret: process.env.SECRET,
       tokenExpiryTime: '1hr',
-      tempTokenExpiryTime: '10min',
+      tempTokenExpiryTime: '30min',
       cookieName: 'jamieskinner.me',
       cookieExpiration: 4 * 3600000, // 1 hour
       captchaSecretKey: process.env.CAPTCHA_SECRET_KEY,
@@ -118,7 +133,7 @@ const config = {
     production: {
       secret: process.env.SECRET,
       tokenExpiryTime: '24hr',
-      tempTokenExpiryTime: '10min',
+      tempTokenExpiryTime: '30min',
       cookieName: 'jamieskinner.me',
       cookieExpiration: 72 * 3600000, // 72 hours
       captchaSecretKey: process.env.CAPTCHA_SECRET_KEY,
@@ -141,7 +156,7 @@ function determineExport(config) {
       ...configObj[env]
     }
   }
-  if (env === 'development') console.log(result)
+  // if (env === 'development') console.log(result)
   return result
 }
 
