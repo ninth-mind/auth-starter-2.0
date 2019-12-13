@@ -93,7 +93,9 @@ FacebookRouter.get(
         res.redirect('/u/profile')
         // if NO user, create temp token and redirect to complete-profile page
       } else {
-        res.redirect(`/c/login?login-attempt=facebook`)
+        res.redirect(
+          `/c/login?login-attempt=facebook&username=${profile.username}`
+        )
       }
     } catch (err) {
       handleError(err, res, 1003)

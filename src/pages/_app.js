@@ -1,4 +1,4 @@
-import App, { Container } from 'next/app'
+import App from 'next/app'
 import React from 'react'
 import Head from 'next/head'
 import withReduxStore from '~/lib/with-redux-store'
@@ -12,6 +12,7 @@ class MyApp extends App {
     super(props)
     this.state = { stripe: null }
   }
+
   componentDidMount() {
     this.setState({ stripe: window.Stripe('pk_test_tZ1UTEHPHFd9dsZzi03UyKNB') })
   }
@@ -19,12 +20,12 @@ class MyApp extends App {
     const { Component, pageProps, reduxStore } = this.props
     return (
       <StripeProvider stripe={this.state.stripe}>
-        <Container>
+        <>
           <Head>
-            <title>Leaderboard!</title>
+            <title>Jamie Skinner - Portfolio</title>
             <meta
               name="viewport"
-              content="initial-scale=1.0, width=device-width, initial-width=1"
+              content="initial-scale=1.0, width=device-width"
             />
             <script src="https://js.stripe.com/v3/" />
           </Head>
@@ -34,7 +35,7 @@ class MyApp extends App {
               <Component {...pageProps} />
             </MainLayout>
           </Provider>
-        </Container>
+        </>
       </StripeProvider>
     )
   }

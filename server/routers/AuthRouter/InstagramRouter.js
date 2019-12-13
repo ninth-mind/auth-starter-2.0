@@ -20,7 +20,6 @@ passport.use(
       callbackURL: `${serverURL}/api/auth/instagram/login/callback`
     },
     (accessToken, refreshToken, profile, done) => {
-      //gets user from spotify and passes it to /spotify/callback
       let obj = { accessToken, refreshToken, profile }
       return done(null, obj)
     }
@@ -36,7 +35,6 @@ passport.use(
       callbackURL: `${serverURL}/api/auth/instagram/register/callback`
     },
     (accessToken, refreshToken, profile, done) => {
-      //gets user from spotify and passes it to /spotify/callback
       let obj = { accessToken, refreshToken, profile }
       return done(null, obj)
     }
@@ -79,7 +77,7 @@ InstagramRouter.get(
       // if user is found, log them in and redirect to profile
       if (user) {
         let token = createToken(user.toObject())
-        setCookie(res, token)
+        setCookie(res, token, true)
         res.redirect('/u/profile')
         // if NO user, create temp token and redirect to complete-profile page
       } else {
@@ -106,11 +104,15 @@ InstagramRouter.get(
       // if user is found, log them in and redirect to profile
       if (user) {
         let token = createToken(user.toObject())
-        setCookie(res, token)
+        setCookie(res, token, true)
+        // respond(res, 200, 'User found. Logging in', { token })
         res.redirect('/u/profile')
+
         // if NO user, create temp token and redirect to complete-profile page
       } else {
-        res.redirect(`/c/login?login-attempt=instagram`)
+        res.redirect(
+          `/c/login?login-attempt=instagram&username=${profile.username}`
+        )
       }
     } catch (err) {
       handleError(err, res, 1003)

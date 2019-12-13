@@ -4,7 +4,8 @@ const {
   secret,
   tempTokenExpiryTime,
   tokenExpiryTime,
-  cookieName
+  cookieName,
+  cookieExpiration
 } = require('../config').utils
 
 /**
@@ -36,11 +37,13 @@ function createToken(p, isTemp = false) {
  * @param {string} token - token to set in the cookie
  * @param {boolean} overwrite - whether or not to overwrite the existing cookie
  */
-function setCookie(res, token, overwrite = false) {
+function setCookie(res, token, overwrite) {
   res.cookie(cookieName, token, {
     httpOnly: true,
+    sameSite: true,
     secure: process.env.NODE_ENV === 'production',
-    overwrite
+    expires: new Date(Date.now() + cookieExpiration),
+    overwrite: !!overwrite
   })
 }
 /**

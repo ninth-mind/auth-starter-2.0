@@ -3,12 +3,24 @@ import Link from 'next/link'
 import { connect } from 'react-redux'
 import { signOut } from '~/lib/utils'
 import { Button, Icon, Layout, Menu } from 'antd'
+import { actions, config } from '~/store'
 const { Header } = Layout
 
 function Navigations(props) {
+  const { CMS_URL } = config
+  const { dispatch } = props
+
   function handleSignOut() {
     const { dispatch } = props
     signOut(dispatch)
+  }
+
+  function openPanel(title) {
+    dispatch({
+      type: actions.PANEL_TOGGLE,
+      state: 'open',
+      title: title
+    })
   }
 
   return (
@@ -23,7 +35,7 @@ function Navigations(props) {
           <Link href="/">
             <span>
               <Icon type="star" />
-              Leaderboard
+              Home
             </span>
           </Link>
         </Menu.Item>
@@ -37,7 +49,27 @@ function Navigations(props) {
             <a>Shop</a>
           </Link>
         </Menu.Item>
+        <Menu.Item key="work">
+          <Link href="/work">
+            <a>Work</a>
+          </Link>
+        </Menu.Item>
+        <Menu.SubMenu title={<Icon type="meh" />}>
+          <Menu.Item key="donut">
+            <a onClick={() => openPanel('donut')}>Donut</a>
+          </Menu.Item>
+          <Menu.Item key="words">
+            <a onClick={() => openPanel('word')}>Words</a>
+          </Menu.Item>
+        </Menu.SubMenu>
         <Menu.SubMenu title={<Icon type="user" />} disabled={!props.isLoggedIn}>
+          {props.permissions.includes('admin') && (
+            <Menu.Item key="cms-link">
+              <a href={CMS_URL} target="_blank" rel="noopener noreferrer">
+                Admin Page
+              </a>
+            </Menu.Item>
+          )}
           <Menu.Item key="/u/account">
             <Link href="/u/account">
               <a>Account</a>
@@ -62,7 +94,8 @@ function Navigations(props) {
 const mapStateToProps = state => {
   return {
     currentPage: state.ui.currentPage,
-    isLoggedIn: state.profile.email
+    isLoggedIn: state.profile.email,
+    permissions: state.profile.permissions
   }
 }
 

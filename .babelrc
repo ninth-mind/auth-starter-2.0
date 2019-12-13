@@ -1,15 +1,23 @@
 {
   "presets": [
-    "next/babel",
-    "@babel/preset-env"
+    [
+      "next/babel",
+      {
+        "preset-env": {
+          "targets": {
+            "node": "current"
+          }
+        }
+      }
+    ]
   ],
   "plugins": [
     [
       "import",
       {
-        "libraryName": "antd",
+        "libraryName": "antd"
         // "style": true // importing styles in `main.scss`
-      },
+      }
     ]
   ]
 }

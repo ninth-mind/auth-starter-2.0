@@ -2,7 +2,7 @@ require('dotenv').config()
 const jwt = require('jsonwebtoken')
 const axios = require('axios')
 const passport = require('passport')
-const db = require('../services/database')
+const mongoDB = require('../connections/mongoDB')
 const { RateLimiterMongo } = require('rate-limiter-flexible')
 const { handleError, respond } = require('./utils')
 // config
@@ -28,12 +28,26 @@ function verifyOrigin(req, res, next) {
 // middleware to protect routes from unAuthorized tokens
 function verifyAuthenticationToken(req, res, next) {
   try {
-    // check if the token is in the cookies or the req.params
+    const { headers } = req
+    // ensure request comes from correct origin and referer
+    // protects against csrf (cross site request forgery)
+    if (headers.origin || headers.referer) {
+      if (
+        (headers.origin && !headers.origin.includes(clientURL)) ||
+        (headers.referer && !headers.referer.includes(clientURL))
+      )
+        return respond(res, 403, 'Unrecognized referer or origin')
+    }
+
+    // check if the token is in the cookies or the
+    // req.params or in the Authorization header
     let token
     if (req.params.token) {
       token = req.params.token
     } else if (req.cookies && req.cookies[cookieName]) {
       token = req.cookies[cookieName]
+    } else if (req.headers.authorization) {
+      token = req.headers.authorization.split(' ')[1]
     }
 
     // verify token
@@ -47,7 +61,7 @@ function verifyAuthenticationToken(req, res, next) {
           return respond(res, 403, 'Your session has expired')
         } else return handleError(err, res, 4000)
       }
-      req.locals = { decodedToken: decoded, token }
+      req.locals = { userInfo: decoded, token }
       next()
     })
   } catch (err) {
@@ -62,7 +76,7 @@ function verifyAuthenticationToken(req, res, next) {
  */
 function makePermissionsMiddleware(permissions) {
   return function(req, res, next) {
-    const userPermissions = req.locals.decodedToken.permissions
+    const userPermissions = req.locals.userInfo.permissions
     let isAllowed = permissions.reduce((allowed, p) => {
       return userPermissions.includes(p) && allowed
     }, true)
@@ -103,7 +117,7 @@ function verifyCaptcha(req, res, next) {
 // |_|_\/_/ \_\_| |___| |____|___|_|  |_|___| |_| |___|_|_\
 //
 const rateLimiter = new RateLimiterMongo({
-  storeClient: db,
+  storeClient: mongoDB.connection,
   points: 100, // Number of points
   duration: 1 // Per second(s)
 })

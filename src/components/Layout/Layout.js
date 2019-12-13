@@ -1,30 +1,78 @@
-import React, { useRef, useEffect } from 'react'
+import React, { useRef, useEffect, useCallback } from 'react'
 import Router from 'next/router'
 import ReCAPTCHA from 'react-google-recaptcha'
 import { connect } from 'react-redux'
 import { setLoading } from '~/lib/utils'
 import Navigation from '~/components/Navigation'
-import { Layout, Spin } from 'antd'
+import { CartDrawer } from '~/components/Cart'
+import Footer from '~/components/Footer'
+import { Button, Layout, Spin } from 'antd'
+import { PanelManager } from '~/components/Panel'
+import { RecaptchaContext, config } from '~/store'
 const { Content } = Layout
-import { actions, RecaptchaContext } from '~/store'
 import './Layout.scss'
+import { actions } from '../../store'
+import ls from 'local-storage'
+import axios from 'axios'
 
+/**
+ * THE MAIN LAYOUT
+ *
+ * Main layout is loaded in the root of the app. meaning this code gets executed on
+ * every page. This is where router initialization happens, and other important
+ * site-wide set up occurs.
+ * @param {*} props
+ */
 function MainLayout(props) {
-  const { dispatch } = props
+  const { CAPTCHA_SITE_KEY, CART_NAME } = config
+  const { dispatch, cartItems } = props
   let recaptcha = useRef(null)
 
-  // initialize router
-  useEffect(initializeRouter)
-  function initializeRouter() {
+  // initialize router events
+  // load previous session details through cookie
+  const init = useCallback(() => {
+    // init router
     Router.events.on('routeChangeStart', url => setLoading(true, dispatch))
-    Router.events.on('routeChangeComplete', url => {
-      setLoading(false, dispatch)
-      dispatch({
-        type: actions.PAGE,
-        currentPage: url
-      })
-    })
+    Router.events.on('routeChangeComplete', url => setLoading(false, dispatch))
     Router.events.on('routeChangeError', () => setLoading(false, dispatch))
+
+    // load shopping cart
+    const cart = ls.get(CART_NAME)
+    if (cart) {
+      dispatch({
+        type: actions.SET_CART,
+        data: cart
+      })
+    }
+  }, [CART_NAME, dispatch])
+
+  // initialize router
+  useEffect(init, [])
+
+  // check if user is logged in
+  useEffect(() => {
+    async function checkIfUserIsLoggedIn() {
+      const r = await axios({
+        url: '/api/me',
+        method: 'get'
+      })
+
+      if (r.data.data) {
+        let { user, token } = r.data.data
+        dispatch({
+          type: actions.PROFILE,
+          ...user,
+          token
+        })
+      }
+    }
+    checkIfUserIsLoggedIn()
+  }, [dispatch])
+
+  function toggleCart() {
+    dispatch({
+      type: actions.DRAWER_TOGGLE
+    })
   }
 
   return (
@@ -33,13 +81,21 @@ function MainLayout(props) {
         <Navigation />
         <Spin spinning={props.isLoading} tip="Loading...">
           <Content>
+            <PanelManager />
             {props.children}
             <ReCAPTCHA
               ref={recaptcha}
-              sitekey={props.captchSiteKey}
+              sitekey={CAPTCHA_SITE_KEY}
               size="invisible"
             />
           </Content>
+          <CartDrawer />
+          {cartItems > 0 && (
+            <Button className="view-cart" type="primary" onClick={toggleCart}>
+              View Cart ({cartItems})
+            </Button>
+          )}
+          <Footer />
         </Spin>
       </RecaptchaContext.Provider>
     </Layout>
@@ -49,7 +105,7 @@ function MainLayout(props) {
 const mapStateToProps = state => {
   return {
     isLoading: state.ui.isLoading,
-    captchSiteKey: state.constants.CAPTCHA_SITE_KEY
+    cartItems: state.cart.items
   }
 }
 

@@ -3,13 +3,14 @@ import { RecaptchaContext } from '~/store'
 import axios from 'axios'
 import Link from 'next/link'
 import { connect } from 'react-redux'
-import { redirect, setLoading } from '~/lib/utils'
+import { redirect, handleToken, setLoading } from '~/lib/utils'
 import { Button, Form, Icon, Input, Modal, notification } from 'antd'
+import { defaultFormItemLayout } from '~/components/Layout/antLayouts'
 import './c.scss'
 
 function EmailLogin(props) {
   /**
-   * @param {Array} inputs : Array of inputs to clear. The first of which will recieve focus.
+   * @param {Array} inputs : Array of inputs to clear. The first of which will receive focus.
    */
   const recaptcha = useContext(RecaptchaContext)
   const {
@@ -19,19 +20,8 @@ function EmailLogin(props) {
     form: { getFieldDecorator }
   } = props
 
-  let loginAttempt = query['login-attempt']
-
-  // styling
-  const formItemLayout = {
-    labelCol: {
-      xs: { span: 24 },
-      sm: { span: 8 }
-    },
-    wrapperCol: {
-      xs: { span: 24 },
-      sm: { span: 16 }
-    }
-  }
+  let loginAttemptSource = query['login-attempt']
+  let loginAttemptUsername = query['username']
 
   async function handleSubmit(e) {
     e.preventDefault()
@@ -47,21 +37,26 @@ function EmailLogin(props) {
         url: `/api/auth/login`,
         data: { ...data, recaptcha: captchaToken }
       })
+
+      if (r.data && r.data.data && r.data.data.token)
+        handleToken(r.data.data.token, dispatch)
+
       redirect('/u/profile')
     } catch (err) {
       console.log(err)
       // if user already has an account with a different provider, redirect
       if (err && err.response && err.response.status === 300) {
-        redirect(`/api/auth/${err.response.data.data.source}`)
+        redirect(`/api/auth/${err.response.data.data.source}/login`)
         // otherwise raise error message
       } else {
         const opts = {
           message: 'Error',
           description: 'Oops! Something went wrong.'
         }
-        if (err && err.response && err.response.data)
+        if (err && err.response && err.response.data) {
           opts.description = err.response.data.msg
-        notification.error(opts)
+          notification.error(opts)
+        }
       }
     } finally {
       setLoading(false, dispatch)
@@ -69,20 +64,22 @@ function EmailLogin(props) {
   }
 
   return (
-    <div className="login page center">
+    <div className="login page">
       <h1>Login</h1>
       <Modal
-        visible={!!loginAttempt}
+        visible={!!loginAttemptSource}
         title="No account found"
-        onOk={() => redirect(`/api/auth/${loginAttempt}/register`)}
+        onOk={() => redirect(`/api/auth/${loginAttemptSource}/register`)}
         onCancel={() => redirect('/c/login')}
       >
         <p>
-          Looks like you don't have an account yet. Would you like to create an
-          account here using <strong>{loginAttempt}</strong>?
+          Looks like you don't have an account yet. We found an{' '}
+          <strong>{loginAttemptSource}</strong> account with the username{' '}
+          <strong>{loginAttemptUsername}</strong>. Would you like to use this to
+          create an account?
         </p>
       </Modal>
-      <Form className="form" {...formItemLayout} onSubmit={handleSubmit}>
+      <Form className="form" {...defaultFormItemLayout} onSubmit={handleSubmit}>
         <Form.Item label="Email/Username">
           {getFieldDecorator('email', {
             rules: [
@@ -118,13 +115,21 @@ function EmailLogin(props) {
       <hr />
       <ul>
         <li>
-          <Button type="link" href="/api/auth/facebook/login">
+          <Button
+            type="link"
+            onClick={() => setLoading(true, dispatch)}
+            href="/api/auth/facebook/login"
+          >
             <Icon type="facebook" />
             Login with Facebook
           </Button>
         </li>
         <li>
-          <Button type="link" href="/api/auth/instagram/login">
+          <Button
+            type="link"
+            onClick={() => setLoading(true, dispatch)}
+            href="/api/auth/instagram/login"
+          >
             <Icon type="instagram" />
             Login with Instagram
           </Button>

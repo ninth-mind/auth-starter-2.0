@@ -4,6 +4,7 @@ import axios from 'axios'
 import { connect } from 'react-redux'
 import countries from '~/assets/countries'
 import { Button, Form, Input, notification, Select } from 'antd'
+import { defaultFormItemLayout } from '~/components/Layout/antLayouts'
 import { parseJWT, redirect, setLoading, handleError } from '~/lib/utils'
 import './c.scss'
 
@@ -23,6 +24,7 @@ function CompleteProfileForm(props) {
     form: { getFieldDecorator },
     query
   } = props
+
   const initialState = {
     id: '',
     source: '',
@@ -91,26 +93,15 @@ function CompleteProfileForm(props) {
     }
   }
 
-  //styling
-  const formItemLayout = {
-    labelCol: {
-      xs: { span: 24 },
-      sm: { span: 8 }
-    },
-    wrapperCol: {
-      xs: { span: 24 },
-      sm: { span: 16 }
-    }
-  }
   const s = knownUserInfo
 
   return (
-    <div id="complete-profile" className="complete-profile page center">
+    <div id="complete-profile" className="complete-profile page">
       <h1>Complete Profile</h1>
       <p>There are just a few more things we need to complete your profile.</p>
       <h3>ID: {s.id}</h3>
       <h3>Source: {s.source}</h3>
-      <Form className="form" {...formItemLayout} onSubmit={handleSubmit}>
+      <Form className="form" {...defaultFormItemLayout} onSubmit={handleSubmit}>
         <Form.Item label="Username" hasFeedback>
           {getFieldDecorator('username', {
             initialValue: s.username,

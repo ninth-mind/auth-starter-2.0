@@ -14,7 +14,8 @@ body,html {
   max-width: 600px;
 }
 
-.small {
-  font-size: 11px;
-  line-height: 1.125em;
+.ant-layout {
+  background-color: #f6f9fc;
 }
+
+@import 'helpers.scss'
