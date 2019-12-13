@@ -5,6 +5,7 @@ import { connect } from 'react-redux'
 import { setLoading } from '~/lib/utils'
 import Navigation from '~/components/Navigation'
 import { CartDrawer } from '~/components/Cart'
+import Footer from '~/components/Footer'
 import { Button, Layout, Spin } from 'antd'
 import { PanelManager } from '~/components/Panel'
 import { RecaptchaContext, config } from '~/store'
@@ -94,6 +95,7 @@ function MainLayout(props) {
               View Cart ({cartItems})
             </Button>
           )}
+          <Footer />
         </Spin>
       </RecaptchaContext.Provider>
     </Layout>

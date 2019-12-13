@@ -11,7 +11,6 @@ function Account(props) {
   const { dispatch } = props
   const serverProfile = useProfile({}, true, dispatch)
   const p = { ...serverProfile, ...props.profile }
-  console.log(serverProfile)
 
   function signOut() {
     signOut(dispatch)

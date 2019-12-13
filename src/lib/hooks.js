@@ -55,7 +55,6 @@ export function useProfile(initialProfile, blocking = false, dispatch) {
         setProfile(payload)
 
         if (Object.keys(payload).length && dispatch) {
-          console.log('updating store')
           dispatch({
             type: actions.CREDS,
             ...payload
