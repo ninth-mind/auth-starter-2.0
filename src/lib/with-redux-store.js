@@ -38,7 +38,7 @@ export default App => {
           const { _id, email, source, permissions, username, value } = user
           profile = { id: _id, email, source, permissions, username, value }
         } catch (err) {
-          if (err.response && err.response.status === 403) return
+          if (err.response && err.response.status === 403) return {}
           else console.log('Error', err)
         }
       }

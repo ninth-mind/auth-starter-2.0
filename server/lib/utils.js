@@ -46,6 +46,7 @@ function setCookie(res, token, overwrite) {
     overwrite: !!overwrite
   })
 }
+
 /**
   Error handling. Only to be used when the SERVER is experiencing an error. Not
   to be used when sending back incorrect credential errors and so forth.
