@@ -4,6 +4,7 @@ import axios from 'axios'
 import Link from 'next/link'
 import { connect } from 'react-redux'
 import { redirect, handleToken, setLoading } from '~/lib/utils'
+import { useRouter } from 'next/router'
 import { Button, Form, Icon, Input, Modal, notification } from 'antd'
 import { defaultFormItemLayout } from '~/components/Layout/antLayouts'
 import './c.scss'
@@ -15,13 +16,14 @@ function EmailLogin(props) {
   const recaptcha = useContext(RecaptchaContext)
   const {
     dispatch,
-    query,
     form,
     form: { getFieldDecorator }
   } = props
 
-  let loginAttemptSource = query['login-attempt']
-  let loginAttemptUsername = query['username']
+  const router = useRouter()
+
+  let loginAttemptSource = router.query['login-attempt']
+  let loginAttemptUsername = router.query['username']
 
   async function handleSubmit(e) {
     e.preventDefault()
@@ -57,9 +59,8 @@ function EmailLogin(props) {
           opts.description = err.response.data.msg
           notification.error(opts)
         }
+        setLoading(false, dispatch)
       }
-    } finally {
-      setLoading(false, dispatch)
     }
   }
 

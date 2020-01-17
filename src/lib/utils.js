@@ -1,5 +1,5 @@
 import { actions, config } from '~/store'
-import ls from 'local-storage'
+// import ls from 'local-storage'
 import validator from 'validator'
 import axios from 'axios'
 import Router from 'next/router'
@@ -68,7 +68,7 @@ export function parseJWT(token) {
 export function handleToken(token, dispatch) {
   if (token) {
     // set token in localstorage
-    ls.set(config.APP_NAME, { token })
+    // ls.set(config.APP_NAME, { token })
     let { email, source, username, id } = parseJWT(token)
     dispatch({
       type: actions.CREDS,
@@ -126,5 +126,37 @@ export function debounce(func, wait, immediate) {
     clearTimeout(timeout)
     timeout = setTimeout(later, wait)
     if (callNow) func.apply(context, args)
+  }
+}
+
+/**
+ * Check object for all necessary keys
+ *
+ * @param {object} obj - object to check for values
+ * @param {array} values - array of values to check the object for
+ */
+export function runObjectCheck(obj, keysAndChecks) {
+  let failedKeys = []
+  for (let [key, check] of Object.entries(keysAndChecks)) {
+    // if the object is undefined or fails check
+    if (obj[key] === undefined || !check(obj[key])) failedKeys.push(key)
+  }
+  if (failedKeys.length > 0) return { success: false, failed: failedKeys }
+  else return { success: true }
+}
+
+/**
+ * makePagePrivate
+ * blocks user if they are not logged in.
+ *
+ */
+
+export function makePagePrivate(profile) {
+  if (!profile.username) {
+    redirect('/c/login')
+    notification.error({
+      message: 'Oops',
+      description: 'You are not logged in yet.'
+    })
   }
 }

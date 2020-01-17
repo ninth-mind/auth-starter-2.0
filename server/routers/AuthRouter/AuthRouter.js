@@ -113,7 +113,7 @@ AuthRouter.post(
 /**
  * LOGOUT
  */
-AuthRouter.get('/logout', verifyAuthenticationToken, (req, res) => {
+AuthRouter.get('/logout', (req, res) => {
   res.clearCookie(cookieName)
   respond(res, 200, 'Successfully logged out')
 })

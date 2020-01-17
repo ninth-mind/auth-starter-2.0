@@ -78,7 +78,7 @@ function makePermissionsMiddleware(permissions) {
   return function(req, res, next) {
     const userPermissions = req.locals.userInfo.permissions
     let isAllowed = permissions.reduce((allowed, p) => {
-      return userPermissions.includes(p) && allowed
+      return userPermissions ? userPermissions.includes(p) && allowed : false
     }, true)
     if (isAllowed) next()
     else respond(res, 403, 'You are not authorized')

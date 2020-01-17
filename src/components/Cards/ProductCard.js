@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { connect } from 'react-redux'
-import { Button, Icon, InputNumber } from 'antd'
+import { Button, Icon, InputNumber, Tag } from 'antd'
 import './Card.scss'
 import { actions } from '../../store'
 
@@ -25,8 +25,13 @@ function Card(props) {
   }
 
   let imgsrc = props.image
-    ? `http://localhost:1337/${props.image.url}`
+    ? `http://localhost:1337/${props.image[0].url}`
     : `http://placehold.it/100x100`
+  let tagBadges = props.categories.map((e, i) => (
+    <Tag key={e.id} color="red">
+      {e.name}
+    </Tag>
+  ))
 
   return (
     <div className="product-card">
@@ -41,6 +46,7 @@ function Card(props) {
             <h2 className="product-details__price">${props.price}</h2>
             <p>{props.stock} left</p>
           </div>
+          <div>{tagBadges}</div>
           <div className="product-details__options">
             <label>Quantity</label>
             <InputNumber

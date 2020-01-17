@@ -11,8 +11,6 @@ import { RecaptchaContext, config } from '~/store'
 const { Content } = Layout
 import './Layout.scss'
 import { actions } from '../../store'
-import ls from 'local-storage'
-import axios from 'axios'
 
 /**
  * THE MAIN LAYOUT
@@ -23,50 +21,19 @@ import axios from 'axios'
  * @param {*} props
  */
 function MainLayout(props) {
-  const { CAPTCHA_SITE_KEY, CART_NAME } = config
+  const { CAPTCHA_SITE_KEY } = config
   const { dispatch, cartItems } = props
+  // console.log('profile', profile)
+
   let recaptcha = useRef(null)
 
   // initialize router events
-  // load previous session details through cookie
   const init = useCallback(() => {
-    // init router
     Router.events.on('routeChangeStart', url => setLoading(true, dispatch))
     Router.events.on('routeChangeComplete', url => setLoading(false, dispatch))
     Router.events.on('routeChangeError', () => setLoading(false, dispatch))
-
-    // load shopping cart
-    const cart = ls.get(CART_NAME)
-    if (cart) {
-      dispatch({
-        type: actions.SET_CART,
-        data: cart
-      })
-    }
-  }, [CART_NAME, dispatch])
-
-  // initialize router
-  useEffect(init, [])
-
-  // check if user is logged in
-  useEffect(() => {
-    async function checkIfUserIsLoggedIn() {
-      const r = await axios({
-        url: '/api/me',
-        method: 'get'
-      })
-
-      if (r.data.data) {
-        let { user, token } = r.data.data
-        dispatch({
-          type: actions.PROFILE,
-          ...user,
-          token
-        })
-      }
-    }
-    checkIfUserIsLoggedIn()
   }, [dispatch])
+  useEffect(init, [])
 
   function toggleCart() {
     dispatch({

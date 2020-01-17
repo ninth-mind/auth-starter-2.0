@@ -6,6 +6,7 @@ import ls from 'local-storage'
 export const RecaptchaContext = React.createContext()
 
 export const config = {
+  BASE_URL: 'http://localhost:3000',
   APP_NAME: 'jamieskinner.me',
   CART_NAME: 'jamieskinner.me-cart',
   CAPTCHA_SITE_KEY: '6Le87Z0UAAAAALKPzIW8DiLMEzSi9I51FNTnWBQN', // v3 site key,
@@ -50,8 +51,9 @@ export const actions = {
   CLEAR_CART: 'CLEAR_CART'
 }
 
-const initializeStore = initStore.bind(null, initialState)
-export { initializeStore }
+export const initializeStore = storeFromServer => {
+  return initStore({ ...initialState, ...storeFromServer })
+}
 
 function initStore(initialState = initialState) {
   return createStore(
@@ -77,8 +79,8 @@ function applicationReducer(state = initialState, action) {
 function profileReducer(state = initialState.profile, action) {
   switch (action.type) {
     case actions.CREDS: {
-      let cur = ls.get(config.APP_NAME)
-      ls.set(config.APP_NAME, { ...cur, token: action.token })
+      // let cur = ls.get(config.APP_NAME)
+      // ls.set(config.APP_NAME, { ...cur, token: action.token })
       return {
         ...state,
         username: action.username,
@@ -216,7 +218,7 @@ function cartReducer(state = initialState.cart, action) {
     }
 
     case actions.SET_CART: {
-      return action.data
+      return action.cart
     }
 
     case actions.CLEAR_CART: {
