@@ -77,13 +77,13 @@ InstagramRouter.get(
       // if user is found, log them in and redirect to profile
       if (user) {
         let token = createToken(user.toObject())
-        setCookie(res, token, true)
+        setCookie(res, token, true, false)
         res.redirect('/u/profile')
         // if NO user, create temp token and redirect to complete-profile page
       } else {
         let newProf = User.loginMapper('instagram', profile)
         let token = createToken(newProf, true)
-        setCookie(res, token, true)
+        setCookie(res, token, true, false)
         res.redirect(`/c/complete-profile?token=${token}`)
       }
     } catch (err) {
@@ -104,7 +104,7 @@ InstagramRouter.get(
       // if user is found, log them in and redirect to profile
       if (user) {
         let token = createToken(user.toObject())
-        setCookie(res, token, true)
+        setCookie(res, token, true, false)
         // respond(res, 200, 'User found. Logging in', { token })
         res.redirect('/u/profile')
 

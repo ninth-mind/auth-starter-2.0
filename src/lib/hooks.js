@@ -103,7 +103,7 @@ export function useProfile(initialProfile, blocking = false, dispatch) {
 
         let { token, user } = r.data.data
         const payload = { ...user, token }
-        setProfile(payload)
+        setProfile({ ...profile, ...payload })
 
         if (Object.keys(payload).length && dispatch) {
           dispatch({
@@ -126,7 +126,7 @@ export function useProfile(initialProfile, blocking = false, dispatch) {
 
     fetchData()
     return
-  }, [blocking, dispatch])
+  }, [blocking, dispatch, profile])
 
   return profile
 }

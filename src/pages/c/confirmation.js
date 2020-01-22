@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import { connect } from 'react-redux'
 import { setLoading, handleError } from '~/lib/utils'
 import { Button, notification } from 'antd'
@@ -7,6 +8,7 @@ import axios from 'axios'
 
 function Confirmation(props) {
   const [sent, setSent] = useState(false)
+  const { query } = useRouter()
 
   async function handleClick() {
     const { dispatch } = props
@@ -42,7 +44,7 @@ function Confirmation(props) {
     <div className="page confirmation">
       <h1>Confirmation Email Sent</h1>
       <p>
-        A confirmation email was sent to <strong>{props.email}</strong>. In
+        A confirmation email was sent to <strong>{query.email}</strong>. In
         order to complete the registration process, please check your email and
         click the provided link. You have approximately{' '}
         <strong>10 minutes from now</strong> ({date.toLocaleTimeString()} on{' '}
@@ -58,7 +60,7 @@ function Confirmation(props) {
       <p>
         First, check your spam folder, occasionally it will get caught in a spam
         filter. If that doesn't work, confirm that{' '}
-        <strong>{props.email}</strong> is the correct email. If neither of those
+        <strong>{query.email}</strong> is the correct email. If neither of those
         seem to be the problem, click the link below to request another email.
       </p>
       <Button type="primary" onClick={handleClick} disabled={sent}>
@@ -76,12 +78,4 @@ function Confirmation(props) {
   )
 }
 
-Confirmation.getInitialProps = ({ query }) => {
-  return { email: query.email }
-}
-
-const mapStateToProps = (state, ownProps) => ({
-  email: ownProps.email || state.email
-})
-
-export default connect(mapStateToProps)(Confirmation)
+export default connect()(Confirmation)

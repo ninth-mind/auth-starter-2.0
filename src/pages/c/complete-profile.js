@@ -2,6 +2,7 @@ import React, { useState, useContext, useEffect } from 'react'
 import { RecaptchaContext } from '~/store'
 import axios from 'axios'
 import { connect } from 'react-redux'
+import { useRouter } from 'next/router'
 import countries from '~/assets/countries'
 import { Button, Form, Input, notification, Select } from 'antd'
 import { defaultFormItemLayout } from '~/components/Layout/antLayouts'
@@ -21,9 +22,11 @@ function CompleteProfileForm(props) {
   const {
     dispatch,
     form,
-    form: { getFieldDecorator },
-    query
+    form: { getFieldDecorator }
   } = props
+
+  const router = useRouter()
+  const query = router.query
 
   const initialState = {
     id: '',
@@ -160,14 +163,12 @@ function CompleteProfileForm(props) {
   )
 }
 
-CompleteProfileForm.getInitialProps = async ({ query }) => ({ query })
-
-const mapStateToProps = (state, ownProps) => ({
-  profile: state.profile,
-  query: ownProps.query
-})
-
 const WrappedCompleteProfileForm = Form.create({ name: 'complete-profile' })(
   CompleteProfileForm
 )
+
+const mapStateToProps = state => ({
+  profile: state.profile
+})
+
 export default connect(mapStateToProps)(WrappedCompleteProfileForm)

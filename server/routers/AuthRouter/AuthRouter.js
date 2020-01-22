@@ -74,8 +74,8 @@ AuthRouter.post('/login', verifyCaptcha, async (req, res) => {
       if (!isMatch) respond(res, 403, 'Incorrect credentials')
       else {
         let token = createToken(u.toObject())
-        setCookie(res, token)
-        respond(res, 200, 'login successful', { token })
+        setCookie(res, token, true)
+        respond(res, 200, 'logged in', { token })
       }
     }
   } catch (err) {
@@ -150,7 +150,7 @@ AuthRouter.get(
         { new: true }
       )
       let newToken = createToken(u.toObject())
-      setCookie(res, newToken, true)
+      setCookie(res, newToken, true, false)
       res.redirect(`/u/profile`)
     } catch (err) {
       handleError(err, res, 1006)
@@ -194,7 +194,7 @@ AuthRouter.get(
   verifyAuthenticationToken,
   (req, res) => {
     const { token } = req.params
-    setCookie(res, token)
+    setCookie(res, token, true, false)
     res.redirect(`/c/reset-password?token=${token}`)
   }
 )

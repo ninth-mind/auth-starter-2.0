@@ -1,23 +1,54 @@
 import React from 'react'
 import axios from 'axios'
 import { connect } from 'react-redux'
-import { actions } from '~/store'
+import { config, actions } from '~/store'
 import { Button, Divider, Popconfirm } from 'antd'
 import { Cart } from '~/components/Cart'
-import { useGetPaymentIntent } from '~/lib/hooks'
+import { handleError } from '~/lib/utils'
+// import { useGetPaymentIntent } from '~/lib/hooks'
+import ls from 'local-storage'
 import { CardDetails, AddressDetails } from '~/components/AccountManagement'
 import './checkout.scss'
 
 function Checkout(props) {
   const { dispatch, cart, profile } = props
-  console.log('cart', cart)
-  // grab payment intent from Stripe
-  let paymentIntentId = useGetPaymentIntent(
-    cart.total,
-    profile?.customer?.id,
-    cart.paymentIntentId
-  )
-  console.log('Payment Intent id', paymentIntentId)
+
+  if (!cart.paymentIntentId) {
+    fetchIntent()
+      .then(r => {
+        dispatch({
+          type: actions.SET_PAYMENT_INTENT_ID,
+          paymentIntentId: r.data.data.id
+        })
+      })
+      .catch(err => handleError(err))
+  }
+
+  /**
+   * Fetches intent id from server.
+   *
+   */
+  async function fetchIntent() {
+    // call server, to update or create payment intent
+    try {
+      // grab existing payment intent if one exists
+      let r = await axios({
+        method: 'post',
+        url: `/api/payment/intent`,
+        data: {
+          amount: cart.total * 100,
+          payment_method_types: ['card'],
+          currency: 'usd'
+        }
+      })
+
+      // store payment intent with localstorage
+      let paymentIntentId = r.data.data.id
+      return paymentIntentId
+    } catch (err) {
+      handleError(err)
+    }
+  }
 
   /**
    * Handle submit

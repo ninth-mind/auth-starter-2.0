@@ -80,20 +80,6 @@ function applicationReducer(state = initialState, action) {
 
 function profileReducer(state = initialState.profile, action) {
   switch (action.type) {
-    case actions.CREDS: {
-      // let cur = ls.get(config.APP_NAME)
-      // ls.set(config.APP_NAME, { ...cur, token: action.token })
-      return {
-        ...state,
-        username: action.username,
-        source: action.source,
-        email: action.email,
-        value: action.value,
-        id: action.id,
-        token: action.token,
-        permissions: action.permissions
-      }
-    }
     case actions.VALUE: {
       return {
         ...state,

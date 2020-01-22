@@ -60,29 +60,6 @@ export function parseJWT(token) {
   }
 }
 
-/**
- * Parses and saves token information in store
- * @param {string} token - jwt
- * @param {function} dispatch - react-redux dispatch function
- */
-export function handleToken(token, dispatch) {
-  if (token) {
-    // set token in localstorage
-    // ls.set(config.APP_NAME, { token })
-    let { email, source, username, id } = parseJWT(token)
-    dispatch({
-      type: actions.CREDS,
-      id,
-      token,
-      email,
-      source,
-      username
-    })
-  } else {
-    signOut(dispatch)
-  }
-}
-
 export function signOut(dispatch) {
   axios({
     method: 'GET',

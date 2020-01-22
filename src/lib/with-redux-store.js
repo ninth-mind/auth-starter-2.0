@@ -26,12 +26,15 @@ export default App => {
       const { ctx } = appContext
       let profile
       if (ctx.req) {
+        const { cookies } = ctx.req
         try {
+          let token = ''
+          if (cookies) token = cookies[config.APP_NAME]
           let r = await axios({
             method: 'get',
             url: `${config.BASE_URL}/api/me`,
             headers: {
-              Authorization: `Bearer ${ctx.req.cookies[config.APP_NAME]}`
+              Authorization: `Bearer ${token}`
             }
           })
           const { user } = r.data.data

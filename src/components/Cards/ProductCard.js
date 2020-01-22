@@ -27,11 +27,14 @@ function Card(props) {
   let imgsrc = props.image
     ? `http://localhost:1337/${props.image[0].url}`
     : `http://placehold.it/100x100`
-  let tagBadges = props.categories.map((e, i) => (
-    <Tag key={e.id} color="red">
-      {e.name}
-    </Tag>
-  ))
+  let tagBadges = []
+  if (props.categories) {
+    tagBadges = props.categories.map((e, i) => (
+      <Tag key={e.id} color="red">
+        {e.name}
+      </Tag>
+    ))
+  }
 
   return (
     <div className="product-card">
