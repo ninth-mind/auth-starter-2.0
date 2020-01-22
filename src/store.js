@@ -6,6 +6,7 @@ import ls from 'local-storage'
 export const RecaptchaContext = React.createContext()
 
 export const config = {
+  BASE_URL: 'http://localhost:3000',
   APP_NAME: 'jamieskinner.me',
   CART_NAME: 'jamieskinner.me-cart',
   CAPTCHA_SITE_KEY: '6Le87Z0UAAAAALKPzIW8DiLMEzSi9I51FNTnWBQN', // v3 site key,
@@ -16,7 +17,8 @@ export const initialState = {
   cart: {
     total: 0,
     items: 0,
-    products: []
+    products: [],
+    paymentIntentId: ''
   },
   ui: {
     isLoading: false,
@@ -47,11 +49,13 @@ export const actions = {
   REMOVE_FROM_CART: 'REMOVE_FORM_CART',
   EDIT_CART: 'EDIT_CART',
   SET_CART: 'SET_CART',
-  CLEAR_CART: 'CLEAR_CART'
+  CLEAR_CART: 'CLEAR_CART',
+  SET_PAYMENT_INTENT_ID: 'SET_PAYMENT_INTENT_ID'
 }
 
-const initializeStore = initStore.bind(null, initialState)
-export { initializeStore }
+export const initializeStore = storeFromServer => {
+  return initStore({ ...initialState, ...storeFromServer })
+}
 
 function initStore(initialState = initialState) {
   return createStore(
@@ -77,8 +81,8 @@ function applicationReducer(state = initialState, action) {
 function profileReducer(state = initialState.profile, action) {
   switch (action.type) {
     case actions.CREDS: {
-      let cur = ls.get(config.APP_NAME)
-      ls.set(config.APP_NAME, { ...cur, token: action.token })
+      // let cur = ls.get(config.APP_NAME)
+      // ls.set(config.APP_NAME, { ...cur, token: action.token })
       return {
         ...state,
         username: action.username,
@@ -216,17 +220,24 @@ function cartReducer(state = initialState.cart, action) {
     }
 
     case actions.SET_CART: {
-      return action.data
+      let curCart = ls.get(config.CART_NAME)
+      if (!curCart) {
+        curCart = { ...initialState.cart }
+        ls.set(config.CART_NAME, curCart)
+      }
+      return curCart
     }
 
     case actions.CLEAR_CART: {
-      const emptyCart = {
-        total: 0,
-        items: 0,
-        products: []
-      }
+      const emptyCart = { ...initialState.cart }
       ls.set(config.CART_NAME, emptyCart)
       return emptyCart
+    }
+
+    case actions.SET_PAYMENT_INTENT_ID: {
+      let newCart = { ...state, paymentIntentId: action.paymentIntentId }
+      ls.set(config.CART_NAME, newCart)
+      return newCart
     }
 
     default: {

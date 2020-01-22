@@ -39,11 +39,6 @@ function Navigations(props) {
             </span>
           </Link>
         </Menu.Item>
-        <Menu.Item key="/c/login">
-          <Link href="/c/login">
-            <a>Login/Register</a>
-          </Link>
-        </Menu.Item>
         <Menu.Item key="shop">
           <Link href="/shop">
             <a>Shop</a>
@@ -62,30 +57,38 @@ function Navigations(props) {
             <a onClick={() => openPanel('word')}>Words</a>
           </Menu.Item>
         </Menu.SubMenu>
-        <Menu.SubMenu title={<Icon type="user" />} disabled={!props.isLoggedIn}>
-          {props.permissions.includes('admin') && (
-            <Menu.Item key="cms-link">
-              <a href={CMS_URL} target="_blank" rel="noopener noreferrer">
-                Admin Page
-              </a>
+        {!props.isLoggedIn ? (
+          <Menu.Item key="/c/login">
+            <Link href="/c/login">
+              <a>Login/Register</a>
+            </Link>
+          </Menu.Item>
+        ) : (
+          <Menu.SubMenu title={<Icon type="user" />}>
+            {props.permissions.includes('admin') && (
+              <Menu.Item key="cms-link">
+                <a href={CMS_URL} target="_blank" rel="noopener noreferrer">
+                  Admin Page
+                </a>
+              </Menu.Item>
+            )}
+            <Menu.Item key="/u/account">
+              <Link href="/u/account">
+                <a>Account</a>
+              </Link>
             </Menu.Item>
-          )}
-          <Menu.Item key="/u/account">
-            <Link href="/u/account">
-              <a>Account</a>
-            </Link>
-          </Menu.Item>
-          <Menu.Item key="/u/profile">
-            <Link href="/u/profile">
-              <a>Profile</a>
-            </Link>
-          </Menu.Item>
-          <Menu.Item key="sign-out">
-            <Button type="danger" onClick={handleSignOut}>
-              Sign Out
-            </Button>
-          </Menu.Item>
-        </Menu.SubMenu>
+            <Menu.Item key="/u/profile">
+              <Link href="/u/profile">
+                <a>Profile</a>
+              </Link>
+            </Menu.Item>
+            <Menu.Item key="sign-out">
+              <Button type="danger" onClick={handleSignOut}>
+                Sign Out
+              </Button>
+            </Menu.Item>
+          </Menu.SubMenu>
+        )}
       </Menu>
     </Header>
   )

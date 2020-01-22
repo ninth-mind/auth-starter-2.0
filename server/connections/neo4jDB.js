@@ -18,8 +18,7 @@ module.exports = {
     } catch (err) {
       session.close()
       // eslint-disable-next-line
-      console.log('ERROR Connecting to GRAPH database', err)
-      handleError(err)
+      console.log('ERROR Connecting to GRAPH database')
     }
   }
 }

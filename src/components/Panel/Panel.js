@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState } from 'react'
 import Draggable from 'react-draggable'
 import { Resizable } from 'react-resizable'
 import { connect } from 'react-redux'

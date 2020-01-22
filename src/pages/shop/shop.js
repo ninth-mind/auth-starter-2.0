@@ -14,6 +14,7 @@ function Shop(props) {
       image={p.image}
       price={p.price}
       stock={p.stock}
+      categories={p.categories}
     />
   ))
 
