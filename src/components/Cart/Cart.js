@@ -71,10 +71,6 @@ function Cart(props) {
   )
 }
 
-const mapStateToProps = state => ({
-  products: state.cart.products,
-  total: state.cart.total,
-  items: state.cart.items
-})
+const mapStateToProps = state => ({ ...state.cart })
 
 export default connect(mapStateToProps)(Cart)

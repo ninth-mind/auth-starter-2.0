@@ -144,19 +144,3 @@ export function runObjectCheck(obj, keysAndChecks) {
   if (failedKeys.length > 0) return { success: false, failed: failedKeys }
   else return { success: true }
 }
-
-/**
- * makePagePrivate
- * blocks user if they are not logged in.
- *
- */
-
-export function makePagePrivate(profile) {
-  if (!profile.username) {
-    redirect('/c/login')
-    notification.error({
-      message: 'Oops',
-      description: 'You are not logged in yet.'
-    })
-  }
-}

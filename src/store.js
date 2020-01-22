@@ -17,7 +17,8 @@ export const initialState = {
   cart: {
     total: 0,
     items: 0,
-    products: []
+    products: [],
+    paymentIntentId: ''
   },
   ui: {
     isLoading: false,
@@ -48,7 +49,8 @@ export const actions = {
   REMOVE_FROM_CART: 'REMOVE_FORM_CART',
   EDIT_CART: 'EDIT_CART',
   SET_CART: 'SET_CART',
-  CLEAR_CART: 'CLEAR_CART'
+  CLEAR_CART: 'CLEAR_CART',
+  SET_PAYMENT_INTENT_ID: 'SET_PAYMENT_INTENT_ID'
 }
 
 export const initializeStore = storeFromServer => {
@@ -218,17 +220,24 @@ function cartReducer(state = initialState.cart, action) {
     }
 
     case actions.SET_CART: {
-      return action.cart
+      let curCart = ls.get(config.CART_NAME)
+      if (!curCart) {
+        curCart = { ...initialState.cart }
+        ls.set(config.CART_NAME, curCart)
+      }
+      return curCart
     }
 
     case actions.CLEAR_CART: {
-      const emptyCart = {
-        total: 0,
-        items: 0,
-        products: []
-      }
+      const emptyCart = { ...initialState.cart }
       ls.set(config.CART_NAME, emptyCart)
       return emptyCart
+    }
+
+    case actions.SET_PAYMENT_INTENT_ID: {
+      let newCart = { ...state, paymentIntentId: action.paymentIntentId }
+      ls.set(config.CART_NAME, newCart)
+      return newCart
     }
 
     default: {

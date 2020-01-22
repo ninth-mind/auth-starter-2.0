@@ -4,10 +4,9 @@ import Head from 'next/head'
 import withReduxStore from '~/lib/with-redux-store'
 import { Provider } from 'react-redux'
 import { StripeProvider } from 'react-stripe-elements'
-import ls from 'local-storage'
 import MainLayout from '~/components/Layout'
 import '~/styles/main.scss'
-import { actions, config } from '~/store'
+import { actions } from '~/store'
 
 class MyApp extends App {
   constructor(props) {
@@ -17,10 +16,8 @@ class MyApp extends App {
 
   componentDidMount() {
     const dispatch = this.props.reduxStore.dispatch
-    const cart = ls.get(config.CART_NAME)
     dispatch({
-      type: actions.SET_CART,
-      cart
+      type: actions.SET_CART
     })
 
     this.setState({ stripe: window.Stripe('pk_test_tZ1UTEHPHFd9dsZzi03UyKNB') })

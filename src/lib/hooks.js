@@ -1,10 +1,8 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios'
-import { redirect, runObjectCheck } from '~/lib/utils'
+import { redirect } from '~/lib/utils'
 import { notification } from 'antd'
-import { actions, config } from '~/store'
-import ls from 'local-storage'
-import { handleError } from './utils'
+import { actions } from '~/store'
 
 /**
  *
@@ -36,47 +34,44 @@ export function useStrapi(endpoint) {
  * Generate PaymentIntent
  */
 
-export async function useGetPaymentIntent(data) {
-  let [intentId, setIntentId] = useState()
-  // grab existing payment intent if one exists.
-  let curLocalStorage = ls.get(config.CART_NAME)
-  if (curLocalStorage && curLocalStorage.paymentIntentId) {
-    data = { ...data, paymentIntentId: curLocalStorage.paymentIntentId }
-  }
-
-  debugger
-
+export function useGetPaymentIntent(total, customerId, paymentIntentId) {
+  console.log('customer id', customerId)
+  let [intentId, setIntentId] = useState(null)
   //TODO grab customer ID from user before fetching payment intent
-
   useEffect(() => {
+    // run checks
+    if (paymentIntentId) {
+      console.log('here')
+      return
+    }
+    if (total <= 0.5) return
     async function fetchIntent() {
       // call server, to update or create payment intent
       try {
-        // check that the data has the necessary key:values
-        let status = runObjectCheck(data, { amount: a => a > 0 })
-        if (!status.success) return status
-
+        // grab existing payment intent if one exists
         let r = await axios({
           method: 'post',
           url: `/api/payment/intent`,
-          data: data
+          data: {
+            amount: total * 100,
+            payment_method_types: ['card'],
+            currency: 'usd',
+            customerId
+          }
         })
 
         // store payment intent with localstorage
         let paymentIntentId = r.data.data.id
-        let curLocalStorage = ls.get(config.CART_NAME)
-        ls.set(config.CART_NAME, {
-          ...curLocalStorage,
-          paymentIntentId: paymentIntentId
-        })
         setIntentId(paymentIntentId)
+        return
       } catch (err) {
         console.log('THIS ERRORED', err)
         // handleError(err)
       }
     }
     fetchIntent()
-  }, [data])
+    return
+  }, [customerId, paymentIntentId, total])
 
   return intentId
 }

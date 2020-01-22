@@ -88,43 +88,33 @@ PaymentRouter.post(
   }
 )
 
-PaymentRouter.post(
-  '/intent',
-  // verifyAuthenticationToken,
-  // verifyCaptcha,
-  async (req, res) => {
-    const {
-      userInfo,
-      userInfo: { email, source }
-    } = req.locals
-    const {
-      amount,
-      currency,
-      payment_method_types,
-      // stripeToken,
-      paymentIntentSecret
-    } = req.body
+PaymentRouter.post('/intent', async (req, res) => {
+  const {
+    amount,
+    currency,
+    payment_method_types,
+    paymentIntentSecret
+  } = req.body
 
-    try {
-      let intent
-      if (paymentIntentSecret) {
-        intent = await stripe.paymentIntents.update({
-          amount,
-          currency: currency || 'usd',
-          payment_method_types: payment_method_types || ['card']
-        })
-      } else {
-        intent = await stripe.paymentIntents.create({
-          amount: amount,
-          currency: 'usd',
-          payment_method_types: ['card']
-        })
-      }
-      respond(res, 200, 'Payment intent created', intent)
-    } catch (err) {
-      handleError(err)
+  try {
+    let intent
+    if (paymentIntentSecret) {
+      intent = await stripe.paymentIntents.update({
+        amount,
+        currency: currency || 'usd',
+        payment_method_types: payment_method_types || ['card']
+      })
+    } else {
+      intent = await stripe.paymentIntents.create({
+        amount: amount,
+        currency: 'usd',
+        payment_method_types: ['card']
+      })
     }
+    respond(res, 200, 'Payment intent created', intent)
+  } catch (err) {
+    handleError(err)
   }
-)
+})
 
 module.exports = PaymentRouter

@@ -9,17 +9,15 @@ import { CardDetails, AddressDetails } from '~/components/AccountManagement'
 import './checkout.scss'
 
 function Checkout(props) {
-  const { dispatch, cart } = props
-
-  //get payment intent for tracking
-
-  debugger
-  let paymentIntent = useGetPaymentIntent({
-    amount: cart.total * 100,
-    payment_method_types: ['card'],
-    currency: 'usd'
-  })
-  console.log('PAYMENT INTENT', paymentIntent)
+  const { dispatch, cart, profile } = props
+  console.log('cart', cart)
+  // grab payment intent from Stripe
+  let paymentIntentId = useGetPaymentIntent(
+    cart.total,
+    profile?.customer?.id,
+    cart.paymentIntentId
+  )
+  console.log('Payment Intent id', paymentIntentId)
 
   /**
    * Handle submit
