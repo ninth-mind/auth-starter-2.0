@@ -24,10 +24,10 @@ const config = {
       mongo: {
         uri: 'mongodb://localhost:27017/test',
         options: {
-          // useMongoClient: true
           useCreateIndex: true,
           useNewUrlParser: true,
-          useFindAndModify: false
+          useFindAndModify: false,
+          useUnifiedTopology: true
         }
       },
       neo4j: {
@@ -38,10 +38,10 @@ const config = {
       mongo: {
         uri: 'mongodb://localhost:27017/test',
         options: {
-          // useMongoClient: true
           useCreateIndex: true,
           useNewUrlParser: true,
-          useFindAndModify: false
+          useFindAndModify: false,
+          useUnifiedTopology: true
         }
       },
       neo4j: {
