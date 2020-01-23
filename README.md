@@ -27,11 +27,12 @@ Starter repo for user authentication using passport, user payment handling using
 ### TODO
 Todos are kept in the auth-starter-2.0 repo's issues.
 You can also search the code base for `TODO:` for small refactors
-[x] Set the HTTP Cookie to Secure
-[x] Check for `Referer` when checking cookie
-  [ ] https://blog.webf.zone/ultimate-guide-to-http-cookies-2aa3e083dbae
-[x] If you try and login while logged in — go to profile
-[ ] Convert into MonoRepo - ie seperate out Server and Client
+- [x] Set the HTTP Cookie to Secure
+- [x] Check for `Referer` when checking cookie
+  - [ ] https://blog.webf.zone/ultimate-guide-to-http-cookies-2aa3e083dbae
+- [x] If you try and login while logged in — go to profile
+- [ ] Convert into MonoRepo - ie seperate out Server and Client
+- [ ] Figure out a way to opt in to Automatic Static optimization [url](https://github.com/zeit/next.js/blob/master/errors/opt-out-auto-static-optimization.md)
 
 
 #### Creating your own Next App using `create-next-app`
