@@ -54,9 +54,8 @@ function RegistrationForm(props) {
       }
       notification.error(opts)
       form.resetFields()
-      return handleError(err)
-    } finally {
       setLoading(false, dispatch)
+      return handleError(err)
     }
   } // end handleSubmit
 

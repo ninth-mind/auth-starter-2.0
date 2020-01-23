@@ -12,6 +12,7 @@
     ]
   ],
   "plugins": [
+    "@babel/plugin-proposal-optional-chaining",
     [
       "import",
       {

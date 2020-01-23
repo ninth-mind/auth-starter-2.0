@@ -1,18 +1,15 @@
 import React from 'react'
 import axios from 'axios'
-import { redirect } from '~/lib/utils'
+import { redirect, signOut } from '~/lib/utils'
 import { Button, Divider, notification, Popconfirm } from 'antd'
 import AddValue from '~/components/AddValue'
 import { SetEmail, CardDetails } from '~/components/AccountManagement'
 import { connect } from 'react-redux'
-import { useProfile } from '~/lib/hooks'
 
 function Account(props) {
-  const { dispatch } = props
-  const serverProfile = useProfile({}, true, dispatch)
-  const p = { ...serverProfile, ...props.profile }
+  const { dispatch, profile } = props
 
-  function signOut() {
+  function logout() {
     signOut(dispatch)
   }
 
@@ -53,16 +50,16 @@ function Account(props) {
   return (
     <div className="page">
       <h1>Account</h1>
-      <h2>Welcome {p.username},</h2>
-      <h4>Email: {p.email}</h4>
-      <h4>Value: {p.value}</h4>
+      <h2>Welcome {profile.username},</h2>
+      <h4>Email: {profile.email}</h4>
+      <h4>Value: {profile.value}</h4>
       <p>Nothing here yet....</p>
       <AddValue />
       <SetEmail />
       <Divider>Billing Details</Divider>
       <CardDetails submitText="Add Card" handleCard={handleCardDetails} />
       <Divider>Delete Account</Divider>
-      <Button type="primary" onClick={signOut}>
+      <Button type="primary" onClick={logout}>
         Sign Out
       </Button>
       <Popconfirm

@@ -3,10 +3,12 @@ import { RecaptchaContext } from '~/store'
 import axios from 'axios'
 import Link from 'next/link'
 import { connect } from 'react-redux'
-import { redirect, handleToken, setLoading } from '~/lib/utils'
+import { redirect, setLoading, parseJWT } from '~/lib/utils'
+import { useRouter } from 'next/router'
 import { Button, Form, Icon, Input, Modal, notification } from 'antd'
 import { defaultFormItemLayout } from '~/components/Layout/antLayouts'
 import './c.scss'
+import { actions } from '../../store'
 
 function EmailLogin(props) {
   /**
@@ -15,13 +17,14 @@ function EmailLogin(props) {
   const recaptcha = useContext(RecaptchaContext)
   const {
     dispatch,
-    query,
     form,
     form: { getFieldDecorator }
   } = props
 
-  let loginAttemptSource = query['login-attempt']
-  let loginAttemptUsername = query['username']
+  const router = useRouter()
+
+  let loginAttemptSource = router.query['login-attempt']
+  let loginAttemptUsername = router.query['username']
 
   async function handleSubmit(e) {
     e.preventDefault()
@@ -38,8 +41,14 @@ function EmailLogin(props) {
         data: { ...data, recaptcha: captchaToken }
       })
 
-      if (r.data && r.data.data && r.data.data.token)
-        handleToken(r.data.data.token, dispatch)
+      console.log('RESPONSE', r)
+      const token = r?.data?.data?.token
+      let profile = parseJWT(token)
+
+      dispatch({
+        type: actions.PROFILE,
+        ...profile
+      })
 
       redirect('/u/profile')
     } catch (err) {
@@ -57,9 +66,8 @@ function EmailLogin(props) {
           opts.description = err.response.data.msg
           notification.error(opts)
         }
+        setLoading(false, dispatch)
       }
-    } finally {
-      setLoading(false, dispatch)
     }
   }
 
@@ -139,12 +147,7 @@ function EmailLogin(props) {
   )
 }
 
-EmailLogin.getInitialProps = async ({ query }) => ({ query })
-
-const mapStateToProps = (state, ownProps) => ({
-  profile: state.profile,
-  query: ownProps.query
-})
+const mapStateToProps = state => ({ profile: state.profile })
 
 const WrappedLoginForm = Form.create({ name: 'login' })(EmailLogin)
 export default connect(mapStateToProps)(WrappedLoginForm)

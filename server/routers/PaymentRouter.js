@@ -19,7 +19,7 @@ PaymentRouter.post('/payment', verifyAuthenticationToken, (req, res) => {
 // Charge card
 PaymentRouter.post(
   '/charge',
-  verifyAuthenticationToken,
+  // verifyAuthenticationToken,
   verifyCaptcha,
   async (req, res) => {
     const { amount, stripeToken } = req.body
@@ -87,5 +87,34 @@ PaymentRouter.post(
     }
   }
 )
+
+PaymentRouter.post('/intent', async (req, res) => {
+  const {
+    amount,
+    currency,
+    payment_method_types,
+    paymentIntentSecret
+  } = req.body
+
+  try {
+    let intent
+    if (paymentIntentSecret) {
+      intent = await stripe.paymentIntents.update({
+        amount,
+        currency: currency || 'usd',
+        payment_method_types: payment_method_types || ['card']
+      })
+    } else {
+      intent = await stripe.paymentIntents.create({
+        amount: amount,
+        currency: 'usd',
+        payment_method_types: ['card']
+      })
+    }
+    respond(res, 200, 'Payment intent created', intent)
+  } catch (err) {
+    handleError(err)
+  }
+})
 
 module.exports = PaymentRouter

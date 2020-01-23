@@ -4,7 +4,7 @@ const axios = require('axios')
 const passport = require('passport')
 const mongoDB = require('../connections/mongoDB')
 const { RateLimiterMongo } = require('rate-limiter-flexible')
-const { handleError, respond } = require('./utils')
+const { handleError, respond, setCookie } = require('./utils')
 // config
 const config = require('../config')
 const { clientURL, env } = config.global
@@ -46,6 +46,7 @@ function verifyAuthenticationToken(req, res, next) {
       token = req.params.token
     } else if (req.cookies && req.cookies[cookieName]) {
       token = req.cookies[cookieName]
+      setCookie(res, token, true) // resets cookie to keep them logged in.
     } else if (req.headers.authorization) {
       token = req.headers.authorization.split(' ')[1]
     }
@@ -78,7 +79,7 @@ function makePermissionsMiddleware(permissions) {
   return function(req, res, next) {
     const userPermissions = req.locals.userInfo.permissions
     let isAllowed = permissions.reduce((allowed, p) => {
-      return userPermissions.includes(p) && allowed
+      return userPermissions ? userPermissions.includes(p) && allowed : false
     }, true)
     if (isAllowed) next()
     else respond(res, 403, 'You are not authorized')

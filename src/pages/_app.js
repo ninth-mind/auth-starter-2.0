@@ -6,6 +6,7 @@ import { Provider } from 'react-redux'
 import { StripeProvider } from 'react-stripe-elements'
 import MainLayout from '~/components/Layout'
 import '~/styles/main.scss'
+import { actions } from '~/store'
 
 class MyApp extends App {
   constructor(props) {
@@ -14,8 +15,14 @@ class MyApp extends App {
   }
 
   componentDidMount() {
+    const dispatch = this.props.reduxStore.dispatch
+    dispatch({
+      type: actions.SET_CART
+    })
+
     this.setState({ stripe: window.Stripe('pk_test_tZ1UTEHPHFd9dsZzi03UyKNB') })
   }
+
   render() {
     const { Component, pageProps, reduxStore } = this.props
     return (

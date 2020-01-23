@@ -9,10 +9,14 @@ function Footer(props) {
       <div className="footer">
         <ul className="footer__group">
           <li className="footer__group__item">
-            <Link href="/legal/terms">Terms</Link>
+            <Link href="/legal/terms">
+              <a>Terms</a>
+            </Link>
           </li>
           <li className="footer__group__item">
-            <Link href="/legal/Privacy">Privacy</Link>
+            <Link href="/legal/Privacy">
+              <a>Privacy</a>
+            </Link>
           </li>
         </ul>
         <div className="footer__group__item copyright">
