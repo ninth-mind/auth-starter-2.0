@@ -1,7 +1,19 @@
+.layout {
+  position: relative;
+  height: 100%;
+}
+
 .page {
   margin: 1rem;
 }
 
 .ant-layout-header {
   padding: 0 !important;
+}
+
+.view-cart {
+  position: fixed !important;
+  z-index: 100;
+  top: 10px;
+  right: 10px;
 }

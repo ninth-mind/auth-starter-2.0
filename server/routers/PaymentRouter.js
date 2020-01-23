@@ -11,7 +11,7 @@ const {
 const stripe = require('stripe')(config.stripe.secretKey)
 
 PaymentRouter.post('/payment', verifyAuthenticationToken, (req, res) => {
-  const { profile } = req.locals.decodedToken
+  const { profile } = req.locals.userInfo
   // TODO: FINISH THE ABILITY TO ADD PAYMENTS
   respond(res, 400, 'there is no resource here yet')
 })
@@ -19,11 +19,11 @@ PaymentRouter.post('/payment', verifyAuthenticationToken, (req, res) => {
 // Charge card
 PaymentRouter.post(
   '/charge',
-  verifyAuthenticationToken,
+  // verifyAuthenticationToken,
   verifyCaptcha,
   async (req, res) => {
     const { amount, stripeToken } = req.body
-    const { profile } = req.locals.decodedToken
+    const { profile } = req.locals.userInfo
     console.log('TOKEN', stripeToken)
     try {
       // create charge
@@ -52,8 +52,8 @@ PaymentRouter.post(
   async (req, res) => {
     const { amount, stripeToken } = req.body
     const {
-      decodedToken,
-      decodedToken: { email, source }
+      userInfo,
+      userInfo: { email, source }
     } = req.locals
 
     console.log('TOKEN', stripeToken)
@@ -74,7 +74,7 @@ PaymentRouter.post(
 
       let u = await User.findOneAndUpdate(
         source,
-        decodedToken,
+        userInfo,
         { customer: { id: customer.id }, $push: { charges: charge } },
         { new: true }
       )
@@ -87,5 +87,34 @@ PaymentRouter.post(
     }
   }
 )
+
+PaymentRouter.post('/intent', async (req, res) => {
+  const {
+    amount,
+    currency,
+    payment_method_types,
+    paymentIntentSecret
+  } = req.body
+
+  try {
+    let intent
+    if (paymentIntentSecret) {
+      intent = await stripe.paymentIntents.update({
+        amount,
+        currency: currency || 'usd',
+        payment_method_types: payment_method_types || ['card']
+      })
+    } else {
+      intent = await stripe.paymentIntents.create({
+        amount: amount,
+        currency: 'usd',
+        payment_method_types: ['card']
+      })
+    }
+    respond(res, 200, 'Payment intent created', intent)
+  } catch (err) {
+    handleError(err)
+  }
+})
 
 module.exports = PaymentRouter
