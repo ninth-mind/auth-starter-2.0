@@ -1,6 +1,6 @@
 import React from 'react'
 import Panel from '../Panel'
-import Donuts from '~/assets/sketches/Donuts'
+// import Donuts from '~/assets/sketches/Donuts'
 
 function DonutPanel(props) {
   return (
@@ -10,7 +10,7 @@ function DonutPanel(props) {
       size={{ width: 300, height: 350 }}
       resizable={true}
     >
-      <Donuts />
+      <h1>Cool beans</h1>
     </Panel>
   )
 }
