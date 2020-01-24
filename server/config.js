@@ -15,7 +15,7 @@ const config = {
       appName: 'jamieskinner.me',
       clientURL: 'http://localhost:3000',
       serverURL: 'http://localhost:3000'
-    }
+    },
     production: {
       env: process.env.NODE_ENV,
       appName: 'jamieskinner.me',
