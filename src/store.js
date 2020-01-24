@@ -9,7 +9,7 @@ export const config = {
   BASE_URL: 'auth-test.thesuperuser.com',
   APP_NAME: 'jamieskinner.me',
   CART_NAME: 'jamieskinner.me-cart',
-  CAPTCHA_SITE_KEY: '6Le87Z0UAAAAALKPzIW8DiLMEzSi9I51FNTnWBQN', // v3 site key,
+  CAPTCHA_SITE_KEY: '6Ld-h9IUAAAAAJmXg8DvD7I9mkGTF___vAqVk4RM', // v3 site key,
   CMS_URL: 'http://localhost:1337/admin'
 }
 

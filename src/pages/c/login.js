@@ -52,7 +52,7 @@ function EmailLogin(props) {
 
       redirect('/u/profile')
     } catch (err) {
-      console.log(err)
+      console.log('err', err)
       // if user already has an account with a different provider, redirect
       if (err && err.response && err.response.status === 300) {
         redirect(`/api/auth/${err.response.data.data.source}/login`)
