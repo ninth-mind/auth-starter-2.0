@@ -1,3 +1,7 @@
+/**
+ * NOTE: Config categories MUST HAVE A DEFAULT category to avoid errors
+ */
+
 const config = {
   global: {
     default: {
@@ -20,8 +24,8 @@ const config = {
     }
   },
   database: {
-    default: {
-      mongo: {
+    mongo: {
+      default: {
         uri: 'mongodb://localhost:27017/test',
         options: {
           useCreateIndex: true,
@@ -30,12 +34,7 @@ const config = {
           useUnifiedTopology: true
         }
       },
-      neo4j: {
-        password: '12341234'
-      }
-    },
-    development: {
-      mongo: {
+      development: {
         uri: 'mongodb://localhost:27017/test',
         options: {
           useCreateIndex: true,
@@ -44,15 +43,15 @@ const config = {
           useUnifiedTopology: true
         }
       },
-      neo4j: {
-        password: '12341234'
-      }
-    },
-    production: {
-      mongo: {
+      production: {
         uri: process.env.MONGO_URL
+      }
+    },
+    neo4j: {
+      default: {
+        password: '12341234'
       },
-      neo4j: {
+      production: {
         password: process.env.NEO4J_PASSWORD
       }
     }
@@ -143,21 +142,33 @@ const config = {
 }
 
 /**
- *
+ * Clean Config
+ * recusively drills into configuration categories and determines exports
  * @param {object} config - determines which objects to export
  */
-function determineExport(config) {
-  let env = process.env.NODE_ENV || 'development'
+function cleanConfig(config, env = 'development') {
   let result = {}
-  for (let key in config) {
-    let configObj = config[key]
-    result[key] = {
-      ...(configObj.default || {}),
-      ...configObj[env]
+  let entries = Object.entries(config)
+  for (let [key, obj] of entries) {
+    if (typeof obj !== 'object' || obj === null)
+      throw 'No default value found in CONFIG. Check server configuration file'
+    if (!obj.default) result[key] = cleanConfig(obj, env)
+    else {
+      result[key] = {}
+      result[key] = { ...obj.default }
+      let newEnvObj = obj[env]
+      if (newEnvObj) {
+        let lowerEntries = Object.entries(newEnvObj)
+        for (let [k, e] of lowerEntries) {
+          if (e || e !== undefined) {
+            result[key][k] = e
+          }
+        }
+      }
     }
   }
-  // if (env === 'development') console.log(result)
+  if (env === 'development') console.log('CONFIG OPTIONS', result)
   return result
 }
 
-module.exports = determineExport(config)
+module.exports = cleanConfig(config, process.env.NODE_ENV)

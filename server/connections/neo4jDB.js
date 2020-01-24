@@ -1,6 +1,5 @@
 const neo4j = require('neo4j-driver')
 const config = require('../config').database.neo4j
-const { handleError } = require('../lib/utils')
 
 const driver = neo4j.driver(
   'bolt://localhost',

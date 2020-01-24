@@ -48,3 +48,25 @@ yarn create next-app --example with-redux with-redux-app
 
 ### Guidelines
 https://github.com/elsewhencode/project-guidelines#6-structure-and-naming
+
+
+### Deployment Process
+1) Create droplet on Digital Ocean.
+2) install Dokku on droplet
+3) Create an app using dokku: `dokku apps:create my-app-name`
+4) Install any plugins you will need (eg Mongo)
+    a) `sudo dokku plugin:install https://github.com/dokku/dokku-mongo.git`
+    b) Create a database `dokku mongo:create database-name`
+    c) link database `dokku postgres:link rails-database ruby-rails-sample`
+5) Update any environment variables `dokku config:set my-app-name ENV=PRODUCTION ...`
+6) On local machine, add remote repo `git remote add dokku dokku@IP_OF_DROPLET:my-app-name`
+7) `git push dokku master`
+
+#### Things to Check
+1) Node and NPM versions are declared in `package.json`, potentially also in `.nvmrc`
+```
+  "engines": {
+   "node": "12.14.1",
+   "npm": "6.13.4"
+  }
+```
