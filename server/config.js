@@ -15,12 +15,12 @@ const config = {
       appName: 'jamieskinner.me',
       clientURL: 'http://localhost:3000',
       serverURL: 'http://localhost:3000'
-    },
+    }
     production: {
       env: process.env.NODE_ENV,
       appName: 'jamieskinner.me',
-      clientURL: 'https://authstarter.herokuapp.com',
-      serverURL: 'https://authstarter.herokuapp.com'
+      clientURL: 'http://auth-test.thesuperuser.com/',
+      serverURL: 'http://auth-test.thesuperuser.com/'
     }
   },
   database: {
@@ -167,7 +167,8 @@ function cleanConfig(config, env = 'development') {
       }
     }
   }
-  if (env === 'development') console.log('CONFIG OPTIONS', result)
+
+  console.log('CONFIG OPTIONS', result)
   return result
 }
 

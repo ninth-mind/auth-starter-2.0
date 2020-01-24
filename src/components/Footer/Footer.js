@@ -14,7 +14,7 @@ function Footer(props) {
             </Link>
           </li>
           <li className="footer__group__item">
-            <Link href="/legal/Privacy">
+            <Link href="/legal/privacy">
               <a>Privacy</a>
             </Link>
           </li>

@@ -6,7 +6,7 @@ import ls from 'local-storage'
 export const RecaptchaContext = React.createContext()
 
 export const config = {
-  BASE_URL: 'http://localhost:3000',
+  BASE_URL: 'auth-test.thesuperuser.com',
   APP_NAME: 'jamieskinner.me',
   CART_NAME: 'jamieskinner.me-cart',
   CAPTCHA_SITE_KEY: '6Le87Z0UAAAAALKPzIW8DiLMEzSi9I51FNTnWBQN', // v3 site key,

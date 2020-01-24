@@ -60,7 +60,7 @@ https://github.com/elsewhencode/project-guidelines#6-structure-and-naming
     c) link database `dokku postgres:link rails-database ruby-rails-sample`
 5) Update any environment variables `dokku config:set my-app-name ENV=PRODUCTION ...`
 6) On local machine, add remote repo `git remote add dokku dokku@IP_OF_DROPLET:my-app-name`
-7) `git push dokku master`
+7) `git push dokku master` (must be master or `my-branch:master`)
 
 #### Things to Check
 1) Node and NPM versions are declared in `package.json`, potentially also in `.nvmrc`
@@ -70,3 +70,4 @@ https://github.com/elsewhencode/project-guidelines#6-structure-and-naming
    "npm": "6.13.4"
   }
 ```
+2) All dependencies are met and, if required for compiling or deployment, are in the `dependencies` and not `dev dependencies`
