@@ -1,45 +1,59 @@
+/**
+ * NOTE: Config categories MUST HAVE A DEFAULT category to avoid errors
+ */
+
 const config = {
   global: {
     default: {
       env: process.env.NODE_ENV || 'development',
-      appName: 'auth-starter',
+      appName: 'jamieskinner.me',
       clientURL: 'http://localhost:3000',
       serverURL: 'http://localhost:3000'
     },
     staging: {
       env: 'staging',
-      appName: 'auth-starter',
+      appName: 'jamieskinner.me',
       clientURL: 'http://localhost:3000',
       serverURL: 'http://localhost:3000'
     },
     production: {
       env: process.env.NODE_ENV,
-      appName: 'auth-starter',
-      clientURL: 'https://authstarter.herokuapp.com',
-      serverURL: 'https://authstarter.herokuapp.com'
+      appName: 'jamieskinner.me',
+      clientURL: 'http://auth-test.thesuperuser.com/',
+      serverURL: 'http://auth-test.thesuperuser.com/'
     }
   },
   database: {
-    default: {
-      uri: 'mongodb://localhost:27017/test',
-      options: {
-        // useMongoClient: true
-        useCreateIndex: true,
-        useNewUrlParser: true,
-        useFindAndModify: false
+    mongo: {
+      default: {
+        uri: 'mongodb://localhost:27017/test',
+        options: {
+          useCreateIndex: true,
+          useNewUrlParser: true,
+          useFindAndModify: false,
+          useUnifiedTopology: true
+        }
+      },
+      development: {
+        uri: 'mongodb://localhost:27017/test',
+        options: {
+          useCreateIndex: true,
+          useNewUrlParser: true,
+          useFindAndModify: false,
+          useUnifiedTopology: true
+        }
+      },
+      production: {
+        uri: process.env.MONGO_URL
       }
     },
-    development: {
-      uri: 'mongodb://localhost:27017/test',
-      options: {
-        // useMongoClient: true
-        useCreateIndex: true,
-        useNewUrlParser: true,
-        useFindAndModify: false
+    neo4j: {
+      default: {
+        password: '12341234'
+      },
+      production: {
+        password: process.env.NEO4J_PASSWORD
       }
-    },
-    production: {
-      uri: process.env.MONGO_URL
     }
   },
   cron: {
@@ -100,24 +114,27 @@ const config = {
     default: {
       secret: 'ThisIsMySuperSecureSecret',
       tokenExpiryTime: '1hr',
-      tempTokenExpiryTime: '10min',
-      cookieName: 'auth-starter',
+      tempTokenExpiryTime: '30min',
+      cookieName: 'jamieskinner.me',
+      cookieExpiration: 4 * 3600000, // 1 hour
       captchaSecretKey: process.env.CAPTCHA_SECRET_KEY,
       captchaThreshold: 0.01
     },
     development: {
       secret: process.env.SECRET,
       tokenExpiryTime: '1hr',
-      tempTokenExpiryTime: '10min',
-      cookieName: 'auth-starter',
+      tempTokenExpiryTime: '30min',
+      cookieName: 'jamieskinner.me',
+      cookieExpiration: 4 * 3600000, // 1 hour
       captchaSecretKey: process.env.CAPTCHA_SECRET_KEY,
       captchaThreshold: 0.01
     },
     production: {
       secret: process.env.SECRET,
       tokenExpiryTime: '24hr',
-      tempTokenExpiryTime: '10min',
-      cookieName: 'auth-starter',
+      tempTokenExpiryTime: '30min',
+      cookieName: 'jamieskinner.me',
+      cookieExpiration: 72 * 3600000, // 72 hours
       captchaSecretKey: process.env.CAPTCHA_SECRET_KEY,
       captchaThreshold: 0.01
     }
@@ -125,21 +142,34 @@ const config = {
 }
 
 /**
- *
+ * Clean Config
+ * recusively drills into configuration categories and determines exports
  * @param {object} config - determines which objects to export
  */
-function determineExport(config) {
-  let env = process.env.NODE_ENV || 'development'
+function cleanConfig(config, env = 'development') {
   let result = {}
-  for (let key in config) {
-    let configObj = config[key]
-    result[key] = {
-      ...(configObj.default || {}),
-      ...configObj[env]
+  let entries = Object.entries(config)
+  for (let [key, obj] of entries) {
+    if (typeof obj !== 'object' || obj === null)
+      throw 'No default value found in CONFIG. Check server configuration file'
+    if (!obj.default) result[key] = cleanConfig(obj, env)
+    else {
+      result[key] = {}
+      result[key] = { ...obj.default }
+      let newEnvObj = obj[env]
+      if (newEnvObj) {
+        let lowerEntries = Object.entries(newEnvObj)
+        for (let [k, e] of lowerEntries) {
+          if (e || e !== undefined) {
+            result[key][k] = e
+          }
+        }
+      }
     }
   }
-  if (env === 'development') console.log(result)
+
+  console.log('CONFIG OPTIONS', result)
   return result
 }
 
-module.exports = determineExport(config)
+module.exports = cleanConfig(config, process.env.NODE_ENV)

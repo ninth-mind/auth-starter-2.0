@@ -21,11 +21,12 @@ MeRouter.get(
   verifyAuthenticationToken,
   makePermissionsMiddleware(['view_profile']),
   (req, res) => {
-    const { source } = req.locals.decodedToken
-    User.findUser(source, req.locals.decodedToken)
+    const { token, userInfo } = req.locals
+    // grab token out of cookies, and send to client
+    User.findUser(userInfo.source, userInfo)
       .then(user => {
         if (!user) respond(res, 403, 'Not authorized')
-        else respond(res, 200, 'User Found', user)
+        else respond(res, 200, 'User Found', { user, token })
       })
       .catch(err => handleError(err, res, 1001))
   }
@@ -36,10 +37,10 @@ MeRouter.get(
  */
 MeRouter.post('/', verifyAuthenticationToken, (req, res) => {
   const { toAdd } = req.body
-  const { source } = req.locals.decodedToken
+  const { source } = req.locals.userInfo
   User.findOneAndUpdate(
     source,
-    req.locals.decodedToken,
+    req.locals.userInfo,
     { $inc: { value: toAdd } },
     { new: true }
   )
@@ -57,7 +58,7 @@ MeRouter.post('/', verifyAuthenticationToken, (req, res) => {
  * Delete Profile
  */
 MeRouter.delete('/', verifyAuthenticationToken, async (req, res) => {
-  const profile = req.locals.decodedToken
+  const profile = req.locals.userInfo
   try {
     let deleteResponse = await User.deleteUser(profile)
     res.clearCookie(cookieName)
@@ -72,19 +73,19 @@ MeRouter.delete('/', verifyAuthenticationToken, async (req, res) => {
  */
 MeRouter.post('/email', verifyAuthenticationToken, async (req, res) => {
   const {
-    decodedToken,
-    decodedToken: { source }
+    userInfo,
+    userInfo: { source }
   } = req.locals
   const { email, password } = req.body
   // update email
   try {
     if (source === 'email') {
-      let isValid = await User.checkPassword(password, decodedToken)
+      let isValid = await User.checkPassword(password, userInfo)
       if (!isValid) return respond(res, 400, 'Incorrect password')
     }
     let user = await User.findOneAndUpdate(
       source,
-      req.locals.decodedToken,
+      req.locals.userInfo,
       { $set: { email: email, confirmed: false } },
       { new: true }
     )
@@ -108,13 +109,13 @@ MeRouter.post(
   async (req, res) => {
     const { name, stripeToken } = req.body
     const {
-      decodedToken,
-      decodedToken: { source }
+      userInfo,
+      userInfo: { source }
     } = req.locals
 
     try {
       // create customer
-      let card = await User.addCard(source, decodedToken, stripeToken, { name })
+      let card = await User.addCard(source, userInfo, stripeToken, { name })
       // TODO: add charge to user history
       respond(res, 200, 'Card Saved', card)
     } catch (err) {
@@ -125,9 +126,9 @@ MeRouter.post(
 )
 
 MeRouter.get('/account', verifyAuthenticationToken, async (req, res) => {
-  const { source } = req.locals.decodedToken
+  const { source } = req.locals.userInfo
   try {
-    let user = await User.findUser(source, req.locals.decodedToken)
+    let user = await User.findUser(source, req.locals.userInfo)
     if (!user.customer || !user.customer.id)
       return respond(res, 403, 'No customer found')
     else {

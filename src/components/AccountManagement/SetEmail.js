@@ -1,6 +1,7 @@
 import React, { useContext } from 'react'
 import { RecaptchaContext } from '~/store'
 import { Button, Divider, Form, Input, notification } from 'antd'
+import { defaultFormItemLayout } from '~/components/Layout/antLayouts'
 import { connect } from 'react-redux'
 import { handleError, setLoading, redirect, signOut } from '~/lib/utils'
 import axios from 'axios'
@@ -67,18 +68,6 @@ function SetEmail(props) {
       .finally(() => setLoading(false, dispatch))
   }
 
-  // Render opts:
-  const formItemLayout = {
-    labelCol: {
-      xs: { span: 24 },
-      sm: { span: 8 }
-    },
-    wrapperCol: {
-      xs: { span: 24 },
-      sm: { span: 16 }
-    }
-  }
-
   return (
     <div>
       <Divider>Change Email</Divider>
@@ -87,7 +76,7 @@ function SetEmail(props) {
         any connected social accounts. This will only change your email
         connected to this service.
       </p>
-      <Form className="form" {...formItemLayout} onSubmit={handleSubmit}>
+      <Form className="form" {...defaultFormItemLayout} onSubmit={handleSubmit}>
         <Form.Item label="New Email">
           {getFieldDecorator('email', {
             rules: [

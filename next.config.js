@@ -43,6 +43,4 @@ const webpackConfigObj = withImages(
   withCSS({ ...webpackWithLess, ...webpackWithSass })
 )
 
-console.log('WEBPACK CONFIG: ', webpackConfigObj)
-
 module.exports = webpackConfigObj

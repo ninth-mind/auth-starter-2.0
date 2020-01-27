@@ -1,0 +1,10 @@
+.page.checkout {
+  display: flex;
+  flex-flow: row wrap;
+}
+
+.side {
+  padding: 1rem;
+  flex: 1 1 auto;
+  min-width: 450px;
+}

@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import { RecaptchaContext } from '~/store'
 import { connect } from 'react-redux'
 import { handleError, setLoading } from '~/lib/utils'
+import { defaultFormItemLayout } from '~/components/Layout/antLayouts'
 import { injectStripe } from 'react-stripe-elements'
 import { Button, Form, Input, notification } from 'antd'
 import {
@@ -14,30 +15,20 @@ import './CardDetails.scss'
 
 /**
  * Card Details takes automatically has `dispatch, recaptcha, stripe, & form` injected.
- * but REQUIRES an `handleCard` function to execute when `stripeToken` and `recaptcha` have completed,
- * this `handleCard` function should return a message object to be passed to
- * `notification.success`. `handleCard` will
+ * but REQUIRES an `handleSubmit` function to execute when `stripeToken` and `recaptcha` have completed,
+ * this `handleSubmit` function should return a message object to be passed to
+ * `notification.success`. `handleSubmit` will
  *
- * the `handleCard` function recieves 3 arguments, the `stripeToken`, `recaptcha`, and `form data`
+ * the `handleSubmit` function receives 3 arguments, the `stripeToken`, `recaptcha`, and `form data`
  *
  * Optionally you can also pass children to the `CardDetails` to add form fields
  * @param {*} props
  */
 function CardDetails(props) {
-  const { getFieldDecorator } = props.form
+  const { form, dispatch, stripe, handleSubmit, isSubmitting } = props
+
   const recaptcha = useContext(RecaptchaContext)
 
-  //CSS IN JS STYLES FOR FORM
-  const formItemLayout = {
-    labelCol: {
-      xs: { span: 24 },
-      sm: { span: 8 }
-    },
-    wrapperCol: {
-      xs: { span: 24 },
-      sm: { span: 16 }
-    }
-  }
   const cardStyles = {
     base: {
       color: 'rgba(0,0,0,0.65)',
@@ -51,10 +42,9 @@ function CardDetails(props) {
   /**
    * HANDLE SUBMIT
    */
-  async function handleSubmit(e) {
+  async function submit(e) {
     // We don't want to let default form submission happen here, which would refresh the page.
-    e.preventDefault()
-    const { dispatch, stripe, form, handleCard } = props
+    if (e) e.preventDefault()
 
     let captchaToken, data
 
@@ -71,7 +61,7 @@ function CardDetails(props) {
       // TODO: If there is not a token, handle appropriately
       if (!token) return new Error('Error creating stripe token')
 
-      let message = await handleCard(token, captchaToken, data)
+      let message = await handleSubmit(token, captchaToken, data)
       console.log(message)
       notification.success(message)
     } catch (err) {
@@ -82,14 +72,12 @@ function CardDetails(props) {
     }
   }
 
-  /**
-   * JSX RETURN VALUE
-   */
+  const { getFieldDecorator } = form
   return (
     <Form
       className="form"
-      onSubmit={handleSubmit}
-      {...formItemLayout}
+      onSubmit={submit}
+      {...defaultFormItemLayout}
       hideRequiredMark={true}
     >
       <Form.Item label="Name on Card">
@@ -114,8 +102,19 @@ function CardDetails(props) {
 }
 
 CardDetails.propTypes = {
-  handleCard: PropTypes.func.isRequired,
+  handleSubmit: PropTypes.func,
+  isSubmitting: PropTypes.bool.isRequired,
+  displaySubmitButton: PropTypes.bool,
   submitText: PropTypes.string
+}
+
+CardDetails.defaultProps = {
+  handleSubmit: (stripeToken, recaptcha, formData) => {
+    console.log({ stripeToken, recaptcha, formData })
+  },
+  isSubmitting: false,
+  displaySubmitButton: true,
+  submitText: 'Submit'
 }
 /**
  * EXPORTING

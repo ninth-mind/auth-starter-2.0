@@ -19,7 +19,7 @@ async function sendEmailConfirmation(email, token) {
 
     return result
   } catch (err) {
-    return err
+    throw err
   }
 }
 

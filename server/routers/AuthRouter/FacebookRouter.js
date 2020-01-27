@@ -89,11 +89,13 @@ FacebookRouter.get(
       // if user is found, log them in and redirect to profile
       if (user) {
         let token = createToken(user.toObject())
-        setCookie(res, token)
+        setCookie(res, token, true, false)
         res.redirect('/u/profile')
         // if NO user, create temp token and redirect to complete-profile page
       } else {
-        res.redirect(`/c/login?login-attempt=facebook`)
+        res.redirect(
+          `/c/login?login-attempt=facebook&username=${profile.username}`
+        )
       }
     } catch (err) {
       handleError(err, res, 1003)
@@ -114,13 +116,13 @@ FacebookRouter.get(
       // if user is found, log them in and redirect to profile
       if (user) {
         let token = createToken(user.toObject())
-        setCookie(res, token)
+        setCookie(res, token, true, false)
         res.redirect('/u/profile')
         // if NO user, create temp token and redirect to complete-profile page
       } else {
         let newProf = User.loginMapper('facebook', profile)
         let token = createToken(newProf, true)
-        setCookie(res, token, true)
+        setCookie(res, token, true, false)
         res.redirect(`/c/complete-profile?token=${token}`)
       }
     } catch (err) {

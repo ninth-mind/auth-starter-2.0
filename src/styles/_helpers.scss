@@ -1,0 +1,90 @@
+.image {
+  width: 100%;
+  min-width: 200px;
+  min-height: 200px;
+  max-width: 400px;
+}
+
+.small {
+  font-size: 11px;
+  line-height: 1.125em;
+}
+
+.cursor {
+  &-pointer {
+    cursor: pointer;
+  }
+}
+
+.center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%)
+}
+.video {
+  position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 100%;
+  height: 100%;
+  transform: translate(-50%, -50%)
+}
+.video-embed {
+  position: relative;
+	padding-bottom: 56.25%; /* 16:9 */
+	padding-top: 25px;
+	height: 0;
+}
+
+.show {
+  display: block;
+}
+
+.hide {
+  display: none;
+}
+
+.space{
+  &-out{
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-around;
+  }
+
+  &-between {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-between;
+  }
+}
+
+.block {
+  display: block;
+}
+
+.palette {
+  &-yellow {
+    color: white;
+    background-color: #f1c40f;
+  }
+  &-invert {
+    color: white;
+    background-color: black;
+  }
+}
+
+/**
+ MEDIA SPECIFIC
+**/
+@media (pointer: coarse) {
+  .hide-on-phone {
+    display: none;
+  }
+}
+
+@media (pointer: fine) {
+  .hide-on-desktop {
+    display: none;
+  }
+}
