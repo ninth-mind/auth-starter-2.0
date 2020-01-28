@@ -1,15 +1,24 @@
 {
   "presets": [
-    "next/babel",
-    "@babel/preset-env"
+    [
+      "next/babel",
+      {
+        "preset-env": {
+          "targets": {
+            "node": "current"
+          }
+        }
+      }
+    ]
   ],
   "plugins": [
+    "@babel/plugin-proposal-optional-chaining",
     [
       "import",
       {
-        "libraryName": "antd",
+        "libraryName": "antd"
         // "style": true // importing styles in `main.scss`
-      },
+      }
     ]
   ]
 }

@@ -9,6 +9,6 @@ console.log(`Starting Cron Job with:  ${config.cronPattern}`)
 
 const job = new CronJob(config.cronPattern, async function() {
   let r = await User.deleteInactiveUsers()
-  console.log(`Cron complete`, r)
+  console.log(`deleted ${r.deletedCount} user`)
 })
 job.start()

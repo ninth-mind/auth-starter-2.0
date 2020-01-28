@@ -1,30 +1,35 @@
-import React, { useRef, useEffect } from 'react'
-import Router from 'next/router'
+import React, { useRef, useEffect, useCallback } from 'react'
 import ReCAPTCHA from 'react-google-recaptcha'
 import { connect } from 'react-redux'
-import { setLoading } from '~/lib/utils'
-import Navigation from '~/components/Navigation'
-import { Layout, Spin } from 'antd'
-const { Content } = Layout
-import { actions, RecaptchaContext } from '~/store'
-import './Layout.scss'
 
+import Navigation from '~/components/Navigation'
+import { CartDrawer } from '~/components/Cart'
+import Footer from '~/components/Footer'
+import { Button, Layout, Spin } from 'antd'
+import { RecaptchaContext, config } from '~/store'
+const { Content } = Layout
+import './Layout.scss'
+import { actions } from '../../store'
+
+/**
+ * THE MAIN LAYOUT
+ *
+ * Main layout is loaded in the root of the app. meaning this code gets executed on
+ * every page. This is where router initialization happens, and other important
+ * site-wide set up occurs.
+ * @param {*} props
+ */
 function MainLayout(props) {
-  const { dispatch } = props
+  const { CAPTCHA_SITE_KEY } = config
+  const { dispatch, cartItems } = props
+  // console.log('profile', profile)
+
   let recaptcha = useRef(null)
 
-  // initialize router
-  useEffect(initializeRouter)
-  function initializeRouter() {
-    Router.events.on('routeChangeStart', url => setLoading(true, dispatch))
-    Router.events.on('routeChangeComplete', url => {
-      setLoading(false, dispatch)
-      dispatch({
-        type: actions.PAGE,
-        currentPage: url
-      })
+  function toggleCart() {
+    dispatch({
+      type: actions.DRAWER_TOGGLE
     })
-    Router.events.on('routeChangeError', () => setLoading(false, dispatch))
   }
 
   return (
@@ -36,10 +41,17 @@ function MainLayout(props) {
             {props.children}
             <ReCAPTCHA
               ref={recaptcha}
-              sitekey={props.captchSiteKey}
+              sitekey={CAPTCHA_SITE_KEY}
               size="invisible"
             />
           </Content>
+          <CartDrawer />
+          {cartItems > 0 && (
+            <Button className="view-cart" type="primary" onClick={toggleCart}>
+              View Cart ({cartItems})
+            </Button>
+          )}
+          <Footer />
         </Spin>
       </RecaptchaContext.Provider>
     </Layout>
@@ -49,7 +61,7 @@ function MainLayout(props) {
 const mapStateToProps = state => {
   return {
     isLoading: state.ui.isLoading,
-    captchSiteKey: state.constants.CAPTCHA_SITE_KEY
+    cartItems: state.cart.items
   }
 }
 

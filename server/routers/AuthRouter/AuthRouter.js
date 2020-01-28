@@ -2,7 +2,6 @@ const express = require('express')
 const { passport } = require('../../lib/middleware')
 const User = require('../../services/user')
 const Mailer = require('../../services/mail')
-const InstagramRouter = require('./InstagramRouter')
 const FacebookRouter = require('./FacebookRouter')
 const {
   verifyAuthenticationToken,
@@ -20,7 +19,6 @@ const { cookieName } = require('../../config').utils
 const AuthRouter = express.Router()
 
 AuthRouter.use(passport.initialize())
-AuthRouter.use('/instagram', InstagramRouter)
 AuthRouter.use('/facebook', FacebookRouter)
 
 /**
@@ -49,7 +47,7 @@ AuthRouter.post('/register', verifyCaptcha, async (req, res) => {
       // create JWT token to pass back to FE
       let token = createToken(nu.toObject(), true)
       //send confirmation email
-      let mailResponse = await Mailer.sendEmailConfirmation(nu.email, token)
+      await Mailer.sendEmailConfirmation(nu.email, token)
       // respond with success message
       respond(res, 200, 'email confirmation sent')
     }
@@ -73,9 +71,10 @@ AuthRouter.post('/login', verifyCaptcha, async (req, res) => {
       let isMatch = await u.comparePassword(password)
       if (!isMatch) respond(res, 403, 'Incorrect credentials')
       else {
-        let token = createToken(u.toObject())
-        setCookie(res, token)
-        respond(res, 200, 'login successful', u.toObject())
+        let user = u.toObject()
+        let token = createToken(user)
+        setCookie(res, token, true)
+        respond(res, 200, 'logged in', { user, token })
       }
     }
   } catch (err) {
@@ -113,7 +112,7 @@ AuthRouter.post(
 /**
  * LOGOUT
  */
-AuthRouter.get('/logout', verifyAuthenticationToken, (req, res) => {
+AuthRouter.get('/logout', (req, res) => {
   res.clearCookie(cookieName)
   respond(res, 200, 'Successfully logged out')
 })
@@ -122,9 +121,9 @@ AuthRouter.post(
   '/email-confirmation',
   verifyAuthenticationToken,
   async (req, res) => {
-    const { decodedToken } = req.locals
-    const { source, email } = decodedToken
-    let u = await User.findOrCreateUser(source, decodedToken, { new: true })
+    const { userInfo } = req.locals
+    const { source, email } = userInfo
+    let u = await User.findOrCreateUser(source, userInfo, { new: true })
     //create new temporary token
     let token = createToken(u.toObject(), true)
     setCookie(res, token, true)
@@ -142,16 +141,16 @@ AuthRouter.get(
   verifyAuthenticationToken,
   async (req, res) => {
     try {
-      let { decodedToken } = req.locals
+      let { userInfo } = req.locals
       let u = await User.findOneAndUpdate(
-        decodedToken.source,
-        decodedToken,
+        userInfo.source,
+        userInfo,
         { $set: { confirmed: true, permissions: ['view_profile'] } },
         { new: true }
       )
       let newToken = createToken(u.toObject())
-      setCookie(res, newToken, true)
-      res.redirect('/u/profile')
+      setCookie(res, newToken, true, false)
+      res.redirect(`/u/profile`)
     } catch (err) {
       handleError(err, res, 1006)
     }
@@ -194,19 +193,22 @@ AuthRouter.get(
   verifyAuthenticationToken,
   (req, res) => {
     const { token } = req.params
-    setCookie(res, token)
+    setCookie(res, token, true, false)
     res.redirect(`/c/reset-password?token=${token}`)
   }
 )
 
+/**
+ * Actually does the resetting of the password
+ */
 AuthRouter.put(
   '/reset-password',
   verifyAuthenticationToken,
   async (req, res) => {
     try {
-      const { decodedToken } = req.locals
+      const { userInfo } = req.locals
       const { password } = req.body
-      let u = await User.findUser('email', { email: decodedToken.email })
+      let u = await User.findUser('email', { email: userInfo.email })
       if (!u) respond(res, 401, 'No user found')
       else {
         u.password = password

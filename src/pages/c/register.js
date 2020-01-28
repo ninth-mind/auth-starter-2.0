@@ -6,6 +6,7 @@ import Link from 'next/link'
 import countries from '~/assets/countries'
 import { redirect, setLoading, handleError } from '~/lib/utils'
 import { Button, Form, Icon, Input, notification, Select, Switch } from 'antd'
+import { defaultFormItemLayout } from '~/components/Layout/antLayouts'
 import './c.scss'
 
 // Country Options
@@ -33,14 +34,14 @@ function RegistrationForm(props) {
         url: `/api/auth/register`,
         data: { ...data, recaptcha: captchaToken }
       })
+
       notification.open({
         message: 'Email Confirmation sent',
-        description: `An email was sent to ${
-          data.email
-        }. Check your email to complete the registration process.`,
+        description: `An email was sent to ${data.email}. Check your email to complete the registration process.`,
         duration: 0
       })
-      redirect('/')
+
+      redirect('/c/confirmation')
     } catch (err) {
       const opts = {
         message: 'Error',
@@ -51,9 +52,8 @@ function RegistrationForm(props) {
       }
       notification.error(opts)
       form.resetFields()
-      return handleError(err)
-    } finally {
       setLoading(false, dispatch)
+      return handleError(err)
     }
   } // end handleSubmit
 
@@ -77,21 +77,11 @@ function RegistrationForm(props) {
 
   // styling
   const { getFieldDecorator } = props.form
-  const formItemLayout = {
-    labelCol: {
-      xs: { span: 24 },
-      sm: { span: 8 }
-    },
-    wrapperCol: {
-      xs: { span: 24 },
-      sm: { span: 16 }
-    }
-  }
 
   return (
-    <div className="register page center">
+    <div className="register page">
       <h1>Register</h1>
-      <Form className="form" {...formItemLayout} onSubmit={handleSubmit}>
+      <Form className="form" {...defaultFormItemLayout} onSubmit={handleSubmit}>
         <Form.Item label="Email">
           {getFieldDecorator('email', {
             rules: [
