@@ -53,7 +53,6 @@ function Account(props) {
       <h2>Welcome {profile.username},</h2>
       <h4>Email: {profile.email}</h4>
       <h4>Value: {profile.value}</h4>
-      <p>Nothing here yet....</p>
       <AddValue />
       <SetEmail />
       <Divider>Billing Details</Divider>

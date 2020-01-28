@@ -42,12 +42,11 @@ function EmailLogin(props) {
       })
 
       console.log('RESPONSE', r)
-      const token = r?.data?.data?.token
-      let profile = parseJWT(token)
+      const { token, user } = r?.data?.data
 
       dispatch({
         type: actions.PROFILE,
-        ...profile
+        ...user
       })
 
       redirect('/u/profile')

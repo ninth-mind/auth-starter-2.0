@@ -1,8 +1,7 @@
 import React, { useRef, useEffect, useCallback } from 'react'
-import Router from 'next/router'
 import ReCAPTCHA from 'react-google-recaptcha'
 import { connect } from 'react-redux'
-import { setLoading } from '~/lib/utils'
+
 import Navigation from '~/components/Navigation'
 import { CartDrawer } from '~/components/Cart'
 import Footer from '~/components/Footer'
@@ -26,14 +25,6 @@ function MainLayout(props) {
   // console.log('profile', profile)
 
   let recaptcha = useRef(null)
-
-  // initialize router events
-  const init = useCallback(() => {
-    Router.events.on('routeChangeStart', url => setLoading(true, dispatch))
-    Router.events.on('routeChangeComplete', url => setLoading(false, dispatch))
-    Router.events.on('routeChangeError', () => setLoading(false, dispatch))
-  }, [dispatch])
-  useEffect(init, [])
 
   function toggleCart() {
     dispatch({

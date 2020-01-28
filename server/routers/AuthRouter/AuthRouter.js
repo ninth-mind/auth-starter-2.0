@@ -71,9 +71,10 @@ AuthRouter.post('/login', verifyCaptcha, async (req, res) => {
       let isMatch = await u.comparePassword(password)
       if (!isMatch) respond(res, 403, 'Incorrect credentials')
       else {
-        let token = createToken(u.toObject())
+        let user = u.toObject()
+        let token = createToken(user)
         setCookie(res, token, true)
-        respond(res, 200, 'logged in', { token })
+        respond(res, 200, 'logged in', { user, token })
       }
     }
   } catch (err) {
