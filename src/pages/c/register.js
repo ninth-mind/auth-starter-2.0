@@ -37,9 +37,7 @@ function RegistrationForm(props) {
 
       notification.open({
         message: 'Email Confirmation sent',
-        description: `An email was sent to ${
-          data.email
-        }. Check your email to complete the registration process.`,
+        description: `An email was sent to ${data.email}. Check your email to complete the registration process.`,
         duration: 0
       })
 

@@ -2,7 +2,6 @@ const express = require('express')
 const { passport } = require('../../lib/middleware')
 const User = require('../../services/user')
 const Mailer = require('../../services/mail')
-const InstagramRouter = require('./InstagramRouter')
 const FacebookRouter = require('./FacebookRouter')
 const {
   verifyAuthenticationToken,
@@ -20,7 +19,6 @@ const { cookieName } = require('../../config').utils
 const AuthRouter = express.Router()
 
 AuthRouter.use(passport.initialize())
-AuthRouter.use('/instagram', InstagramRouter)
 AuthRouter.use('/facebook', FacebookRouter)
 
 /**
@@ -199,6 +197,9 @@ AuthRouter.get(
   }
 )
 
+/**
+ * Actually does the resetting of the password
+ */
 AuthRouter.put(
   '/reset-password',
   verifyAuthenticationToken,

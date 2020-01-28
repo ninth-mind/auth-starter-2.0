@@ -3,10 +3,11 @@ import { RecaptchaContext } from '~/store'
 import axios from 'axios'
 import { connect } from 'react-redux'
 import { useRouter } from 'next/router'
+import Link from 'next/link'
 import countries from '~/assets/countries'
-import { Button, Form, Input, notification, Select } from 'antd'
+import { Button, Form, Icon, Input, notification, Select, Switch } from 'antd'
 import { defaultFormItemLayout } from '~/components/Layout/antLayouts'
-import { parseJWT, redirect, setLoading, handleError } from '~/lib/utils'
+import { parseJWT, redirect, setLoading } from '~/lib/utils'
 import './c.scss'
 
 // Country Options
@@ -76,9 +77,7 @@ function CompleteProfileForm(props) {
 
       notification.open({
         message: 'Email Confirmation sent',
-        description: `An email was sent to ${
-          data.email
-        }. Check your email to complete the registration process.`,
+        description: `An email was sent to ${data.email}. Check your email to complete the registration process.`,
         duration: 0
       })
       redirect(`/c/confirmation?email=${r.data.data.accepted[0]}`)
@@ -154,6 +153,28 @@ function CompleteProfileForm(props) {
               {countryOptions}
             </Select>
           )}
+        </Form.Item>
+        <Form.Item label="Agreements">
+          {getFieldDecorator('agreement', {
+            required: true,
+            valuePropName: 'checked',
+            initialValue: false
+          })(
+            <Switch
+              checkedChildren={<Icon type="check" />}
+              unCheckedChildren={<Icon type="close" />}
+            />
+          )}
+          <p className="small">
+            By checking the box above you agree to the{' '}
+            <Link href="/legal/terms">
+              <a>Terms and Conditions</a>
+            </Link>{' '}
+            as well as the policies outlined in our{' '}
+            <Link href="/legal/privacy">
+              <a>Privacy Policy</a>
+            </Link>
+          </p>
         </Form.Item>
         <Button type="primary" htmlType="submit">
           Submit

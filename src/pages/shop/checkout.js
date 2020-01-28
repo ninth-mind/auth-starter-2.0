@@ -1,28 +1,26 @@
 import React from 'react'
 import axios from 'axios'
 import { connect } from 'react-redux'
-import { config, actions } from '~/store'
+import { actions } from '~/store'
 import { Button, Divider, Popconfirm } from 'antd'
 import { Cart } from '~/components/Cart'
 import { handleError } from '~/lib/utils'
-// import { useGetPaymentIntent } from '~/lib/hooks'
-import ls from 'local-storage'
 import { CardDetails, AddressDetails } from '~/components/AccountManagement'
 import './checkout.scss'
 
 function Checkout(props) {
   const { dispatch, cart, profile } = props
 
-  if (!cart.paymentIntentId) {
-    fetchIntent()
-      .then(r => {
-        dispatch({
-          type: actions.SET_PAYMENT_INTENT_ID,
-          paymentIntentId: r.data.data.id
-        })
-      })
-      .catch(err => handleError(err))
-  }
+  // if (!cart.paymentIntentId) {
+  //   fetchIntent()
+  //     .then(r => {
+  //       dispatch({
+  //         type: actions.SET_PAYMENT_INTENT_ID,
+  //         paymentIntentId: r.data.data.id
+  //       })
+  //     })
+  //     .catch(err => handleError(err))
+  // }
 
   /**
    * Fetches intent id from server.

@@ -132,16 +132,6 @@ function EmailLogin(props) {
             Login with Facebook
           </Button>
         </li>
-        <li>
-          <Button
-            type="link"
-            onClick={() => setLoading(true, dispatch)}
-            href="/api/auth/instagram/login"
-          >
-            <Icon type="instagram" />
-            Login with Instagram
-          </Button>
-        </li>
       </ul>
     </div>
   )

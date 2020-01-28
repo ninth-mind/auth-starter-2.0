@@ -6,19 +6,20 @@ import { Provider } from 'react-redux'
 import { StripeProvider } from 'react-stripe-elements'
 import MainLayout from '~/components/Layout'
 import '~/styles/main.scss'
-import { actions } from '~/store'
+import { actions, initializeStore } from '~/store'
 
 class MyApp extends App {
   constructor(props) {
     super(props)
     this.state = { stripe: null }
+    this.store = initializeStore({})
   }
 
   componentDidMount() {
-    const dispatch = this.props.reduxStore.dispatch
-    dispatch({
-      type: actions.SET_CART
-    })
+    // const dispatch = this.props.reduxStore.dispatch
+    // dispatch({
+    //   type: actions.SET_CART
+    // })
 
     this.setState({ stripe: window.Stripe('pk_test_tZ1UTEHPHFd9dsZzi03UyKNB') })
   }
@@ -37,7 +38,7 @@ class MyApp extends App {
             <script src="https://js.stripe.com/v3/" />
           </Head>
 
-          <Provider store={reduxStore}>
+          <Provider store={this.store}>
             <MainLayout>
               <Component {...pageProps} />
             </MainLayout>
@@ -48,4 +49,5 @@ class MyApp extends App {
   }
 }
 
-export default withReduxStore(MyApp)
+// export default withReduxStore(MyApp)
+export default MyApp

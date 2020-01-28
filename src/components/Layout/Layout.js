@@ -7,7 +7,6 @@ import Navigation from '~/components/Navigation'
 import { CartDrawer } from '~/components/Cart'
 import Footer from '~/components/Footer'
 import { Button, Layout, Spin } from 'antd'
-import { PanelManager } from '~/components/Panel'
 import { RecaptchaContext, config } from '~/store'
 const { Content } = Layout
 import './Layout.scss'
@@ -48,7 +47,6 @@ function MainLayout(props) {
         <Navigation />
         <Spin spinning={props.isLoading} tip="Loading...">
           <Content>
-            <PanelManager />
             {props.children}
             <ReCAPTCHA
               ref={recaptcha}

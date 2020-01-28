@@ -9,7 +9,7 @@ export const config = {
   BASE_URL: 'https://auth-test.thesuperuser.com',
   APP_NAME: 'jamieskinner.me',
   CART_NAME: 'jamieskinner.me-cart',
-  CAPTCHA_SITE_KEY: '6Ld-h9IUAAAAAJmXg8DvD7I9mkGTF___vAqVk4RM', // v3 site key,
+  CAPTCHA_SITE_KEY: '6Ld-h9IUAAAAAJmXg8DvD7I9mkGTF___vAqVk4RM', // v3 site key, thesuperuser.com
   CMS_URL: 'http://localhost:1337/admin'
 }
 
@@ -23,7 +23,6 @@ export const initialState = {
   ui: {
     isLoading: false,
     currentPage: '/',
-    panels: [],
     checkoutDrawerIsVisible: false
   },
   profile: {
@@ -43,7 +42,6 @@ export const actions = {
   PROFILE: 'PROFILE',
   LOGOUT: 'LOGOUT',
   VALUE: 'SET_VALUE',
-  PANEL_TOGGLE: 'PANEL_TOGGLE',
   DRAWER_TOGGLE: 'DRAWER_TOGGLE',
   ADD_TO_CART: 'ADD_TO_CART',
   REMOVE_FROM_CART: 'REMOVE_FORM_CART',
@@ -108,23 +106,6 @@ function uiReducer(state = initialState.ui, action) {
   switch (action.type) {
     case actions.LOADING: {
       return { ...state, isLoading: action.isLoading }
-    }
-    case actions.PANEL_TOGGLE: {
-      const panels = state.panels
-      const key = action.title.toLowerCase()
-      if (action.state === 'open') {
-        // check if it exists then add it
-        if (panels.indexOf(key) >= 0) return state
-        return { ...state, panels: [...panels, key] }
-      } else {
-        // remove it from panels array
-        let temp = [...panels]
-        temp.splice(panels.indexOf(key), 1)
-        return {
-          ...state,
-          panels: temp
-        }
-      }
     }
     case actions.DRAWER_TOGGLE: {
       return {
