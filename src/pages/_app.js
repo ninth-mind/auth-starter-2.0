@@ -7,13 +7,11 @@ import axios from 'axios'
 import MainLayout from '~/components/Layout'
 import { actions, initializeStore } from '~/store'
 import { setLoading } from '~/lib/utils'
-import { StripeProvider } from 'react-stripe-elements'
 import '~/styles/main.scss'
 
 class MyApp extends App {
   constructor(props) {
     super(props)
-    this.state = { stripe: null }
     this.store = initializeStore({})
   }
 
@@ -24,10 +22,6 @@ class MyApp extends App {
     Router.events.on('routeChangeStart', () => setLoading(true, dispatch))
     Router.events.on('routeChangeComplete', () => setLoading(false, dispatch))
     Router.events.on('routeChangeError', () => setLoading(false, dispatch))
-
-    dispatch({
-      type: actions.SET_CART
-    })
 
     /**
      * FETCH USER PROFILE TO DETERMINE IF USER IS LOGGED IN
@@ -47,32 +41,26 @@ class MyApp extends App {
         if (err?.request?.status !== 403)
           console.log('ERROR FETCHING PROFILE', err)
       })
-
-    // this.setState({ stripe: window.Stripe('pk_test_tZ1UTEHPHFd9dsZzi03UyKNB') })
   }
 
   render() {
     const { Component, pageProps } = this.props
-    console.log('RENDERING')
     return (
-      <StripeProvider stripe={this.state.stripe}>
-        <>
-          <Head>
-            <title>Jamie Skinner - Portfolio</title>
-            <meta
-              name="viewport"
-              content="initial-scale=1.0, width=device-width"
-            />
-            <script src="https://js.stripe.com/v3/" />
-          </Head>
+      <>
+        <Head>
+          <title>Your Cool App</title>
+          <meta
+            name="viewport"
+            content="initial-scale=1.0, width=device-width"
+          />
+        </Head>
 
-          <Provider store={this.store}>
-            <MainLayout>
-              <Component {...pageProps} />
-            </MainLayout>
-          </Provider>
-        </>
-      </StripeProvider>
+        <Provider store={this.store}>
+          <MainLayout>
+            <Component {...pageProps} />
+          </MainLayout>
+        </Provider>
+      </>
     )
   }
 }

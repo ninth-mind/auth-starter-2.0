@@ -57,11 +57,9 @@
     "react-google-recaptcha": "^1.1.0",
     "react-redux": "^5.1.2",
     "react-showdown": "^1.6.0",
-    "react-stripe-elements": "^2.0.3",
     "redux": "^3.6.0",
     "redux-devtools-extension": "^2.13.2",
     "sass": "^1.25.0",
-    "stripe": "^7.15.0",
     "validator": "^10.11.0",
     "xoauth2": "^1.2.0"
   },

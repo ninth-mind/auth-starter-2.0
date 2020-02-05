@@ -20,7 +20,7 @@ function Footer(props) {
           </li>
         </ul>
         <div className="footer__group__item copyright">
-          Copyright <i>Sudonym.net</i> 2020
+          Copyright <i>Your-Company.net</i> 2020
         </div>
       </div>
     </Layout.Footer>

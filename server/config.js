@@ -6,19 +6,19 @@ const config = {
   global: {
     default: {
       env: process.env.NODE_ENV || 'development',
-      appName: 'jamieskinner.me',
+      appName: 'your-cool-app',
       clientURL: 'http://localhost:3000',
       serverURL: 'http://localhost:3000'
     },
     staging: {
       env: 'staging',
-      appName: 'jamieskinner.me',
+      appName: 'your-cool-app',
       clientURL: 'http://localhost:3000',
       serverURL: 'http://localhost:3000'
     },
     production: {
       env: process.env.NODE_ENV,
-      appName: 'jamieskinner.me',
+      appName: 'your-cool-app',
       clientURL: 'http://auth-test.thesuperuser.com/',
       serverURL: 'http://auth-test.thesuperuser.com/'
     }
@@ -59,11 +59,6 @@ const config = {
   cron: {
     default: {
       cronPattern: '0 */2 * * * *'
-    }
-  },
-  stripe: {
-    default: {
-      secretKey: process.env.STRIPE_SECRET_KEY
     }
   },
   facebook: {
@@ -115,7 +110,7 @@ const config = {
       secret: 'ThisIsMySuperSecureSecret',
       tokenExpiryTime: '1hr',
       tempTokenExpiryTime: '30min',
-      cookieName: 'jamieskinner.me',
+      cookieName: 'your-cool-app',
       cookieExpiration: 4 * 3600000, // 1 hour
       captchaSecretKey: process.env.CAPTCHA_SECRET_KEY,
       captchaThreshold: 0.01
@@ -124,7 +119,7 @@ const config = {
       secret: process.env.SECRET,
       tokenExpiryTime: '1hr',
       tempTokenExpiryTime: '30min',
-      cookieName: 'jamieskinner.me',
+      cookieName: 'your-cool-app',
       cookieExpiration: 4 * 3600000, // 1 hour
       captchaSecretKey: process.env.CAPTCHA_SECRET_KEY,
       captchaThreshold: 0.01
@@ -133,7 +128,7 @@ const config = {
       secret: process.env.SECRET,
       tokenExpiryTime: '24hr',
       tempTokenExpiryTime: '30min',
-      cookieName: 'jamieskinner.me',
+      cookieName: 'your-cool-app',
       cookieExpiration: 72 * 3600000, // 72 hours
       captchaSecretKey: process.env.CAPTCHA_SECRET_KEY,
       captchaThreshold: 0.01

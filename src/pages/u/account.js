@@ -3,7 +3,7 @@ import axios from 'axios'
 import { redirect, signOut } from '~/lib/utils'
 import { Button, Divider, notification, Popconfirm } from 'antd'
 import AddValue from '~/components/AddValue'
-import { SetEmail, CardDetails } from '~/components/AccountManagement'
+import { SetEmail, ResetPassword } from '~/components/AccountManagement'
 import { connect } from 'react-redux'
 
 function Account(props) {
@@ -11,25 +11,6 @@ function Account(props) {
 
   function logout() {
     signOut(dispatch)
-  }
-
-  async function handleCardDetails(stripeToken, recaptcha) {
-    try {
-      let result = await axios({
-        method: 'post',
-        url: `/api/me/card`,
-        data: { recaptcha, stripeToken }
-      })
-
-      console.log(result)
-      return {
-        message: 'Card Added',
-        description: 'You card has been added to your account'
-      }
-    } catch (err) {
-      console.log(err)
-      notification.error({ message: 'Error adding card' })
-    }
   }
 
   async function deleteAccount() {
@@ -55,9 +36,9 @@ function Account(props) {
       <h4>Value: {profile.value}</h4>
       <AddValue />
       <SetEmail />
-      <Divider>Billing Details</Divider>
-      <CardDetails submitText="Add Card" handleCard={handleCardDetails} />
-      <Divider>Delete Account</Divider>
+      <Divider />
+      <ResetPassword confirmCurrentPassword={true} />
+      <Divider />
       <Button type="primary" onClick={logout}>
         Sign Out
       </Button>
@@ -65,6 +46,8 @@ function Account(props) {
         title="Are you sure delete your account?"
         onConfirm={deleteAccount}
       >
+        <Divider />
+        <h1 className="palette-red">Danger Zone!</h1>
         <Button type="danger">Delete Account</Button>
       </Popconfirm>
     </div>

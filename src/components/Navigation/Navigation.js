@@ -27,9 +27,9 @@ function Navigations(props) {
             </span>
           </Link>
         </Menu.Item>
-        <Menu.Item key="shop">
-          <Link href="/shop">
-            <a>Shop</a>
+        <Menu.Item key="/about">
+          <Link href="/about">
+            <span>About</span>
           </Link>
         </Menu.Item>
         {!props.isLoggedIn ? (

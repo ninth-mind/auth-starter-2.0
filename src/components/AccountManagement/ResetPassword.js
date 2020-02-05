@@ -4,10 +4,11 @@ import axios from 'axios'
 import { setLoading, handleError, redirect } from '~/lib/utils'
 import { Button, Form, Input, notification } from 'antd'
 import { defaultFormItemLayout } from '~/components/Layout/antLayouts'
+import { connect } from 'react-redux'
 
 function PasswordReset(props) {
   const recaptcha = useContext(RecaptchaContext)
-  const { dispatch, form } = props
+  const { dispatch, form, confirmCurrentPassword } = props
 
   // validate password
   function validatePassword(rule, value, cb) {
@@ -31,7 +32,6 @@ function PasswordReset(props) {
     try {
       setLoading(true, dispatch)
       data = await form.validateFields()
-      setLoading(true, dispatch)
       captchaToken = await recaptcha.execute({ action: 'reset-password' })
     } catch (err) {
       handleError(err)
@@ -103,6 +103,18 @@ function PasswordReset(props) {
             ]
           })(<Input.Password />)}
         </Form.Item>
+        {confirmCurrentPassword && (
+          <Form.Item label="Current Password" hasFeedback>
+            {getFieldDecorator('current', {
+              rules: [
+                {
+                  required: true,
+                  message: 'Please confirm your password!'
+                }
+              ]
+            })(<Input.Password />)}
+          </Form.Item>
+        )}
         <Button type="primary" htmlType="submit">
           Submit
         </Button>
@@ -115,4 +127,4 @@ const WrappedPasswordResetForm = Form.create({
   name: 'password-reset'
 })(PasswordReset)
 
-export default WrappedPasswordResetForm
+export default connect()(WrappedPasswordResetForm)

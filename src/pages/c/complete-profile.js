@@ -86,6 +86,18 @@ function CompleteProfileForm(props) {
         message: 'Error',
         description: 'Oops! Something went wrong.'
       }
+
+      // if field validation failed
+      if (err?.errors) {
+        // throws an error for each incomplete field
+        Object.keys(err.errors).forEach(key => {
+          opts.message = err.errors[key].errors[0].message
+          notification.error(opts)
+        })
+        return
+      }
+
+      //if request errors
       if (err && err.response && err.response.data)
         opts.description = err.response.data.msg
       notification.error(opts)
@@ -156,7 +168,13 @@ function CompleteProfileForm(props) {
         </Form.Item>
         <Form.Item label="Agreements">
           {getFieldDecorator('agreement', {
-            required: true,
+            rules: [
+              {
+                required: true,
+                message: 'You must agree to our terms.',
+                validator: (r, v, c) => v
+              }
+            ],
             valuePropName: 'checked',
             initialValue: false
           })(

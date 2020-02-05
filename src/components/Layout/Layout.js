@@ -1,15 +1,13 @@
-import React, { useRef, useEffect, useCallback } from 'react'
+import React, { useRef, useEffect, useState } from 'react'
 import ReCAPTCHA from 'react-google-recaptcha'
 import { connect } from 'react-redux'
 
 import Navigation from '~/components/Navigation'
-import { CartDrawer } from '~/components/Cart'
 import Footer from '~/components/Footer'
-import { Button, Layout, Spin } from 'antd'
+import { Layout, Spin } from 'antd'
 import { RecaptchaContext, config } from '~/store'
 const { Content } = Layout
 import './Layout.scss'
-import { actions } from '../../store'
 
 /**
  * THE MAIN LAYOUT
@@ -21,20 +19,16 @@ import { actions } from '../../store'
  */
 function MainLayout(props) {
   const { CAPTCHA_SITE_KEY } = config
-  const { dispatch, cartItems } = props
-  // console.log('profile', profile)
-
+  let [captchaElement, setCaptchaElement] = useState(null)
   let recaptcha = useRef(null)
 
-  function toggleCart() {
-    dispatch({
-      type: actions.DRAWER_TOGGLE
-    })
-  }
+  useEffect(() => {
+    if (recaptcha && recaptcha.current) setCaptchaElement(recaptcha.current)
+  }, [])
 
   return (
     <Layout className="layout">
-      <RecaptchaContext.Provider value={recaptcha.current}>
+      <RecaptchaContext.Provider value={captchaElement}>
         <Navigation />
         <Spin spinning={props.isLoading} tip="Loading...">
           <Content>
@@ -45,12 +39,6 @@ function MainLayout(props) {
               size="invisible"
             />
           </Content>
-          <CartDrawer />
-          {cartItems > 0 && (
-            <Button className="view-cart" type="primary" onClick={toggleCart}>
-              View Cart ({cartItems})
-            </Button>
-          )}
           <Footer />
         </Spin>
       </RecaptchaContext.Provider>
@@ -58,11 +46,8 @@ function MainLayout(props) {
   )
 }
 
-const mapStateToProps = state => {
-  return {
-    isLoading: state.ui.isLoading,
-    cartItems: state.cart.items
-  }
-}
+const mapStateToProps = state => ({
+  isLoading: state.ui.isLoading
+})
 
 export default connect(mapStateToProps)(MainLayout)

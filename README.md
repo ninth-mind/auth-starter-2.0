@@ -1,9 +1,9 @@
-# Portfolio
+# Underground
+This is the admin client area. This is where administrators are able to create and manage Projects. Each project is comprised of Layers. These layers have points. These points can have attributes. This repo is built off my Auth-Starter-2.0 Repo. The details for that repo can be found below.
 
-This is my portfolio. Built on top of the `Auth-Starter-2.0` package.
 
 # Auth Starter 2.0
-Starter repo for user authentication using passport, user payment handling using Stripe, and SSR using Next. Component Library AntD
+Starter repo for user authentication using passport, and SSR using Next. Component Library AntD
 
 ### Getting Started
 1. Change `.env.example` to `.env`, and populate all fields

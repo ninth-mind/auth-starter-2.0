@@ -44,9 +44,7 @@ function SetEmail(props) {
         signOut(dispatch)
         notification.success({
           message: 'Email Changed',
-          description: `We sent you an email confirmation to ${
-            data.email
-          }. Please confirm your new email to continue.`
+          description: `We sent you an email confirmation to ${data.email}. Please confirm your new email to continue.`
         })
         redirect('/')
       })

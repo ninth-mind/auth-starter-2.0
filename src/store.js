@@ -7,8 +7,7 @@ export const RecaptchaContext = React.createContext()
 
 export const config = {
   BASE_URL: 'https://auth-test.thesuperuser.com',
-  APP_NAME: 'jamieskinner.me',
-  CART_NAME: 'jamieskinner.me-cart',
+  APP_NAME: 'your_app_name',
   CAPTCHA_SITE_KEY: '6Ld-h9IUAAAAAJmXg8DvD7I9mkGTF___vAqVk4RM', // v3 site key, thesuperuser.com
   CMS_URL: 'http://localhost:1337/admin'
 }

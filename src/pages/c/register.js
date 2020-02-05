@@ -28,6 +28,7 @@ function RegistrationForm(props) {
     try {
       setLoading(true, dispatch)
       data = await form.validateFields()
+      console.log('DATA', data)
       captchaToken = await recaptcha.execute({ action: 'register' })
       let r = await axios({
         method: 'post',
@@ -43,10 +44,21 @@ function RegistrationForm(props) {
 
       redirect('/c/confirmation')
     } catch (err) {
+      // default error message
       const opts = {
         message: 'Error',
         description: 'Oops! Something went wrong.'
       }
+
+      // if validation failed
+      if (err?.errors) {
+        Object.keys(err.errors).forEach(key => {
+          opts.message = err.errors[key].errors[0].message
+          notification.error(opts)
+        })
+        return
+      }
+      // if error in request
       if (err && err.response && err.response.data) {
         opts.description = err.response.data.msg
       }
@@ -152,7 +164,13 @@ function RegistrationForm(props) {
         </Form.Item>
         <Form.Item label="Agreements">
           {getFieldDecorator('agreement', {
-            required: true,
+            rules: [
+              {
+                required: true,
+                message: 'You must agree to our terms.',
+                validator: (r, v, c) => v
+              }
+            ],
             valuePropName: 'checked',
             initialValue: false
           })(

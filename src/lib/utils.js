@@ -105,19 +105,3 @@ export function debounce(func, wait, immediate) {
     if (callNow) func.apply(context, args)
   }
 }
-
-/**
- * Check object for all necessary keys
- *
- * @param {object} obj - object to check for values
- * @param {array} values - array of values to check the object for
- */
-export function runObjectCheck(obj, keysAndChecks) {
-  let failedKeys = []
-  for (let [key, check] of Object.entries(keysAndChecks)) {
-    // if the object is undefined or fails check
-    if (obj[key] === undefined || !check(obj[key])) failedKeys.push(key)
-  }
-  if (failedKeys.length > 0) return { success: false, failed: failedKeys }
-  else return { success: true }
-}
