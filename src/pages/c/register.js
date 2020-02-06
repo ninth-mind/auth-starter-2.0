@@ -202,12 +202,6 @@ function RegistrationForm(props) {
             Login with Facebook
           </Button>
         </li>
-        <li>
-          <Button type="link" href="/api/auth/instagram/register">
-            <Icon type="instagram" />
-            Login with Instagram
-          </Button>
-        </li>
       </ul>
       <Link href="/c/login">
         <a className="small italic link">Already a member? Login here.</a>
